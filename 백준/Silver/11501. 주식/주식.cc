@@ -12,28 +12,16 @@ int main() {
   while (t--) {
     vector<int> days;
     long long ans = 0;
+    int mx = -1;
     cin >> n;
     for (int i = 0; i < n; i++) {
       cin >> x;
       days.push_back(x);
     }
 
-    auto b = days.begin();
-    auto e = days.end();
-    auto mx = prev(e);
-    for (auto i = prev(e); i >= b; i--) {
-      if (*mx < *i) mx = i;
-    }
-
-    while (b != e) {
-      while (b <= mx) {
-        ans += *mx - *b;
-        b++;
-      }
-      mx = prev(e);
-      for (auto i = prev(e); i >= b; i--) {
-        if (*mx < *i) mx = i;
-      }
+    for (int i = n - 1; i >= 0; i--) {
+      if (mx < days[i]) mx = days[i];
+      if (mx > days[i]) ans += mx - days[i];
     }
 
     cout << ans << "\n";
