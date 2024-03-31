@@ -4,45 +4,39 @@
 
 using namespace std;
 
-int N, Q, x, i, q;
-long long loca = 1;
+int N, Q, t, curr = 1;
 set<int> attr;
 
 int main() {
   ios::sync_with_stdio(0);
   cin.tie(0);
   cin >> N >> Q;
-  for (i = 0; i < N; i++) {
-    cin >> x;
-    if (x) {
-      attr.insert(i + 1);
-      attr.insert(i + 1 + N);
-    }
+  for (int i = 1; i <= N; i++) {
+    cin >> t;
+    if (t) attr.insert(i);
   }
   while (Q--) {
-    cin >> q;
-    if (q == 1) {
-      cin >> i;
-      if (attr.find(i) != attr.end()) {
-        attr.erase(i);
-        attr.erase(i + N);
-      } else {
-        attr.insert(i);
-        attr.insert(i + N);
-      }
-    } else if (q == 2) {
-      cin >> x;
-      loca = (loca - 1 + x) % N + 1;
-    } else if (q == 3) {
-      if (attr.find(loca) != attr.end()) {
-        cout << "0\n";
-        continue;
-      }
-      auto dest = attr.upper_bound(loca);
-      if (dest == attr.end())
-        cout << "-1\n";
+    cin >> t;
+    if (t == 1) {
+      cin >> t;
+      if (attr.find(t) != attr.end())
+        attr.erase(t);
       else
-        cout << (*dest - loca) << "\n";
+        attr.insert(t);
+
+    } else if (t == 2) {
+      cin >> t;
+      curr = (curr - 1 + t) % N + 1;
+    } else if (t == 3) {
+      if (attr.empty()) {
+        cout << "-1\n";
+      } else {
+        auto dest = attr.lower_bound(curr);
+        if (dest == attr.end())
+          cout << N - curr + *attr.begin() << "\n";
+        else
+          cout << *dest - curr << "\n";
+      }
     }
   }
 }
