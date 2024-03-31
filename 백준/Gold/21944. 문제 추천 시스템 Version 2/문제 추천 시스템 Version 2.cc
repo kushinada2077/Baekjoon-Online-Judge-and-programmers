@@ -6,122 +6,87 @@
 
 using namespace std;
 
-struct Info {
-  int l;
-  int g;
-};
-unordered_map<int, Info> dif;
+int N, P, L, G, x;
+string op;
 
-struct cmp {
-  bool operator()(const int& p1, const int& p2) const {
-    if (dif[p1].l == dif[p2].l) return p1 < p2;
-    return dif[p1].l < dif[p2].l;
-  }
-};
+pair<int, int> probLevel[100001];
+set<int> probByL[101];
+set<int> probByGL[101][101];
+
+void insert_prop(int P, int L, int G) {
+  probLevel[P] = {L, G};
+  probByL[L].insert(P);
+  probByGL[G][L].insert(P);
+}
 
 int main() {
   ios::sync_with_stdio(0);
   cin.tie(0);
 
-  int n;
-  cin >> n;
-  set<int, cmp> s[101];
-  while (n--) {
-    int p, l, g;
-    cin >> p >> l >> g;
-    Info info = {l, g};
-    dif[p] = info;
-    s[g].insert(p);
+  cin >> N;
+  while (N--) {
+    cin >> P >> L >> G;
+    insert_prop(P, L, G);
   }
-  int m;
-  cin >> m;
-  while (m--) {
-    string op;
+  cin >> N;
+  while (N--) {
     cin >> op;
 
-    if (op == "add") {
-      int p, l, g;
-      cin >> p >> l >> g;
-      Info info = {l, g};
-      dif[p] = info;
-      s[g].insert(p);
-    }
-
-    else if (op == "recommend") {
-      int g, x;
-      cin >> g >> x;
-      int opt;
+    if (op == "recommend") {
+      cin >> G >> x;
       if (x == 1) {
-        opt = *prev(s[g].end());
+        for (int i = 100; i > 0; i--) {
+          if (probByGL[G][i].empty()) continue;
+          cout << *prev(probByGL[G][i].end()) << "\n";
+          break;
+        }
       } else {
-        opt = *s[g].begin();
+        for (int i = 1; i < 101; i++) {
+          if (probByGL[G][i].empty()) continue;
+          cout << *probByGL[G][i].begin() << "\n";
+          break;
+        }
       }
-      cout << opt << "\n";
     } else if (op == "recommend2") {
-      int x;
-      int p = 0;
       cin >> x;
-      set<int, cmp> tmp;
-
       if (x == 1) {
-        for (set<int, cmp>& c : s) {
-          if (!c.empty()) {
-            int num = *prev(c.end());
-            tmp.insert(num);
-          }
+        for (int i = 100; i > 0; i--) {
+          if (probByL[i].empty()) continue;
+          cout << *(prev(probByL[i].end())) << "\n";
+          break;
         }
-        p = *prev(tmp.end());
       } else {
-        for (set<int, cmp>& c : s) {
-          if (!c.empty()) {
-            int num = *c.begin();
-            tmp.insert(num);
-          }
+        for (int i = 1; i < 101; i++) {
+          if (probByL[i].empty()) continue;
+          cout << *probByL[i].begin() << "\n";
+          break;
         }
-        p = *tmp.begin();
       }
-
-      cout << p << "\n";
     } else if (op == "recommend3") {
-      int x, l;
-      cin >> x >> l;
-      int p = -1;
-      set<int, cmp> tmp;
+      cin >> x >> L;
+      int ans = -1;
       if (x == 1) {
-        dif[0] = {l, 0};
-        for (set<int, cmp>& c : s) {
-          auto flag = c.lower_bound(0);
-          if (flag != c.end()) {
-            tmp.insert(*flag);
-          }
+        for (int i = L; i < 101; i++) {
+          if (probByL[i].empty()) continue;
+          ans = *probByL[i].begin();
+          break;
         }
-
-        if (!tmp.empty()) {
-          p = *tmp.begin();
-        }
-        dif.erase(0);
       } else {
-        dif[100001] = {l - 1, 0};
-        for (set<int, cmp>& c : s) {
-          auto flag = c.upper_bound(100001);
-          if (flag != c.begin()) {
-            tmp.insert(*prev(flag));
-          }
+        for (int i = L - 1; i > 0; i--) {
+          if (probByL[i].empty()) continue;
+          ans = *prev(probByL[i].end());
+          break;
         }
-
-        if (!tmp.empty()) {
-          p = *prev(tmp.end());
-        }
-        dif.erase(100001);
       }
-
-      cout << p << "\n";
+      cout << ans << "\n";
+    } else if (op == "add") {
+      cin >> P >> L >> G;
+      insert_prop(P, L, G);
     } else {
-      int p, g;
-      cin >> p;
-      g = dif[p].g;
-      s[g].erase(p);
-      dif.erase(p);
+      cin >> P;
+      tie(L, G) = probLevel[P];
+      probByL[L].erase(P);
+      probByGL[G][L].erase(P);
     }
   }
 }
