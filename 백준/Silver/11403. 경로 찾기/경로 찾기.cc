@@ -16,11 +16,11 @@ bool bfs(int v, int dest) {
 
   while (!q.empty()) {
     auto cur = q.front();
-    if (cur == dest && vis[dest]) return true;
     q.pop();
     for (int i = 1; i < N + 1; i++) {
       if (adj[cur][i] == 0) continue;
       if (vis[i]) continue;
+      if (i == dest) return true;
       q.push(i);
       vis[i] = true;
     }
