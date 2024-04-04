@@ -7,7 +7,7 @@ ans = [0] * 10
 for num in product:
   ans[int(num)] += 1
 
-# for n in ans:
-#   print(n)
+for n in ans:
+  print(n)
 
-print("\n".join(map(str, ans)))
+# print("\n".join(map(str, ans)))
