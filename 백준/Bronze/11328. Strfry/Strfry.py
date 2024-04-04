@@ -1,9 +1,10 @@
-N = int(input())
+import sys
+N = int(sys.stdin.readline())
 ord_a = ord('a')
 
 for i in range(N):
   cnt = [0] * 26
-  s1, s2 = input().split(" ")
+  s1, s2 = sys.stdin.readline().split()
   
   for c in s1:
     cnt[ord(c) - ord_a] += 1
