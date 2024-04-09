@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 
-int V, E, A, B, C, ans, p[10001];
+int V, E, A, B, C, ans, cnt, p[10001];
 vector<tuple<int, int, int>> edge;
 
 int find(int n) {
@@ -13,17 +13,15 @@ int find(int n) {
   return p[n];
 }
 
-void merge(int a, int b) {
-  a = find(a);
-  b = find(b);
-  if (a == b) return;
-  p[a] = b;
-}
-
 bool is_diff_group(int a, int b) {
   a = find(a);
   b = find(b);
   if (a == b) return false;
+  if (p[a] == p[b]) p[a]--;
+  if (p[a] > p[b])
+    p[b] = a;
+  else
+    p[a] = b;
   return true;
 }
 
@@ -43,7 +41,8 @@ int main() {
   for (auto [cost, a, b] : edge) {
     if (!is_diff_group(a, b)) continue;
     ans += cost;
-    merge(a, b);
+    cnt++;
+    if (cnt == V - 1) break;
   }
 
   cout << ans;
