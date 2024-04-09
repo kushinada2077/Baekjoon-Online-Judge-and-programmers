@@ -6,7 +6,8 @@
 #include <vector>
 using namespace std;
 
-int N, M, ans, cnt, a, b, c, p[100001];
+int N, M, cnt, a, b, c, p[100001];
+vector<int> ans;
 vector<TUPLE> edge;
 
 int find(int v) {
@@ -28,7 +29,6 @@ bool is_diff_group(int a, int b) {
 }
 
 int main() {
-  // freopen("/Users/leedongha/Downloads/PS/input.txt", "r", stdin);
   ios::sync_with_stdio(0);
   cin.tie(0);
   cin >> N >> M;
@@ -41,10 +41,13 @@ int main() {
   sort(edge.begin(), edge.end());
   for (auto [cost, a, b] : edge) {
     if (!is_diff_group(a, b)) continue;
-    ans += cost;
-    if (++cnt == N - 2) break;
+    ans.push_back(cost);
+    if (++cnt >= N - 1) break;
   }
 
-  if (N == 2) ans = 0;
-  cout << ans;
+  ans.pop_back();
+  cnt = 0;
+  for (auto n : ans) cnt += n;
+
+  cout << cnt;
 }
