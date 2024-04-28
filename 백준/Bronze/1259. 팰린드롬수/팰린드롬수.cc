@@ -4,27 +4,26 @@
 #include <vector>
 using namespace std;
 
+bool isPal(int n) {
+  int p = 0;
+  int m = n;
+
+  while (m) {
+    p = p * 10 + m % 10;
+    m /= 10;
+  }
+
+  return p == n;
+}
+
 int main() {
   ios::sync_with_stdio(0);
   cin.tie(0);
 
   while (true) {
-    string str;
-    cin >> str;
-    if (str == "0") break;
-    bool flag = true;
-
-    for (int i = 0; i < str.size() / 2 + 1; i++) {
-      int j = str.size() - i - 1;
-      if (str[i] != str[j]) {
-        flag = false;
-        break;
-      }
-    }
-
-    if (flag)
-      cout << "yes\n";
-    else
-      cout << "no\n";
+    int n;
+    cin >> n;
+    if (n == 0) break;
+    cout << (isPal(n) ? "yes\n" : "no\n");
   }
 }
