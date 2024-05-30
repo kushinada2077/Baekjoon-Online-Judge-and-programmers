@@ -8,12 +8,16 @@ using namespace std;
 
 ll mod;
 ll pow(ll a, ll b) {
-  if (b == 1) return a % mod;
-  ll val = pow(a, b / 2);
-  val = val * val % mod;
-  if (b % 2) return a * val % mod;
-  return val;
+  ll ret = 1;
+  while (b) {
+    if (b % 2) ret = ret * a % mod;
+    a = a * a % mod;
+    b /= 2;
+  }
+
+  return ret;
 }
+
 int main() {
   ios::sync_with_stdio(0);
   cin.tie(0);
