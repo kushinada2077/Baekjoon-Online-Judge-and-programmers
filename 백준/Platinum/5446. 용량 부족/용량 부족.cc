@@ -7,15 +7,14 @@
 #include <vector>
 using namespace std;
 
-const int MX = 2000 * 20 + 5;
+const int MX = 1000 * 20 + 5;
 const int ROOT = 1;
 const string chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.";
 int unused = 2;
 int nxt[MX][63];
-int chk[MX];
+bool chk[MX];
 int cnt;
-char cc[MX];
 string s;
 unordered_map<char, int> c2i;
 unordered_set<int> po;
@@ -27,13 +26,10 @@ void setup() {
 void insert(string& s) {
   int v = ROOT;
   for (auto c : s) {
-    if (nxt[v][c2i[c]] == 0) {
-      nxt[v][c2i[c]] = unused++;
-      cc[unused - 1] = c;
-    }
+    if (nxt[v][c2i[c]] == 0) nxt[v][c2i[c]] = unused++;
     v = nxt[v][c2i[c]];
   }
-  chk[v] = 1;
+  chk[v] = true;
 }
 
 void find(string& s) {
@@ -93,7 +89,6 @@ int main() {
 
     for (auto f : file) {
       find(f);
-      // cout << f << " || " << po.size() + cnt << "\n";
     }
     cout << po.size() + cnt << "\n";
   }
