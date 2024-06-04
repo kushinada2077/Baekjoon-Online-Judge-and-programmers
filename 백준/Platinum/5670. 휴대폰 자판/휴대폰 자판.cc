@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 using namespace std;
 
@@ -12,29 +13,29 @@ int unused = 2;
 int nxt[MX][26];
 int nums[MX];
 bool chk[MX];
+string s;
 
+int c2i(char c) { return c - 'a'; }
 void insert(string& s) {
   int v = ROOT;
   for (auto c : s) {
-    if (nxt[v][c - 'a'] == 0) {
-      nxt[v][c - 'a'] = unused++;
+    if (nxt[v][c2i(c)] == 0) {
+      nxt[v][c2i(c)] = unused++;
       nums[v]++;
     }
-    v = nxt[v][c - 'a'];
+    v = nxt[v][c2i(c)];
   }
   chk[v] = true;
 }
-
-int typing(string& s) {
-  int v = nxt[ROOT][s[0] - 'a'];
-  int ret = 1;
+int cal(string& s) {
+  int sum = 1;
+  int v = nxt[ROOT][c2i(s[0])];
   for (int i = 1; i < s.size(); ++i) {
-    char c = s[i];
-    if (nums[v] > 1 || (chk[v] && nums[v])) ret++;
-    v = nxt[v][c - 'a'];
+    auto c = s[i];
+    if (nums[v] > 1 || (chk[v] && nums[v])) sum++;
+    v = nxt[v][c2i(c)];
   }
-
-  return ret;
+  return sum;
 }
 
 int main() {
@@ -43,21 +44,19 @@ int main() {
   cout << fixed;
   cout.precision(2);
   int n;
-
   while (cin >> n) {
     unused = 2;
     for (int i = 0; i < MX; ++i) fill(nxt[i], nxt[i] + 26, 0);
     fill(nums, nums + MX, 0);
     fill(chk, chk + MX, 0);
-    vector<string> word(n);
     int sum = 0;
+    vector<string> word(n);
     for (int i = 0; i < n; ++i) {
       cin >> word[i];
       insert(word[i]);
     }
     for (auto w : word) {
-      int tmp = typing(w);
-      sum += tmp;
+      sum += cal(w);
     }
     cout << float(sum) / n << "\n";
   }
