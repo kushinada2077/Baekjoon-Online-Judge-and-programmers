@@ -9,7 +9,7 @@ using namespace std;
 const int INF = 0x3f3f3f3f;
 int n, k;
 int coin[101];
-int d[100005];
+int d[10005];
 
 int f(int k) {
   if (k <= 0) return INF;
@@ -24,9 +24,10 @@ int main() {
   ios::sync_with_stdio(0);
   cin.tie(0);
   cin >> n >> k;
-  fill(d, d + 100005, -1);
+  fill(d, d + 10005, -1);
   for (int i = 0; i < n; ++i) {
     cin >> coin[i];
+    if (coin[i] > 10000) continue;
     d[coin[i]] = 1;
   }
   int ans = f(k);
