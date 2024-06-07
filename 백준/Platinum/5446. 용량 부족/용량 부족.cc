@@ -43,14 +43,7 @@ void find(string& s) {
     if (po.find(nxt[v][c2i[c]]) != po.end()) return;
     v = nxt[v][c2i[c]];
   }
-
-  for (auto c : chars) {
-    if (nxt[v][c2i[c]]) {
-      cnt++;
-      return;
-    }
-  }
-  po.insert(v);
+  cnt++;
 }
 
 int main() {
