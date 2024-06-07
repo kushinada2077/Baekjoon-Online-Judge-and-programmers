@@ -34,7 +34,6 @@ void insert(string& s) {
 
 void find(string& s) {
   int v = ROOT;
-  vector<int> r;
   for (auto c : s) {
     if (nxt[v][c2i[c]] == 0) {
       po.insert(unused);
@@ -42,7 +41,6 @@ void find(string& s) {
       return;
     }
     if (po.find(nxt[v][c2i[c]]) != po.end()) return;
-    if (chk[v]) r.push_back(nxt[v][c2i[c]]);
     v = nxt[v][c2i[c]];
   }
 
