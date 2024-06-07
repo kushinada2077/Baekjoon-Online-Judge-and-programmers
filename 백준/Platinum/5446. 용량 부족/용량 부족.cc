@@ -52,10 +52,7 @@ void find(string& s) {
       return;
     }
   }
-  if (r.size())
-    po.insert(r[r.size() - 1]);
-  else
-    po.insert(v);
+  po.insert(v);
 }
 
 int main() {
