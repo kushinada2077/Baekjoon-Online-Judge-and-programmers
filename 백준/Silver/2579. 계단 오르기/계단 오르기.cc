@@ -5,30 +5,30 @@
 #include <vector>
 using namespace std;
 
-const int IM = -100;
+const int IM = 500000;
 int N, stair[305];
-int d[305][3];
-// f(n, k) = n번째 계단까지 올랐을 때 k개의 계단을 연속으로 밟은 상태에서 최댓값
-int f(int n, int k) {
-  if (n == 0) return 0;
-  if (n == 1) return k == 1 ? stair[1] : IM;
-  if (d[n][k] != IM) return d[n][k];
+int d[305];
+// f(n) = n번째 계단까지의 밟지 않을 합의 최소, n번째는 밟지 않음
+int f(int n) {
+  if (n == 1) return stair[1];
+  if (n == 2) return stair[2];
+  if (d[n] != IM) return d[n];
 
-  int result = IM;
-  if (k == 1)
-    result = max(max(result, f(n - 2, 2) + stair[n]), f(n - 2, 1) + stair[n]);
-  if (k == 2) result = max(result, f(n - 1, 1) + stair[n]);
-  d[n][k] = result;
+  int result = stair[n] + f(n - 2);           // n-2를 밟지 않음
+  result = min(result, stair[n] + f(n - 3));  // n-2를 밟음
+  d[n] = result;
   return result;
 }
 int main() {
   ios::sync_with_stdio(0);
   cin.tie(0);
   cin >> N;
+  fill(d, d + N + 1, IM);
+  int sum = 0;
   for (int i = 1; i <= N; ++i) {
     cin >> stair[i];
-    fill(d[i], d[i] + 3, IM);
+    sum += stair[i];
   }
-  int ans = max(f(N, 1), f(N, 2));
-  cout << ans;
+  sum = sum - min(f(N - 1), f(N - 2));
+  cout << sum;
 }
