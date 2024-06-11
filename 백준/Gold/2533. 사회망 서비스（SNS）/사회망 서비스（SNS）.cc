@@ -17,19 +17,13 @@ int f(int n, bool k) {
   if (d[n][k] != -1) return d[n][k];
 
   vis[n] = true;
-  int result, result2;
+  int result = 1, result2 = 0x3f3f3f3f;
+  for (auto v : adj[n]) result += f(v, 1);
   if (k) {
-    result = 0;
-    result2 = 1;
-    for (auto v : adj[n]) {
-      result += f(v, 0);
-      result2 += f(v, 1);
-    }
-    result = min(result, result2);
-  } else {
-    result = 1;
-    for (auto v : adj[n]) result += f(v, 1);
+    result2 = 0;
+    for (auto v : adj[n]) result2 += f(v, 0);
   }
+  result = min(result, result2);
   vis[n] = false;
   d[n][k] = result;
   return result;
