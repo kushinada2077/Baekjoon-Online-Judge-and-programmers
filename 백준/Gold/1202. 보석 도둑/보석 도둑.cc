@@ -1,43 +1,43 @@
+#define ll long long
+#define PAIR pair<int, int>
 #include <algorithm>
 #include <iostream>
+#include <queue>
 #include <set>
-
+#include <vector>
 using namespace std;
+
+int n, k, m, v, ans = 0;
 
 int main() {
   ios::sync_with_stdio(0);
   cin.tie(0);
-
-  long long ans = 0;
-  multiset<int> bags;
-  vector<pair<int, int>> jews;
-  int n, k;
   cin >> n >> k;
-
+  priority_queue<int, vector<int>, greater<int>> bag;
+  priority_queue<PAIR, vector<PAIR>, greater<PAIR>> jew;
+  priority_queue<PAIR> val;
+  ll ans = 0;
   while (n--) {
-    int m, v;
     cin >> m >> v;
-    jews.push_back({v, m});
+    jew.push({m, v});
   }
-
   while (k--) {
-    int c;
-    cin >> c;
-    bags.insert(c);
+    cin >> m;
+    bag.push(m);
   }
 
-  sort(jews.begin(), jews.end(), greater<pair<int, int>>());
-
-  for (auto jew : jews) {
-    int m, v;
-    tie(v, m) = jew;
-    auto iter = bags.lower_bound(m);
-
-    if (iter != bags.end()) {
-      ans += v;
-      bags.erase(iter);
+  while (!bag.empty()) {
+    int b = bag.top();
+    bag.pop();
+    while (!jew.empty() && jew.top().first <= b) {
+      auto [m, v] = jew.top();
+      jew.pop();
+      val.push({v, m});
+    }
+    if (!val.empty()) {
+      ans += val.top().first;
+      val.pop();
     }
   }
-
   cout << ans;
 }
