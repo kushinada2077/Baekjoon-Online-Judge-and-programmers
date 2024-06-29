@@ -6,21 +6,15 @@ using namespace std;
 
 int n, m, ans = 0x3f3f3f3f;
 string board[50];
-char color[2] = {'B', 'W'};
+bool f(char c) { return c == 'W'; }
 int count(int r, int c) {
-  int ret = 0x3f3f3f3f;
-  for (int t = 0; t < 2; ++t) {
-    int cnt = 0;
-    for (int i = r; i < r + 8; ++i) {
-      int idx = (i + t) & 1 & 1;
-      for (int j = c; j < c + 8; ++j) {
-        if (board[i][j] != color[idx]) cnt++;
-        idx = (idx + 1) % 2;
-      }
+  int cnt = 0;
+  for (int i = r; i < r + 8; ++i) {
+    for (int j = c; j < c + 8; ++j) {
+      if (f(board[i][j]) != ((i + j) & 1)) cnt++;
     }
-    ret = min(ret, cnt);
   }
-  return ret;
+  return cnt > 32 ? 64 - cnt : cnt;
 }
 int main() {
   ios::sync_with_stdio(0);
