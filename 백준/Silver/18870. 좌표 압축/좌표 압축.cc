@@ -1,11 +1,13 @@
 #include <algorithm>
 #include <iostream>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 #define ll long long
 #define fastio cin.tie(0)->sync_with_stdio(0);
 using namespace std;
 
+unordered_map<int, int> d;
 int upper_bound(vector<int>& a, int x) {
   int lo = -1, hi = a.size();
   while (lo + 1 < hi) {
@@ -14,6 +16,11 @@ int upper_bound(vector<int>& a, int x) {
     else lo = mid;
   }
   return hi;
+}
+int compress(vector<int>& a, int x) {
+  if (d.find(x) != d.end()) return d[x];
+  d[x] = upper_bound(a, x);
+  return d[x];
 }
 int main() {
   fastio;
@@ -29,5 +36,5 @@ int main() {
     a.push_back(cpy[i]);
   }
   sort(a.begin(), a.end());
-  for (auto v : cpy) cout << upper_bound(a, v) << " ";
+  for (auto v : cpy) cout << compress(a, v) << " ";
 }
