@@ -32,17 +32,15 @@ void merge_sort(vector<int>& a, int st, int en) {
 }
 bool binary_search(vector<int>& a, int x) {
   int n = a.size();
-  int lo = -1, hi = n;
+  int lo = -1, hi = n - 1;
   while (lo + 1 < hi) {
     int mid = (lo + hi) / 2;
-    if (a[mid] > x)
+    if (a[mid] >= x)
       hi = mid;
-    else if (a[mid] < x)
-      lo = mid;
     else
-      return true;
+      lo = mid;
   }
-  return false;
+  return a[hi] == x;
 }
 int main() {
   fastio;
