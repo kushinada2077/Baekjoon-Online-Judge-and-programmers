@@ -6,29 +6,23 @@
 #define fastio cin.tie(0)->sync_with_stdio(0);
 using namespace std;
 
-ll sol(vector<ll>& a, int x, int i) {
-  int lo = 0, hi = a.size() - 1;
-  while (lo + 1 < hi) {
-    int mid = (lo + hi) / 2;
-    if (a[mid] >= x) hi = mid;
-    else lo = mid;
-  }
-  if (i == hi) return a[lo];
-  else if (i == lo) return a[hi];
-  else if (abs(a[lo] - x) < abs(a[hi] - x)) return a[lo];
-  else return a[hi];
-}
 int main() {
   fastio;
   int n;
+  ll ans1 = 1e9 + 1, ans2 = 1e9 + 1;
   cin >> n;
-  vector<ll> solution(n);
-  for (int i = 0; i < n; ++i) cin >> solution[i];
-  pair<ll, ll> ans = {solution[0], solution[1]};
+  vector<ll> s(n);
+  for (int i = 0; i < n; ++i) cin >> s[i];
   for (int i = 0; i < n; ++i) {
-    ll s = solution[i];
-    ll s2 = sol(solution, -s, i);
-    if (abs(ans.first + ans.second) > abs(s + s2)) ans = {min(s, s2), max(s, s2)};
+    int idx = lower_bound(s.begin(), s.end(), -s[i]) - s.begin();
+    if (i != idx && idx < n && abs(ans1 + ans2) > abs(s[idx] + s[i])) {
+      ans1 = s[i];
+      ans2 = s[idx];
+    } else if (i != idx - 1 && idx - 1 > -1 && abs(ans1 + ans2) > abs(s[idx - 1] + s[i])) {
+      ans1 = s[i];
+      ans2 = s[idx - 1];
+    }
   }
-  cout << ans.first << " " << ans.second;
+  if (ans1 > ans2) swap(ans1, ans2);
+  cout << ans1 << " " << ans2;
 }
