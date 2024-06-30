@@ -27,24 +27,6 @@ void merge_sort(vector<int> &a, int st, int en) {
   merge_sort(a, mid, en);
   merge(a, st, en);
 }
-int lb(vector<int> &a, int x) {
-  int lo = -1, hi = a.size();
-  while (lo + 1 < hi) {
-    int mid = (lo + hi) / 2;
-    if (a[mid] >= x) hi = mid;
-    else lo = mid;
-  }
-  return hi;
-}
-int ub(vector<int> &a, int x) {
-  int lo = -1, hi = a.size();
-  while (lo + 1 < hi) {
-    int mid = (lo + hi) / 2;
-    if (a[mid] > x) hi = mid;
-    else lo = mid;
-  }
-  return hi;
-}
 int main() {
   fastio;
   int n, m, x;
@@ -55,6 +37,6 @@ int main() {
   cin >> m;
   while (m--) {
     cin >> x;
-    cout << ub(a, x) - lb(a, x) << " ";
+    cout << upper_bound(a.begin(), a.end(), x) - lower_bound(a.begin(), a.end(), x) << " ";
   }
 }
