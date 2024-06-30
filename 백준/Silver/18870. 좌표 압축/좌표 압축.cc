@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <iostream>
 #include <unordered_map>
-#include <unordered_set>
 #include <vector>
 #define ll long long
 #define fastio cin.tie(0)->sync_with_stdio(0);
@@ -24,17 +23,19 @@ int compress(vector<int>& a, int x) {
 }
 int main() {
   fastio;
-  unordered_set<int> dup;
   int n;
   cin >> n;
-  vector<int> a;
-  vector<int> cpy(n);
+  vector<int> a(n);
+  vector<int> erase_dup;
+  vector<int> tmp(n);
   for (int i = 0; i < n; ++i) {
-    cin >> cpy[i];
-    if (dup.find(cpy[i]) != dup.end()) continue;
-    dup.insert(cpy[i]);
-    a.push_back(cpy[i]);
+    cin >> tmp[i];
+    a[i] = tmp[i];
   }
-  sort(a.begin(), a.end());
-  for (auto v : cpy) cout << compress(a, v) << " ";
+  sort(tmp.begin(), tmp.end());
+  for (int i = 0; i < n; ++i) {
+    if (i > 0 && tmp[i] == tmp[i - 1]) continue;
+    erase_dup.push_back(tmp[i]);
+  }
+  for (auto v : a) cout << compress(erase_dup, v) << " ";
 }
