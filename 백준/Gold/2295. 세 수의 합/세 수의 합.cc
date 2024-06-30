@@ -25,7 +25,6 @@ int main() {
   for (int i = 0; i < n; ++i)
     for (int j = i; j < n; ++j) two_sum.push_back(a[i] + a[j]);
   sort(two_sum.begin(), two_sum.end());
-  two_sum.erase(unique(two_sum.begin(), two_sum.end()), two_sum.end());
   for (int i = 0; i < n; ++i) {
     for (int j = i; j < n; ++j) {
       int apb = bs(two_sum, a[j] - a[i]);
