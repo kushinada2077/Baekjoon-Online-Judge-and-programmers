@@ -20,7 +20,7 @@ bool f(vector<int>& a, int tot, int bud) {
   return tot >= sum;
 }
 int sol(vector<int>& a, int tot) {
-  int lo = 1, hi = 1e9 + 1;
+  int lo = 1, hi = *max_element(all(a)) + 1;
   while (lo + 1 < hi) {
     int mid = (lo + hi) / 2;
     if (f(a, tot, mid)) lo = mid;
@@ -39,9 +39,5 @@ int main() {
   }
   int tot;
   cin >> tot;
-  if (tot >= sum) {
-    cout << *max_element(all(a));
-    return 0;
-  }
   cout << sol(a, tot);
 }
