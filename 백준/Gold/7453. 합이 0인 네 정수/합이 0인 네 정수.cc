@@ -74,6 +74,7 @@ int main() {
       cd.pb(c[i] + d[j]);
     }
   }
+  merge_sort(ab, 0, si(ab));
   merge_sort(cd, 0, si(cd));
   for (auto ab_sum : ab) ans += ub(cd, -ab_sum) - lb(cd, -ab_sum);
   cout << ans;
