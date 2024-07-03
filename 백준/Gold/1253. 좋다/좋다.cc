@@ -41,6 +41,19 @@ int lb(vector<int>& a, int x) {
   }
   return hi;
 }
+void sol(vector<int>& a, int& ans, int i) {
+  for_in(j, si(a)) {
+    if (i == j) continue;
+    int x = a[i] - a[j], idx = lb(a, x);
+    while (idx < si(a) && a[idx] == x) {
+      if (idx != i && idx != j) {
+        ans++;
+        return;
+      }
+      idx++;
+    }
+  }
+}
 int main() {
   fastio;
   int n, ans = 0;
@@ -48,15 +61,6 @@ int main() {
   vector<int> a(n);
   for_in(n) cin >> a[i];
   merge_sort(a, 0, si(a));
-  for_in(i, n) {
-    for_in(j, n) {
-      if (i == j) continue;
-      int x = a[i] - a[j], idx = lb(a, x);
-      if ((i != idx && j != idx && idx < n && a[idx] == x) || (i != idx + 1 && j != idx + 1 && idx + 1 < n && a[idx + 1] == x)) {
-        ans++;
-        break;
-      }
-    }
-  }
+  for_in(n) sol(a, ans, i);
   cout << ans;
 }
