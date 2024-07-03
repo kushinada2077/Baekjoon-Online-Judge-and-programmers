@@ -14,46 +14,6 @@
 #define pb(x) push_back(x)
 using namespace std;
 
-template <typename T>
-void merge(vector<T>& a, int st, int en) {
-  int mid = (st + en) / 2, l = st, r = mid;
-  vector<T> tmp;
-  for_in(i, st, en) {
-    if (l == mid) tmp.pb(a[r++]);
-    else if (r == en) tmp.pb(a[l++]);
-    else if (a[l] <= a[r]) tmp.pb(a[l++]);
-    else tmp.pb(a[r++]);
-  }
-  for_in(i, st, en) a[i] = tmp[i - st];
-}
-template <typename T>
-void merge_sort(vector<T>& a, int st, int en) {
-  if (st + 1 == en) return;
-  int mid = (st + en) / 2;
-  merge_sort(a, st, mid);
-  merge_sort(a, mid, en);
-  merge(a, st, en);
-}
-template <typename T>
-int lb(vector<T>& a, int x) {
-  int lo = -1, hi = si(a);
-  while (lo + 1 < hi) {
-    int mid = (lo + hi) / 2;
-    if (a[mid] >= x) hi = mid;
-    else lo = mid;
-  }
-  return hi;
-}
-template <typename T>
-int ub(vector<T>& a, int x) {
-  int lo = -1, hi = si(a);
-  while (lo + 1 < hi) {
-    int mid = (lo + hi) / 2;
-    if (a[mid] > x) hi = mid;
-    else lo = mid;
-  }
-  return hi;
-}
 int main() {
   fastio;
   int x1, x2, x3, x4, n;
@@ -74,8 +34,8 @@ int main() {
       cd.pb(c[i] + d[j]);
     }
   }
-  merge_sort(ab, 0, si(ab));
-  merge_sort(cd, 0, si(cd));
-  for (auto ab_sum : ab) ans += ub(cd, -ab_sum) - lb(cd, -ab_sum);
+  sort(all(ab));
+  sort(all(cd));
+  for (auto ab_sum : ab) ans += upper_bound(all(cd), -ab_sum) - lower_bound(all(cd), -ab_sum);
   cout << ans;
 }
