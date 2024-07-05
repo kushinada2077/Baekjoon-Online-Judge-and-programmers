@@ -16,7 +16,7 @@ using namespace std;
 
 int d[10005][3];
 int wine[10005];
-// f(n, k) => n번째 포도주까지 탐색했을 때 k개를 연속으로 마신 상태에서 최대 포도주 양
+// f(n, k) => n번째까지 k개를 연속해서 마셨을 때 최대 포도주 양
 int n;
 int f(int n, int k) {
   if (n <= 0) return 0;
@@ -24,8 +24,8 @@ int f(int n, int k) {
 
   int ret;
   if (k == 0) ret = max({f(n - 1, 0), f(n - 1, 1), f(n - 1, 2)});
-  if (k == 1) ret = wine[n] + f(n - 1, 0);
-  if (k == 2) ret = wine[n] + f(n - 1, 1);
+  if (k == 1) ret = f(n - 1, 0) + wine[n];
+  if (k == 2) ret = f(n - 1, 1) + wine[n];
   d[n][k] = ret;
   return ret;
 }
@@ -34,5 +34,5 @@ int main() {
   cin >> n;
   for_in(n + 1) fill(d[i], d[i] + 3, -1);
   for_in(n) cin >> wine[i + 1];
-  cout << max({f(n, 1), f(n, 2), f(n, 0)});
+  cout << max({f(n, 0), f(n, 1), f(n, 2)});
 }
