@@ -20,10 +20,7 @@ int f(vector<vector<int>>& tri, int n, int k) {
   if (n == 1) return tri[1][1];
   if (d[n][k] != -1) return d[n][k];
 
-  int ret;
-  if (k == 1) ret = f(tri, n - 1, k) + tri[n][k];
-  else if (k == n) ret = f(tri, n - 1, k - 1) + tri[n][k];
-  else ret = max(f(tri, n - 1, k - 1), f(tri, n - 1, k)) + tri[n][k];
+  int ret = max(f(tri, n - 1, k - 1), f(tri, n - 1, k)) + tri[n][k];
   d[n][k] = ret;
   return ret;
 }
