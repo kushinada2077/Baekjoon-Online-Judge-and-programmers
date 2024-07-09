@@ -38,10 +38,7 @@ int main() {
   }
   sort(all(ans), [](string& a, string& b) {
     if (si(a) != si(b)) return si(a) < si(b);
-    for (int i = 0; i < si(a); ++i) {
-      if (a[i] != b[i]) return a[i] < b[i];
-    }
-    return true;
+    return a < b;
   });
   for (auto v : ans) cout << v << "\n";
 }
