@@ -1,27 +1,36 @@
-#define ll long long
+#include <algorithm>
 #include <iostream>
-#include <set>
+#include <queue>
 #include <vector>
+#define ll long long
+#define fastio cin.tie(0)->sync_with_stdio(0);
+#define for_in(n) for (int i = 0; i < n; ++i)
+#define si(x) int(x.size())
+#define all(x) (x).begin(), (x).end()
+#define pb(...) push_back(__VA_ARGS__)
 using namespace std;
 
-int n, m, ans = 0x3f3f3f3f;
-string board[50];
-bool f(char c) { return c == 'W'; }
-int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
-  cin >> n >> m;
-  for (int i = 0; i < n; ++i) cin >> board[i];
-  for (int i = 0; i < n - 7; ++i) {
-    for (int j = 0; j < m - 7; ++j) {
-      int cnt = 0;
-      for (int x = i; x < i + 8; ++x) {
-        for (int y = j; y < j + 8; ++y) {
-          cnt += f(board[x][y]) == ((x + y) & 1);
-        }
-      }
-      ans = min(min(ans, cnt), 64 - cnt);
+int n, m;
+int c2i(char& c) { return c == 'W' ? 0 : 1; }
+int f(vector<string>& a, int x, int y) {
+  int ret = 0;
+  for (int i = x; i < x + 8; ++i) {
+    for (int j = y; j < y + 8; ++j) {
+      if (((i + j) & 1) == c2i(a[i][j])) ret++;
     }
   }
-  cout << ans;
+  return min(ret, 64 - ret);
+}
+int main() {
+  fastio;
+  cin >> n >> m;
+  vector<string> a(n);
+  int ans = 0x3f3f3f3f;
+  for (auto& i : a) cin >> i;
+  for (int i = 0; i < n - 7; ++i) {
+    for (int j = 0; j < m - 7; ++j) {
+      ans = min(ans, f(a, i, j));
+    }
+  }
+  cout << ans << "\n";
 }
