@@ -10,16 +10,19 @@
 #define pb(...) push_back(__VA_ARGS__)
 using namespace std;
 
+vector<bool> d(1000005, true);
+void sieve(int n) {
+  d[1] = false;
+  for (int i = 2; i * i <= n; ++i) {
+    if (!d[i]) continue;
+    for (int j = i * i; j <= n; j += i) d[j] = false;
+  }
+}
 int main() {
   fastio;
-  ll m, n;
+  int m, n;
   cin >> m >> n;
-  vector<bool> d(1000005, true);
-  d[1] = false;
-
-  for (ll i = 2; i <= n; ++i) {
-    if (!d[i]) continue;
-    for (ll j = i * i; j <= n; j += i) d[j] = false;
-    if (i >= m) cout << i << "\n";
-  }
+  sieve(n);
+  for (int i = m; i <= n; ++i)
+    if (d[i]) cout << i << "\n";
 }
