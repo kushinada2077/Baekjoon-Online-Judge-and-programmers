@@ -10,24 +10,31 @@
 #define pb(...) push_back(__VA_ARGS__)
 using namespace std;
 
-map<string, int> cnt;
 int main() {
   fastio;
   int n, m;
   string s;
-  vector<string> ans;
+  vector<string> tmp;
   cin >> n >> m;
   while (n--) {
     cin >> s;
     if (si(s) < m) continue;
-    ans.pb(s);
-    cnt[s]++;
+    tmp.pb(s);
   }
-  sort(all(ans), [](string& a, string& b) {
-    if (cnt.at(a) != cnt.at(b)) return cnt.at(a) > cnt.at(b);
-    else if (si(a) != si(b)) return si(a) > si(b);
-    else return a < b;
+  sort(all(tmp), [](string& a, string& b) {
+    if (si(a) == si(b)) return a < b;
+    return si(a) > si(b);
   });
-  ans.erase(unique(all(ans)), ans.end());
-  for (auto s : ans) cout << s << "\n";
+  vector<pair<int, int>> ans;
+  for (int i = 0; i < si(tmp); ++i) {
+    int num = 0;
+    string s = tmp[i];
+    while (i < si(tmp) - 1 && s == tmp[i + 1]) {
+      i++;
+      num++;
+    }
+    ans.pb({-num, i});
+  }
+  sort(all(ans));
+  for (auto& [_, i] : ans) cout << tmp[i] << "\n";
 }
