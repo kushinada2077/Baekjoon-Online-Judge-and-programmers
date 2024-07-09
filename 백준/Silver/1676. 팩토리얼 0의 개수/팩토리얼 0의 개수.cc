@@ -14,20 +14,13 @@ int main() {
   fastio;
   int n;
   cin >> n;
-  int cnt2 = 0, cnt5 = 0;
-  for (int i = 2; i <= n; i += 2) {
-    int tmp = i;
-    while (tmp % 2 == 0) {
-      cnt2++;
-      tmp /= 2;
-    }
+  int cnt = 0;
+
+  int t = 5;
+  int r = 0;
+  while (t <= n) {
+    r += n / t;
+    t *= 5;
   }
-  for (int i = 5; i <= n; i += 5) {
-    int tmp = i;
-    while (tmp % 5 == 0) {
-      cnt5++;
-      tmp /= 5;
-    }
-  }
-  cout << min(cnt2, cnt5);
+  cout << r << "\n";
 }
