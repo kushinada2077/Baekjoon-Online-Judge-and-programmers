@@ -1,51 +1,43 @@
 #include <algorithm>
 #include <iostream>
+#include <numeric>
 #include <queue>
 #include <vector>
 #define ll long long
 #define fastio cin.tie(0)->sync_with_stdio(0);
-#define FOR_IN_1(n) for (int i = 0; i < n; ++i)
-#define FOR_IN_2(i, n) for (int i = 0; i < n; ++i)
-#define FOR_IN_3(i, m, n) for (int i = m; i < n; ++i)
-#define GET_MACRO(_1, _2, _3, NAME, ...) NAME
-#define for_in(...) GET_MACRO(__VA_ARGS__, FOR_IN_3, FOR_IN_2, FOR_IN_1)(__VA_ARGS__)
+#define for_in(n) for (int i = 0; i < n; ++i)
 #define si(x) int(x.size())
 #define all(x) (x).begin(), (x).end()
-#define pb(x) push_back(x)
+#define pb(...) push_back(__VA_ARGS__)
 using namespace std;
 
-#include <iostream>
-#include <string>
-#include <vector>
-#define ll long long
-using namespace std;
-
-ll factorial(ll n) {
+ll fac(ll n) {
   if (n == 0) return 1;
-  ll ret = n * factorial(n - 1);
+  ll ret = n * fac(n - 1);
   return ret;
 }
 vector<int> f1(int n, ll k) {
   k--;
-  vector<int> nums;
-  vector<int> ret;
-  for_in(n) nums.pb(i + 1);
-  ll nf = factorial(n);
+  vector<int> a(n), ret;
+  ll nf = fac(n);
+  for (int i = 0; i < n; ++i) a[i] = i + 1;
   while (n > 0) {
     nf /= n--;
-    ret.pb(nums[k / nf]);
-    nums.erase(nums.begin() + (k / nf));
+    int idx = k / nf;
+    ret.pb(a[idx]);
+    a.erase(a.begin() + idx);
     k %= nf;
   }
   return ret;
 }
-ll f2(vector<int>& se, int n) {
-  vector<int> nums;
-  for_in(n) nums.pb(i + 1);
-  ll ret = 0, nf = factorial(n);
-  for (auto v : se) {
-    int idx = find(all(nums), v) - nums.begin();
-    nums.erase(nums.begin() + idx);
+ll f2(vector<int>& a) {
+  int n = si(a);
+  vector<int> b(n);
+  for (int i = 0; i < n; ++i) b[i] = i + 1;
+  ll ret = 0, nf = fac(n);
+  for (auto& v : a) {
+    int idx = find(all(b), v) - b.begin();
+    b.erase(b.begin() + idx);
     nf /= n--;
     ret += idx * nf;
   }
@@ -53,16 +45,17 @@ ll f2(vector<int>& se, int n) {
 }
 int main() {
   fastio;
-  int n, c;
+  int n, x;
   ll k;
-  cin >> n >> c;
-  if (c == 1) {
+  cin >> n >> x;
+  if (x == 1) {
     cin >> k;
     vector<int> ans = f1(n, k);
-    for (auto n : ans) cout << n << " ";
+    for (auto& v : ans) cout << v << " ";
   } else {
-    vector<int> se(n);
-    for_in(n) cin >> se[i];
-    cout << f2(se, n);
+    vector<int> p(n);
+    for (auto& i : p) cin >> i;
+    ll ans = f2(p);
+    cout << ans << "\n";
   }
 }
