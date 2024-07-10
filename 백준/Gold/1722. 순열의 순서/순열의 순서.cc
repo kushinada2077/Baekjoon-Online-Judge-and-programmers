@@ -11,51 +11,49 @@
 #define pb(...) push_back(__VA_ARGS__)
 using namespace std;
 
-ll fac(ll n) {
+ll fac(int n) {
   if (n == 0) return 1;
-  ll ret = n * fac(n - 1);
-  return ret;
+  return n * fac(n - 1);
 }
-vector<int> f1(int n, ll k) {
+vector<int> f(int n, ll k) {
   k--;
-  vector<int> a(n), ret;
   ll nf = fac(n);
+  vector<int> a(n), ret;
   for (int i = 0; i < n; ++i) a[i] = i + 1;
   while (n > 0) {
     nf /= n--;
     int idx = k / nf;
+    k %= nf;
     ret.pb(a[idx]);
     a.erase(a.begin() + idx);
-    k %= nf;
   }
   return ret;
 }
-ll f2(vector<int>& a) {
-  int n = si(a);
-  vector<int> b(n);
-  for (int i = 0; i < n; ++i) b[i] = i + 1;
+ll f2(vector<int>& p, int n) {
+  vector<int> a(n);
+  for (int i = 0; i < n; ++i) a[i] = i + 1;
   ll ret = 0, nf = fac(n);
-  for (auto& v : a) {
-    int idx = find(all(b), v) - b.begin();
-    b.erase(b.begin() + idx);
+  for (auto& v : p) {
     nf /= n--;
+    int idx = find(all(a), v) - a.begin();
+    a.erase(a.begin() + idx);
     ret += idx * nf;
   }
   return ret + 1;
 }
 int main() {
   fastio;
-  int n, x;
+  int n, c;
+  cin >> n >> c;
   ll k;
-  cin >> n >> x;
-  if (x == 1) {
+  if (c == 1) {
     cin >> k;
-    vector<int> ans = f1(n, k);
-    for (auto& v : ans) cout << v << " ";
+    vector<int> ans = f(n, k);
+    for (auto v : ans) cout << v << " ";
   } else {
-    vector<int> p(n);
-    for (auto& i : p) cin >> i;
-    ll ans = f2(p);
+    vector<int> a(n);
+    for (auto& i : a) cin >> i;
+    ll ans = f2(a, n);
     cout << ans << "\n";
   }
 }
