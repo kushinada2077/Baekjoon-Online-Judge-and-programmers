@@ -13,34 +13,23 @@ using namespace std;
 
 int main() {
   fastio;
-  int n, m, len = -1;
+  int n, m, x, y, l;
   cin >> n >> m;
   vector<string> a(n);
-  vector<int> r(n, 0);
-  vector<int> c(m, 0);
   for (auto& s : a) cin >> s;
+  x = y = -1;
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < m; ++j) {
-      if (a[i][j] == '#') {
-        r[i]++;
-        c[j]++;
-        len = max(len, r[i]);
+      if (x == -1 && a[i][j] == '#') {
+        y = i;
+        x = j;
       }
+      if (a[i][j] == '#') l = j - x + 1;
     }
   }
 
-  for (int i = 0; i < n; ++i) {
-    if (r[i] == len - 1) {
-      if (i + len - 1 < n && r[i + len - 1] == len) cout << "UP\n";
-      else cout << "DOWN\n";
-      return 0;
-    }
-  }
-  for (int i = 0; i < m; ++i) {
-    if (c[i] == len - 1) {
-      if (i + len - 1 < m && c[i + len - 1] == len) cout << "LEFT\n";
-      else cout << "RIGHT\n";
-      return 0;
-    }
-  }
+  if (a[y][x + l / 2] == '.') cout << "UP\n";
+  if (a[y + l - 1][x + l / 2] == '.') cout << "DOWN\n";
+  if (a[y + l / 2][x] == '.') cout << "LEFT\n";
+  if (a[y + l / 2][x + l - 1] == '.') cout << "RIGHT\n";
 }
