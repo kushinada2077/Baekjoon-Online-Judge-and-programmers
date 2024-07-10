@@ -28,8 +28,8 @@ int main() {
         x += dx[dir];
         y += dy[dir];
       } else if (op == 'B') {
-        x += dx[(dir + 2) % 4];
-        y += dy[(dir + 2) % 4];
+        x -= dx[dir];
+        y -= dy[dir];
       } else if (op == 'L') {
         dir = (dir + 3) % 4;
       } else if (op == 'R') {
