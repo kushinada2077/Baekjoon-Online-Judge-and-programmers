@@ -12,36 +12,24 @@
 #define Y second
 using namespace std;
 
-int n;
-vector<bool> dist(3e5 + 5, 0);
-vector<int> a;
-int bfs() {
-  queue<int> q;
-  vector<int> dist(300005, 0);
-  for (int i = 0; i < si(a) && a[i] <= n; ++i) {
-    q.push(a[i]);
-    dist[a[i]] = 1;
-  }
-  while (!q.empty()) {
-    int cur = q.front();
-    q.pop();
-    for (int i = 0; i < si(a); ++i) {
-      int nxt = cur + a[i];
-      if (nxt > n || dist[nxt]) continue;
-      q.push(nxt);
-      dist[nxt] = dist[cur] + 1;
-    }
-  }
-  return dist[n];
+int n, d[300005];
+const int INF = 0x3f3f3f3f;
+vector<int> s(1, 0);
+int f(int k) {
+  if (k == 0) return 0;
+  if (d[k] != INF) return d[k];
+
+  int ret = 0x3f3f3f3f;
+  for (int i = 1; i < si(s); ++i)
+    if (k - s[i] >= 0) ret = min(ret, f(k - s[i]) + 1);
+  d[k] = ret;
+  return ret;
 }
 int main() {
   fastio;
-  int d = 1, cur = 0, tot = 0;
   cin >> n;
-  while (tot <= 3e5) {
-    cur += d++;
-    tot += cur;
-    a.pb(tot);
-  }
-  cout << bfs() << "\n";
+  fill(d, d + 300005, INF);
+  s.pb(1);
+  for (int i = 1; s[i] <= 300000; ++i) s.pb(s[i] + (i + 2) * (i + 1) / 2);
+  cout << f(n);
 }
