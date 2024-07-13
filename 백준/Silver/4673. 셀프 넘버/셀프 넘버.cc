@@ -23,7 +23,8 @@ int f(int n) {
 int main() {
   fastio;
   vector<bool> chk(10005, false);
-  for (int i = 1; i < 10001; ++i) chk[f(i)] = true;
-  for (int i = 1; i < 10001; ++i)
+  for (int i = 1; i < 10001; ++i) {
     if (!chk[i]) cout << i << "\n";
+    chk[f(i)] = true;
+  }
 }
