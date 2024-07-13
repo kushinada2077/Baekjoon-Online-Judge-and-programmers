@@ -20,10 +20,9 @@ int main() {
   fill(p.begin(), p.begin() + k, 0);
   vector<pair<int, int>> a(n);
   for (auto& [i, j] : a) cin >> i >> j;
-
   do {
     vector<pair<int, int>> s;
-    int mx = -1;
+    int mx = 0;
     for (int i = 0; i < n; ++i)
       if (p[i] == 0) s.pb(a[i]);
     for (int i = 0; i < n; ++i) {
