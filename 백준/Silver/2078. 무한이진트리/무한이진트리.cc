@@ -17,7 +17,7 @@ int main() {
   int x, y, l, r;
   cin >> x >> y;
   l = r = 0;
-  while (x != 1 && y != 1) {
+  while (x != 0 && y != 0) {
     if (x < y) {
       r += y / x;
       y %= x;
@@ -26,8 +26,7 @@ int main() {
       x %= y;
     }
   }
-
-  if (x == 1) r += y - 1;
-  else l += x - 1;
+  if (x == 0) l--;
+  else r--;
   cout << l << " " << r << "\n";
 }
