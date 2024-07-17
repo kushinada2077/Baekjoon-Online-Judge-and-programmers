@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <bitset>
 #include <deque>
 #include <iostream>
 #include <set>
@@ -23,32 +24,29 @@ int main() {
   int n, m, o, a, b, ans = 0;
   set<string> s;
   cin >> n >> m;
-  vector<vector<bool>> train(n, vector<bool>(20, false));
+  bitset<20> t[n];
   while (m--) {
     cin >> o;
     if (o == 1) {
       cin >> a >> b;
-      train[a - 1][b - 1] = true;
+      t[a - 1].set(b - 1);
     } else if (o == 2) {
       cin >> a >> b;
-      train[a - 1][b - 1] = false;
+      t[a - 1].reset(b - 1);
     } else if (o == 3) {
       cin >> a;
-      for (int i = 19; i > 0; --i) {
-        train[a - 1][i] = train[a - 1][i - 1];
-      }
-      train[a - 1][0] = false;
+      for (int i = 19; i != 0; --i) t[a - 1][i] = t[a - 1][i - 1];
+      t[a - 1].reset(0);
     } else {
       cin >> a;
-      for (int i = 0; i < 19; ++i) train[a - 1][i] = train[a - 1][i + 1];
-      train[a - 1][19] = false;
+      for (int i = 0; i < 19; ++i) t[a - 1][i] = t[a - 1][i + 1];
+      t[a - 1].reset(19);
     }
   }
-
   for (int i = 0; i < n; ++i) {
-    string e = v2s(train[i]);
-    if (s.find(e) != s.end()) continue;
-    s.insert(e);
+    string tt = t[i].to_string();
+    if (s.find(tt) != s.end()) continue;
+    s.insert(tt);
     ans++;
   }
   cout << ans << "\n";
