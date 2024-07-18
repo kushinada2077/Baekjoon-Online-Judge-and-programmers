@@ -14,11 +14,11 @@
 using namespace std;
 
 int cnt = 0;
-bool f(const string& s) {
+bool f(const string& s, int l, int r) {
   cnt++;
-  if (si(s) == 0 || si(s) == 1) return true;
-  if (s[0] != s[si(s) - 1]) return false;
-  return f(s.substr(1, si(s) - 2));
+  if (r - l < 2) return true;
+  if (s[l] != s[r - 1]) return false;
+  return f(s, l + 1, r - 1);
 }
 int main() {
   fastio;
@@ -28,6 +28,6 @@ int main() {
   while (t--) {
     cnt = 0;
     cin >> s;
-    cout << f(s) << " " << cnt << "\n";
+    cout << f(s, 0, si(s)) << " " << cnt << "\n";
   }
 }
