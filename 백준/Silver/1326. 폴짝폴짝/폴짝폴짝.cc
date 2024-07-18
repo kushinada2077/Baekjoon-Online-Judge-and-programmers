@@ -36,7 +36,7 @@ int bfs(vector<int>& a, int from, int to) {
       dist[nxt] = dist[cur] + 1;
     }
   }
-  return dist[to];
+  return -1;
 }
 int main() {
   fastio;
