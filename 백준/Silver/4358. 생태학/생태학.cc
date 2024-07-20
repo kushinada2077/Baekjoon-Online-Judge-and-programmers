@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <iostream>
-#include <map>
 #include <queue>
+#include <unordered_map>
 #include <vector>
 #define ll long long
 #define fastio cin.tie(0)->sync_with_stdio(0);
@@ -18,7 +18,7 @@ int main() {
   cout << fixed;
   cout.precision(4);
   vector<string> tree;
-  map<string, int> cnt;
+  unordered_map<string, int> cnt;
   string ip;
   while (getline(cin, ip)) {
     tree.pb(ip);
