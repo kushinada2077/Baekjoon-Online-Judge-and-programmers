@@ -16,16 +16,12 @@ using namespace std;
 
 int main() {
   fastio;
-  vector<vector<char>> a(5, vector<char>(15, '\0'));
-  string s;
-  for (int i = 0; i < 5; ++i) {
-    getline(cin, s);
-    for (int j = 0; j < si(s); ++j) a[i][j] = s[j];
-  }
+  vector<string> a(5);
+  for (auto& s : a) cin >> s;
 
-  for (int i = 0; i < 15; ++i) {
-    for (int j = 0; j < 5; ++j) {
-      if (a[j][i] != '\0') cout << a[j][i];
+  for (int j = 0; j < 15; ++j) {
+    for (int i = 0; i < 5; ++i) {
+      if (si(a[i]) > j) cout << a[i][j];
     }
   }
 }
