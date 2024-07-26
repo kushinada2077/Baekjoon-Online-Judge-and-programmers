@@ -14,15 +14,19 @@ using namespace std;
 
 int main() {
   fastio;
-  int n, l;
+  int n, L;
   deque<int> q;
-  cin >> n >> l;
+  cin >> n >> L;
   vector<int> a(n);
   for (auto& i : a) cin >> i;
-  for (int i = 0; i < n; ++i) {
-    while (!q.empty() && q.back() > a[i]) q.pop_back();
-    q.push_back(a[i]);
+  int l = 0;
+  for (int r = 0; r < n; ++r) {
+    while (!q.empty() && q.back() > a[r]) q.pop_back();
+    q.push_back(a[r]);
+    if (r - l + 1 > L) {
+      if (q.front() == a[l]) q.pop_front();
+      l++;
+    }
     cout << q.front() << " ";
-    if (i >= l - 1 && q.front() == a[i - l + 1]) q.pop_front();
   }
 }
