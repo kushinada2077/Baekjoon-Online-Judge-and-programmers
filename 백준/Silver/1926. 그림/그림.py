@@ -1,36 +1,36 @@
-import sys
 from collections import deque
 
-def OOB(r, c): return r < 0 or r >= n or c < 0 or c >= m
-def bfs(r, c):
+dx = [1, 0, -1, 0]
+dy = [0, 1, 0, -1]
+vis = [[0 for i in range(500)] for j in range(500)]
+
+def bfs(sx, sy):
   ret = 0
-  q = deque()
-  q.append([r, c])
-  vis[r][c] = 1
-  while len(q):
-    r, c = q.popleft() # 현재 위치 (방금 방문함)
+  dq = deque()
+  dq.append([sx, sy])
+  vis[sx][sy] = 1 # 방문 체크
+   
+  while len(dq):
+    x, y = dq.popleft() # 큐에서 뽑은 현재 좌표
     ret += 1
     for dir in range(4):
-      nr = r + dr[dir] # 탐색 위치
-      nc = c + dc[dir]
-      if OOB(nr, nc) or vis[nr][nc] or board[nr][nc] == 0: continue # OOB도 아니고 방문도 안한 정점이면
-      q.append([nr, nc]) 
-      vis[nr][nc] = 1  # 방문 표시
+      nx = x + dx[dir] # 다음 x좌표
+      ny = y + dy[dir] # 다음 y좌표
+      if nx < 0 or nx >= n or ny < 0 or ny >= m: continue
+      if paper[nx][ny] == 0: continue
+      if vis[nx][ny]: continue
+      dq.append([nx, ny])
+      vis[nx][ny] = 1
   return ret
 
 n, m = map(int, input().split())
-ans_n = 0
-ans_s = 0
-board = []
-for i in range(n):
-  board.append(list(map(int, input().split()))) 
-dr = [-1, 0, 1, 0]
-dc = [0, 1, 0, -1]
-vis = [[0 for i in range(m)] for j in range(n)]
-
+paper = [list(map(int, input().split())) for i in range(n)]
+ans1 = 0
+ans2 = 0
 for i in range(n):
   for j in range(m):
-    if vis[i][j] or board[i][j] == 0: continue
-    ans_n += 1
-    ans_s = max(ans_s, bfs(i, j))
-print(ans_n, ans_s, sep="\n")
+    if paper[i][j] == 1 and vis[i][j] == 0:
+      ans1 += 1
+      ans2 = max(ans2, bfs(i, j))
+
+print(ans1, ans2, sep='\n')
