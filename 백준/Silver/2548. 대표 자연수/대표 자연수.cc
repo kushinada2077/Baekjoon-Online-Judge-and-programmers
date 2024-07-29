@@ -18,27 +18,11 @@ using namespace std;
 
 int main() {
   fastio;
-  int n;
+  int n, x;
   cin >> n;
-  vector<int> a(n), cnt(10005, 0), sum(10005, 0);
-  for (auto& i : a) {
-    cin >> i;
-    cnt[i]++;
-  }
-  int tot = 0, num = 0;
-  for (int i = 1; i < 10001; ++i) {
-    tot += i * cnt[i];
-    sum[i] = tot;
-    num += cnt[i];
-    cnt[i] = num;
-  }
-  int comp = 0x3f3f3f3f, idx = 0;
-  for (int i = 1; i < 10001; ++i) {
-    int diff = (i * cnt[i] - sum[i]) + (sum[10000] - sum[i]) - (i * (cnt[10000] - cnt[i]));
-    if (diff < comp) {
-      comp = diff;
-      idx = i;
-    }
-  }
-  cout << idx << "\n";
+  int cnt = 0;
+  vector<int> a(n);
+  for (auto& i : a) cin >> i;
+  sort(all(a));
+  cout << a[((n - 1) >> 1)] << "\n";
 }
