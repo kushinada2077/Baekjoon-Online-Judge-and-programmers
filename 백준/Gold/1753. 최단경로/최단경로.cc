@@ -1,48 +1,51 @@
-#define TUPLE tuple<int, int, int>
 #include <algorithm>
+#include <cmath>
+#include <deque>
 #include <iostream>
 #include <queue>
+#include <tuple>
+#include <unordered_set>
 #include <vector>
+#define fastio cin.tie(0)->sync_with_stdio(0);
+#define for_in(n) for (int i = 0; i < n; ++i)
+#define si(x) int(x.size())
+#define all(x) (x).begin(), (x).end()
+#define pb(...) push_back(__VA_ARGS__)
+#define X first
+#define Y second
+using ll = long long;
 using namespace std;
 
-priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>>
-    pq;
-vector<pair<int, int>> adj[20001];
-const int INF = 0x3f3f3f3f;
-int V, E, u, v, w, K;
-int d[20001];
-
-int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
-  cin >> V >> E >> K;
-  fill(d + 1, d + V + 1, INF);
-
-  while (E--) {
-    cin >> u >> v >> w;
-    adj[u].push_back({w, v});
-  }
-
-  pq.push({0, K});
-  d[K] = 0;
+int v, e, st, a, b, c;
+vector<vector<pair<int, int>>> adj(20005);
+vector<int> djikstra(int st) {
+  priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+  vector<int> dist(v + 5, -1);
+  pq.push({0, st});
+  dist[st] = 0;
 
   while (!pq.empty()) {
-    auto [cost, cur] = pq.top();
+    auto [d, cur] = pq.top();
     pq.pop();
-    if (cost != d[cur]) continue;
-
-    for (auto [dis, nxt] : adj[cur]) {
-      if (d[nxt] <= cost + dis) continue;
-      d[nxt] = cost + dis;
-      pq.push({d[nxt], nxt});
+    if (dist[cur] != d) continue;
+    for (auto [c, nxt] : adj[cur]) {
+      if (dist[nxt] != -1 && dist[nxt] <= d + c) continue;
+      pq.push({c + d, nxt});
+      dist[nxt] = c + d;
     }
   }
-
-  for (int i = 1; i <= V; i++) {
-    if (d[i] == INF)
-      cout << "INF";
-    else
-      cout << d[i];
-    cout << "\n";
+  return dist;
+}
+int main() {
+  fastio;
+  cin >> v >> e >> st;
+  for (int i = 0; i < e; ++i) {
+    cin >> a >> b >> c;
+    adj[a].pb({c, b});
+  }
+  vector<int> ans = djikstra(st);
+  for (int i = 1; i <= v; ++i) {
+    if (ans[i] == -1) cout << "INF\n";
+    else cout << ans[i] << "\n";
   }
 }
