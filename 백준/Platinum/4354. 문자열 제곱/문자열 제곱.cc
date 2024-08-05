@@ -1,35 +1,41 @@
-#define PAIR pair<long long, int>
-#define ll long long
 #include <algorithm>
+#include <climits>
+#include <deque>
 #include <iostream>
-#include <map>
+#include <numeric>
+#include <queue>
+#include <tuple>
+#include <unordered_map>
 #include <vector>
+#define fastio cin.tie(0)->sync_with_stdio(0);
+#define for_in(n) for (int i = 0; i < n; ++i)
+#define si(x) int(x.size())
+#define all(x) (x).begin(), (x).end()
+#define pb(...) push_back(__VA_ARGS__)
+#define X first
+#define Y second
+using ll = long long;
 using namespace std;
 
 vector<int> failure(const string& s) {
-  vector<int> f(s.size());
+  vector<int> f(si(s));
   int j = 0;
-  for (int i = 1; i < s.size(); ++i) {
-    while (j > 0 && s[i] != s[j]) j = f[j - 1];
+  for (int i = 1; i < si(s); ++i) {
+    while (j && s[i] != s[j]) j = f[j - 1];
     if (s[i] == s[j]) f[i] = ++j;
   }
-
   return f;
 }
-
 int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
+  fastio;
   string s;
   while (true) {
     cin >> s;
     if (s == ".") break;
-    auto f = failure(s);
-    int len = s.size() - f[s.size() - 1];
-    if (s.size() % len)
-      cout << "1\n";
-    else
-      cout << s.size() / len << "\n";
+    int l = si(s);
+    vector<int> f = failure(s);
+    int p = l - f[l - 1];
+    if (l % p) cout << "1\n";
+    else cout << l / p << "\n";
   }
-  return 0;
 }
