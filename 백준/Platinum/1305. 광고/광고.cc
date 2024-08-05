@@ -32,6 +32,5 @@ int main() {
   string s;
   cin >> n >> s;
   vector<int> f = failure(s);
-  if (f[n - 1] == n) cout << "1\n";
-  else cout << n - f[n - 1] << "\n";
+  cout << n - f[n - 1] << "\n";
 }
