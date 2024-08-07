@@ -18,11 +18,6 @@ using ll = long long;
 using namespace std;
 
 bool f(const string& a, const string& b) { return a < b; }
-bool chk(const string& a, const string& b) {
-  for (int i = 0; i < si(b); ++i)
-    if (a[i] != b[i]) return false;
-  return true;
-}
 int main() {
   fastio;
   int n, m, ans = 0;
@@ -39,7 +34,7 @@ int main() {
       if (f(a[mid], s)) lo = mid;
       else hi = mid;
     }
-    ans += chk(a[hi], s);
+    if (a[hi].find(s) == 0) ans++;
   }
   cout << ans << "\n";
 }
