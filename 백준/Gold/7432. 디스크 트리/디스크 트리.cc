@@ -1,66 +1,62 @@
-// Authored by : sukam09
-// Co-authored by : -
-// http://boj.kr/a0dadd213ec1458fbf61dd335f06a9ac
-
-// 코드 정상동작 확인용 제출입니다.
-#include <bits/stdc++.h>
-using namespace std;
-
+#include <algorithm>
+#include <climits>
+#include <deque>
+#include <iostream>
+#include <map>
+#include <numeric>
+#include <queue>
+#include <tuple>
+#include <vector>
+#define fastio cin.tie(0)->sync_with_stdio(0);
+#define for_in(n) for (int i = 0; i < n; ++i)
+#define si(x) int(x.size())
+#define all(x) (x).begin(), (x).end()
+#define pb(...) push_back(__VA_ARGS__)
 #define X first
 #define Y second
+using ll = long long;
+using namespace std;
 
-const int MX = 500 * 40 + 5;
-const int ROOT = 1;
+const int ROOT = 1, MX = 505 * 80;
 int unused = 2;
-unordered_map<string, int> nxt[MX];  // nxt[v][r] -> v번 노드의 자식 중 이름이 r인 노드의 번호
-int depth[MX];                       // 노드의 깊이를 나타내며 ROOT의 깊이는 -1로 정의
-string name[MX];                     // 노드의 이름
-
-void insert(vector<string>& route) {
-  int v = ROOT;
-  for (auto r : route) {
-    int nv = nxt[v][r];
-    if (nv == 0)
-      nv = nxt[v][r] = unused++;
-    depth[nv] = depth[v] + 1;
-    name[nv] = r;
-    v = nv;
+vector<map<string, int>> nxt(MX);
+vector<bool> chk(MX);
+int n;
+string s;
+vector<string> split(const string& s, const string& sep) {
+  vector<string> ret;
+  int pos = 0;
+  while (pos < si(s)) {
+    int nxt_pos = s.find(sep, pos);
+    if (nxt_pos == -1) nxt_pos = si(s);
+    if (nxt_pos - pos > 0) ret.pb(s.substr(pos, nxt_pos - pos));
+    pos = nxt_pos + si(sep);
+  }
+  return ret;
+}
+void insert(const string& s) {
+  vector<string> sp = split(s, "\\");
+  int cur = ROOT;
+  for (auto& p : sp) {
+    if (nxt[cur][p] == 0) nxt[cur][p] = unused++;
+    cur = nxt[cur][p];
+  }
+  chk[cur] = true;
+}
+void traverse(int cur, int dep) {
+  for (auto [p, n] : nxt[cur]) {
+    if (n == 0) continue;
+    for (int i = 0; i < dep; ++i) cout << " ";
+    cout << p << "\n";
+    traverse(n, dep + 1);
   }
 }
-
-void dfs(int v) {
-  if (v != ROOT) {
-    for (int i = 0; i < depth[v]; i++) cout << ' ';
-    cout << name[v] << '\n';
-  }
-  // nxt[v]가 unordered map이므로 vector로 바꾼 뒤 노드 이름을 이용해서 sort
-  vector<pair<string, int>> m(nxt[v].begin(), nxt[v].end());
-  sort(m.begin(), m.end());
-  for (auto mm : m) dfs(mm.Y);
-}
-
-int main(void) {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
-
-  int n;
+int main() {
+  fastio;
   cin >> n;
-  depth[ROOT] = -1;
-  while (n--) {
-    string s;
+  for (int i = 0; i < n; ++i) {
     cin >> s;
-    string cur = "";
-    vector<string> route;
-    // "\"를 기준으로 split하여 route에 삽입
-    for (auto c : s) {
-      if (c == '\\') {
-        route.push_back(cur);
-        cur = "";
-      } else
-        cur += c;
-    }
-    route.push_back(cur);
-    insert(route);
+    insert(s);
   }
-  dfs(ROOT);
+  traverse(ROOT, 0);
 }
