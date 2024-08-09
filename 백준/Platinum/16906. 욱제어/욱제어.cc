@@ -1,65 +1,68 @@
-#define PAIR pair<long long, int>
-#define ll long long
 #include <algorithm>
+#include <climits>
+#include <deque>
 #include <iostream>
-#include <unordered_map>
+#include <map>
+#include <numeric>
+#include <queue>
+#include <tuple>
 #include <vector>
+#define fastio cin.tie(0)->sync_with_stdio(0);
+#define for_in(n) for (int i = 0; i < n; ++i)
+#define si(x) int(x.size())
+#define all(x) (x).begin(), (x).end()
+#define pb(...) push_back(__VA_ARGS__)
+#define X first
+#define Y second
+#define ROOT 1
+using ll = long long;
 using namespace std;
 
 const int MX = 1000 * 1000 + 5;
-const int ROOT = 1;
-int unused = 2;
-int nxt[MX][2];
-bool chk[MX];
-bool flag;
-string w;
-
-void insert(string& s) {
-  int v = ROOT;
-  for (auto c : s) {
-    if (nxt[v][c - '0'] == 0) nxt[v][c - '0'] = unused++;
-    v = nxt[v][c - '0'];
-  }
-  chk[v] = true;
-}
-
-void dfs(int v, int c_len, int t_len, string& s) {
-  if (chk[v] || flag || c_len > t_len) return;
-  if (c_len == t_len && !nxt[v][0] && !nxt[v][1]) {
-    w = s;
-    flag = true;
+int n, x, unused = 2, nxt[MX][2], cnt;
+bool f = false;
+vector<bool> chk(MX, false);
+vector<string> ans(1001);
+string s = "";
+void dfs(int cur, int dep, int len, int idx) {
+  if (dep == len) {
+    ans[idx] = s;
+    chk[cur] = true;
+    cnt++;
+    f = true;
     return;
   }
-  dfs(nxt[v][0], c_len + 1, t_len, s += "0");
-  s.pop_back();
-  if (flag) return;
-  dfs(nxt[v][1], c_len + 1, t_len, s += "1");
-  s.pop_back();
-}
-
-int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
-  int n;
-  cin >> n;
-  vector<int> l(n);
-  vector<string> word;
-  for (int i = 0; i < n; ++i) {
-    cin >> l[i];
-  }
-  for (auto len : l) {
-    flag = false;
-    w = "";
-    string tmp = "";
-    dfs(ROOT, 0, len, tmp);
-    if (w == "") {
-      cout << "-1";
-      exit(0);
+  for (int i = 0; i < 2; ++i) {
+    if (!nxt[cur][i]) {
+      nxt[cur][i] = unused++;
+      s += i + '0';
+      dfs(nxt[cur][i], dep + 1, len, idx);
+      s.pop_back();
+      break;
     }
-    insert(w);
-    word.push_back(w);
+    if (!chk[nxt[cur][i]]) {
+      s += i + '0';
+      dfs(nxt[cur][i], dep + 1, len, idx);
+      s.pop_back();
+      if (f) return;
+    }
   }
-
-  cout << "1\n";
-  for (auto w : word) cout << w << "\n";
+}
+int main() {
+  fastio;
+  cin >> n;
+  vector<pair<int, int>> l;
+  for (int i = 0; i < n; ++i) {
+    cin >> x;
+    l.pb({x, i});
+  }
+  sort(all(l));
+  for (auto& [i, _] : l) {
+    f = false;
+    dfs(ROOT, 0, i, _);
+  }
+  if (cnt == n) {
+    cout << "1\n";
+    for (int i = 0; i < n; ++i) cout << ans[i] << "\n";
+  } else cout << "-1\n";
 }
