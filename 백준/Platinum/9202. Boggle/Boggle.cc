@@ -1,101 +1,101 @@
-#define PAIR pair<long long, int>
-#define ll long long
 #include <algorithm>
+#include <climits>
+#include <deque>
 #include <iostream>
-#include <unordered_set>
+#include <map>
+#include <numeric>
+#include <queue>
+#include <tuple>
 #include <vector>
+#define fastio cin.tie(0)->sync_with_stdio(0);
+#define for_in(n) for (int i = 0; i < n; ++i)
+#define si(x) int(x.size())
+#define all(x) (x).begin(), (x).end()
+#define pb(...) push_back(__VA_ARGS__)
+#define X first
+#define Y second
+#define ROOT 1
+using ll = long long;
 using namespace std;
 
 const int MX = 300000 * 8 + 5;
-const int ROOT = 1;
-int unused = 2;
+int w, b, unused = 2;
+string s, word, board[4];
+vector<int> ep;
+vector<string> ans;
+vector<vector<bool>> vis(4, vector<bool>(4, false));
 int nxt[MX][26];
 bool chk[MX];
-vector<string> board(4);
-bool vis[4][4];
-unordered_set<string> word;
-
-void insert(string& s) {
-  int v = ROOT;
-  for (auto c : s) {
-    if (nxt[v][c] == 0) nxt[v][c] = unused++;
-    v = nxt[v][c];
+int insert(const string& s) {
+  int cur = ROOT;
+  for (auto& c : s) {
+    char p = c - 'A';
+    if (!nxt[cur][p]) nxt[cur][p] = unused++;
+    cur = nxt[cur][p];
   }
-  chk[v] = true;
+  chk[cur] = true;
+  return cur;
 }
-
-bool find(string& s) {
-  int v = ROOT;
-  for (auto c : s) {
-    if (nxt[v][c] == 0) return false;
-    v = nxt[v][c];
+bool find(const string& s) {
+  int cur = ROOT;
+  for (auto& c : s) {
+    char p = c - 'A';
+    if (!nxt[cur][p]) return false;
+    cur = nxt[cur][p];
   }
-  return chk[v];
+  bool ret = chk[cur];
+  if (chk[cur]) chk[cur] = false;
+  return ret;
 }
-
-bool OOB(int a, int b) { return a < 0 || a >= 4 || b < 0 || b >= 4; }
-void dfs(int x, int y, string& s) {
-  if (OOB(x, y) || vis[x][y] || s.size() >= 8) return;
-  s += board[x][y];
-  vis[x][y] = true;
-  if (find(s)) {
-    word.insert(string(s));
-  }
+void dfs(int x, int y) {
+  if (1 <= si(word) && si(word) <= 8 && find(word)) ans.pb(word);
+  if (si(word) >= 8) return;
   for (int dir = 0; dir < 8; ++dir) {
-    int nx = x + ("00122210"[dir] - '1');
-    int ny = y + ("12221000"[dir] - '1');
-    dfs(nx, ny, s);
+    int nx = x + "21012020"[dir] - '1';
+    int ny = y + "12102200"[dir] - '1';
+    if (nx < 0 || nx >= 4 || ny < 0 || ny >= 4) continue;
+    if (vis[nx][ny]) continue;
+    vis[nx][ny] = true;
+    word += board[nx][ny];
+    dfs(nx, ny);
+    vis[nx][ny] = false;
+    word.pop_back();
   }
-  s.pop_back();
-  vis[x][y] = false;
 }
-
-int score(string& s) {
-  int len = s.size();
-  if (len == 1 || len == 2) return 0;
-  if (len == 3 || len == 4) return 1;
-  if (len == 5) return 2;
-  if (len == 6) return 3;
-  if (len == 7) return 5;
-  if (len == 8) return 11;
-
-  return 0;
+int score(int l) {
+  if (l == 1 || l == 2) return 0;
+  if (l == 3 || l == 4) return 1;
+  if (l == 5) return 2;
+  if (l == 6) return 3;
+  if (l == 7) return 5;
+  if (l == 8) return 11;
 }
-
 int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
-  int w;
-  string s;
+  fastio;
   cin >> w;
-  while (w--) {
+  for_in(w) {
     cin >> s;
-    insert(s);
+    ep.pb(insert(s));
   }
-
-  cin >> w;
-  while (w--) {
-    word.clear();
-    for (int i = 0; i < 4; ++i) {
-      cin >> board[i];
-    }
+  cin >> b;
+  while (b--) {
+    ans.clear();
+    for (auto& v : ep) chk[v] = true;
+    for_in(4) cin >> board[i];
     for (int i = 0; i < 4; ++i) {
       for (int j = 0; j < 4; ++j) {
-        for (int k = 0; k < 4; ++k) fill(vis[i], vis[i] + 4, 0);
-        s = "";
-        dfs(i, j, s);
+        word = board[i][j];
+        vis[i][j] = true;
+        dfs(i, j);
+        vis[i][j] = false;
       }
     }
-
-    vector<string> m(word.begin(), word.end());
-    sort(m.begin(), m.end(), [](string a, string b) {
-      if (a.size() == b.size()) return a < b;
-      return a.size() > b.size();
-    });
     int sum = 0;
-    for (auto s : m) {
-      sum += score(s);
-    }
-    cout << sum << " " << m[0] << " " << m.size() << "\n";
+    sort(all(ans), [&](const string& a, const string& b) {
+      if (si(a) == si(b)) return a < b;
+      return si(a) > si(b);
+    });
+    for (auto& i : ans) sum += score(si(i));
+    cout << sum << " " << ans[0] << " " << si(ans) << "\n";
   }
 }
