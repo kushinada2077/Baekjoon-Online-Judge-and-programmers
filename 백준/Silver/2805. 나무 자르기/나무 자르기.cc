@@ -32,7 +32,7 @@ int main() {
   cin >> n >> m;
   vector<int> a(n);
   for (auto& i : a) cin >> i;
-  int lo = 0, hi = 2e9 + 5;
+  int lo = 0, hi = 1e9 + 5;
   while (lo + 1 < hi) {
     int mid = (lo + hi) / 2;
     if (f(mid, a)) lo = mid;
