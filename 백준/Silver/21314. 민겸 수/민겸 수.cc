@@ -28,21 +28,13 @@ int main() {
     if (c == 'K') {
       mx += '5';
       for (int i = 0; i < cnt; ++i) mx += '0';
-      cnt = 0;
-    } else cnt++;
-  }
-  for (int i = 0; i < cnt; ++i) mx += '1';
-  cnt = 0;
-  for (auto& c : s) {
-    if (c == 'K') {
       if (cnt) mn += '1';
-      for (int i = 0; i < cnt - 1; ++i) {
-        mn += '0';
-      }
+      for (int i = 0; i < cnt - 1; ++i) mn += '0';
       mn += '5';
       cnt = 0;
     } else cnt++;
   }
+  for (int i = 0; i < cnt; ++i) mx += '1';
   if (cnt) mn += '1';
   for (int i = 0; i < cnt - 1; ++i) mn += '0';
   cout << mx << "\n" << mn << "\n";
