@@ -1,8 +1,9 @@
 #include <algorithm>
-#include <cmath>
+#include <climits>
 #include <deque>
 #include <iostream>
 #include <map>
+#include <numeric>
 #include <queue>
 #include <tuple>
 #include <vector>
@@ -13,44 +14,36 @@
 #define pb(...) push_back(__VA_ARGS__)
 #define X first
 #define Y second
+#define ROOT 1
 using ll = long long;
 using namespace std;
 
-ll ten = 10;
-string f1(const char first, const int n) {
-  string ret = "";
-  ret += first;
-  for (int i = 0; i < n; ++i) ret += '0';
-  return ret;
-}
 int main() {
   fastio;
-  string s, num = "", ans = "";
+  string s;
   cin >> s;
-  for (int i = 0; i < si(s); ++i) {
-    char c = s[i];
+  string mx = "", mn = "";
+  int cnt = 0;
+  for (auto& c : s) {
     if (c == 'K') {
-      ans += f1('5', si(num));
-      num = "";
-    } else {
-      num += c;
-    }
+      mx += '5';
+      for (int i = 0; i < cnt; ++i) mx += '0';
+      cnt = 0;
+    } else cnt++;
   }
-  if (si(num))
-    for (int i = 0; i < si(num); ++i) ans += '1';
-  cout << ans << "\n";
-  num = "";
-  ans = "";
-  for (int i = 0; i < si(s); ++i) {
-    char c = s[i];
+  for (int i = 0; i < cnt; ++i) mx += '1';
+  cnt = 0;
+  for (auto& c : s) {
     if (c == 'K') {
-      if (si(num)) ans += f1('1', si(num) - 1);
-      ans += '5';
-      num = "";
-    } else {
-      num += c;
-    }
+      if (cnt) mn += '1';
+      for (int i = 0; i < cnt - 1; ++i) {
+        mn += '0';
+      }
+      mn += '5';
+      cnt = 0;
+    } else cnt++;
   }
-  if (si(num)) ans += f1('1', si(num) - 1);
-  cout << ans << "\n";
+  if (cnt) mn += '1';
+  for (int i = 0; i < cnt - 1; ++i) mn += '0';
+  cout << mx << "\n" << mn << "\n";
 }
