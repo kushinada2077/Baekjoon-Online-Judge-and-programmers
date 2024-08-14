@@ -2,10 +2,10 @@
 #include <climits>
 #include <deque>
 #include <iostream>
+#include <map>
 #include <numeric>
 #include <queue>
 #include <tuple>
-#include <unordered_map>
 #include <vector>
 #define fastio cin.tie(0)->sync_with_stdio(0);
 #define for_in(n) for (int i = 0; i < n; ++i)
@@ -14,27 +14,29 @@
 #define pb(...) push_back(__VA_ARGS__)
 #define X first
 #define Y second
+#define ROOT 1
 using ll = long long;
 using namespace std;
 
-bool f(const string& a, const string& b) { return a < b; }
+bool f(const string& a, const string& s) {
+  for (int i = 0; i < si(s); ++i) {
+    if (a[i] != s[i]) return false;
+  }
+  return true;
+}
 int main() {
   fastio;
   int n, m, ans = 0;
-  string s;
   cin >> n >> m;
-  vector<string> a(n);
-  for (int i = 0; i < n; ++i) cin >> a[i];
-  sort(all(a));
-  for (int i = 0; i < m; ++i) {
+  vector<string> dic(n);
+  string s;
+  for (auto& s : dic) cin >> s;
+  sort(all(dic));
+  while (m--) {
     cin >> s;
-    int lo = -1, hi = n - 1;
-    while (lo + 1 < hi) {
-      int mid = (lo + hi) / 2;
-      if (f(a[mid], s)) lo = mid;
-      else hi = mid;
-    }
-    if (a[hi].find(s) == 0) ans++;
+    auto it = lower_bound(all(dic), s);
+    if (it == dic.end()) continue;
+    ans += f(*it, s);
   }
   cout << ans << "\n";
 }
