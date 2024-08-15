@@ -22,9 +22,6 @@ int main() {
   fastio;
   string s, c;
   cin >> s;
-  c = s;
-  sort(all(c));
-  next_permutation(all(s));
-  if (c == s) cout << "0\n";
-  else cout << s << "\n";
+  if (next_permutation(all(s))) cout << s << "\n";
+  else cout << "0\n";
 }
