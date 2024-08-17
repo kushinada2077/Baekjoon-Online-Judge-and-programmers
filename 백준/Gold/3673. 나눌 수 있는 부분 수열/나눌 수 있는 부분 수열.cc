@@ -5,6 +5,7 @@
 #include <map>
 #include <numeric>
 #include <queue>
+#include <set>
 #include <tuple>
 #include <vector>
 #define fastio cin.tie(0)->sync_with_stdio(0);
@@ -18,23 +19,23 @@
 using ll = long long;
 using namespace std;
 
-int t, d, n;
+int t, m, n;
+ll x;
 int main() {
   fastio;
   cin >> t;
   while (t--) {
-    cin >> d >> n;
-    vector<ll> a(n), cnt(d + 1);
-    ll tot = 0;
-    for (auto& i : a) {
-      cin >> i;
-      tot = (1ll * tot + i) % d;
-      cnt[tot]++;
+    cin >> m >> n;
+    vector<ll> r = {0};
+    for (int i = 0; i < n; ++i) {
+      cin >> x;
+      r.pb(x + r.back());
     }
-    ll ans = cnt[0];
-    for (int i = 0; i < d; ++i) {
-      if (cnt[i] < 2) continue;
-      ans += cnt[i] * (cnt[i] - 1) / 2ll;
+    vector<ll> b(m, 0);
+    b[0] = 1;
+    ll ans = 0;
+    for (int i = 1; i <= n; ++i) {
+      ans += b[r[i] % m]++;
     }
     cout << ans << "\n";
   }
