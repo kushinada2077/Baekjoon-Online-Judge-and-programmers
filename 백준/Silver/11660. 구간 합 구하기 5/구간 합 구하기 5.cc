@@ -5,6 +5,7 @@
 #include <map>
 #include <numeric>
 #include <queue>
+#include <set>
 #include <tuple>
 #include <vector>
 #define fastio cin.tie(0)->sync_with_stdio(0);
@@ -18,23 +19,19 @@
 using ll = long long;
 using namespace std;
 
-int n, m, x1, x2, _y1, y2;
 int main() {
   fastio;
+  int n, m, x, x1, y1, x2, y2, r[1025][1025];
   cin >> n >> m;
-  vector<vector<int>> board(n + 1, vector<int>(n + 1, 0)), p_sum(n + 1, vector<int>(n + 1, 0));
   for (int i = 1; i <= n; ++i) {
-    int tot = 0;
     for (int j = 1; j <= n; ++j) {
-      cin >> board[i][j];
-      tot += board[i][j];
-      p_sum[i][j] = tot;
+      cin >> x;
+      r[i][j] = r[i - 1][j] + r[i][j - 1] - r[i - 1][j - 1] + x;
     }
   }
   while (m--) {
-    cin >> x1 >> _y1 >> x2 >> y2;
-    int tot = 0;
-    for (int i = x1; i <= x2; ++i) tot += p_sum[i][y2] - p_sum[i][_y1 - 1];
-    cout << tot << "\n";
+    cin >> x1 >> y1 >> x2 >> y2;
+    ll ans = r[x2][y2] - r[x2][y1 - 1] - r[x1 - 1][y2] + r[x1 - 1][y1 - 1];
+    cout << ans << "\n";
   }
 }
