@@ -2,10 +2,11 @@
 #include <climits>
 #include <deque>
 #include <iostream>
+#include <map>
 #include <numeric>
 #include <queue>
+#include <set>
 #include <tuple>
-#include <unordered_map>
 #include <vector>
 #define fastio cin.tie(0)->sync_with_stdio(0);
 #define for_in(n) for (int i = 0; i < n; ++i)
@@ -14,26 +15,22 @@
 #define pb(...) push_back(__VA_ARGS__)
 #define X first
 #define Y second
+#define ROOT 1
 using ll = long long;
 using namespace std;
 
-vector<int> b(30, 0);
 int main() {
   fastio;
   int n;
+  ll ans = 0;
   cin >> n;
-  vector<int> a(n);
+  vector<int> a(n), cnt(20, 0);
   for (auto& i : a) {
     cin >> i;
-    for (int j = 0, k; (k = (1 << j)) <= i; ++j) {
-      if (i & k) b[j]++;
+    for (int j = 0; j < 20; ++j) {
+      if (i & (1 << j)) cnt[j]++;
     }
   }
-
-  ll m = 1, ans = 0;
-  for (int j = 0; j < 30; ++j) {
-    ll num = 1ll * b[j] * (n - b[j]);
-    ans += (num << j);
-  }
+  for (int j = 0; j < 20; ++j) ans += (1ll << j) * cnt[j] * (n - cnt[j]);
   cout << ans << "\n";
 }
