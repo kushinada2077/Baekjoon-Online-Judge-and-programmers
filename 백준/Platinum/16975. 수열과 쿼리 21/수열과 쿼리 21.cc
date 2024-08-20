@@ -6,6 +6,7 @@
 #include <numeric>
 #include <queue>
 #include <set>
+#include <stack>
 #include <tuple>
 #include <vector>
 #define fastio cin.tie(0)->sync_with_stdio(0);
@@ -19,28 +20,33 @@
 using ll = long long;
 using namespace std;
 
-int n, _size = 1, m, q, l, r, c;
-ll seg[300000];
-
-ll sum(int idx, int st, int en, int l, int r) {
-  if (en <= l || r <= st) return 0;
-  if (l <= st && en <= r) return seg[idx];
-  int mid = (st + en) / 2;
-  return sum(2 * idx, st, mid, l, r) + sum(2 * idx + 1, mid, en, l, r);
-}
-void update(int idx, int val) {
-  idx += _size;
-  seg[idx] += 1ll * val;
-  while (idx > 1) {
-    idx >>= 1;
-    seg[idx] = seg[2 * idx] + seg[2 * idx + 1];
+const int _size = 1 << 17;
+ll seg[_size << 1];
+// d[i] = a[i] - a[i - 1], d[0] = 0
+void update(int l, int r, ll x) {
+  l += _size;
+  r += _size + 1;
+  seg[l] += x;
+  seg[r] -= x;
+  while (l > 1) {
+    l >>= 1;
+    seg[l] = seg[2 * l] + seg[2 * l + 1];
   }
+  while (r > 1) {
+    r >>= 1;
+    seg[r] = seg[2 * r] + seg[2 * r + 1];
+  }
+}
+ll sum(int i, int st, int en, int l, int r) {
+  if (en <= l || r <= st) return 0;
+  if (l <= st && en <= r) return seg[i];
+  int mid = (st + en) / 2;
+  return sum(2 * i, st, mid, l, r) + sum(2 * i + 1, mid, en, l, r);
 }
 int main() {
   fastio;
-  int n, pre = 0, x;
+  int n, m, a, b, c, pre = 0, x;
   cin >> n;
-  while (_size < n) _size <<= 1;
   for (int i = 0; i < n; ++i) {
     cin >> x;
     seg[i + _size] = x - pre;
@@ -49,14 +55,13 @@ int main() {
   for (int i = _size - 1; i != 0; --i) seg[i] = seg[2 * i] + seg[2 * i + 1];
   cin >> m;
   while (m--) {
-    cin >> q;
-    if (q == 1) {
-      cin >> l >> r >> c;
-      update(l - 1, c);
-      if (r < n) update(r, -c);
+    cin >> a;
+    if (a == 1) {
+      cin >> b >> c >> x;
+      update(b - 1, c - 1, x);
     } else {
-      cin >> c;
-      cout << sum(1, 0, _size, 0, c) << "\n";
+      cin >> x;
+      cout << sum(1, 0, _size, 0, x) << "\n";
     }
   }
 }
