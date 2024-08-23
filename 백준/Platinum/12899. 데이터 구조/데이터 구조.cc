@@ -8,7 +8,9 @@
 #include <set>
 #include <stack>
 #include <tuple>
+#include <unordered_map>
 #include <vector>
+#define PATH "/Users/leedongha/Downloads/PS/input.txt"
 #define fastio cin.tie(0)->sync_with_stdio(0);
 #define for_in(n) for (int i = 0; i < n; ++i)
 #define si(x) int(x.size())
@@ -20,32 +22,34 @@
 using ll = long long;
 using namespace std;
 
-int n, t, x, _size = (1 << 21), seg[5000000];
-void update(int idx, int delta) {
+const int _size = 1 << 21;
+int seg[_size << 1];
+
+void update(int idx, int x) {
   idx += _size;
-  seg[idx] += delta;
+  seg[idx] += x;
   while (idx > 1) {
     idx >>= 1;
-    seg[idx] = seg[2 * idx] + seg[2 * idx + 1];
+    seg[idx] = seg[idx << 1] + seg[idx << 1 | 1];
   }
 }
-int kth(int idx, int st, int en, int k) {
+int find(int node, int st, int en, int k) {
   if (st + 1 == en) return st;
   int mid = (st + en) / 2;
-  int l = seg[2 * idx];
-  if (k <= l) return kth(2 * idx, st, mid, k);
-  return kth(2 * idx + 1, mid, en, k - l);
+  if (seg[node << 1] >= k) return find(node << 1, st, mid, k);
+  else return find(node << 1 | 1, mid, en, k - seg[node << 1]);
 }
 int main() {
   fastio;
+  int n, t, x;
   cin >> n;
   for (int i = 0; i < n; ++i) {
     cin >> t >> x;
     if (t == 1) update(x, 1);
     else {
-      x = kth(1, 0, _size, x);
-      cout << x << "\n";
-      update(x, -1);
+      int num = find(1, 0, _size, x);
+      cout << num << "\n";
+      update(num, -1);
     }
   }
 }
