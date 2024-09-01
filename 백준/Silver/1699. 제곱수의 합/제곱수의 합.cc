@@ -1,32 +1,41 @@
-#define ll long long
 #include <algorithm>
+#include <climits>
+#include <deque>
 #include <iostream>
+#include <map>
+#include <numeric>
+#include <queue>
+#include <set>
+#include <stack>
+#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#define PATH "/Users/leedongha/Downloads/PS/input.txt"
+#define fastio cin.tie(0)->sync_with_stdio(0);
+#define for_in(n) for (int i = 0; i < n; ++i)
+#define si(x) int(x.size())
+#define all(x) (x).begin(), (x).end()
+#define pb(...) push_back(__VA_ARGS__)
+#define X first
+#define Y second
+#define ROOT 1
+#define INF 0x3f3f3f3f
+using ll = long long;
 using namespace std;
 
-int N;
-int t;
-int d[100005];
-vector<int> num;
-const int INF = 0x3f3f3f3f;
-
-int f(int n, int k) {
-  if (k == t) return n ? INF : 0;
-  if (d[n]) return d[n];
-
-  int result = f(n, k + 1);
-  if (num[k] <= n) result = min(result, f(n - num[k], k) + 1);
-  d[n] = result;
-  return result;
-}
-
+int dp[100005];
 int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
-  cin >> N;
-  for (int i = 1; i * i <= N; ++i) num.push_back(i * i);
-  t = num.size();
-  cout << f(N, 0);
+  fastio;
+  int n;
+  cin >> n;
+  fill(dp, dp + 100005, INF);
+  dp[0] = 0;
+  dp[1] = 1;
+  for (int i = 2; i <= n; ++i) {
+    for (int j = 1; j * j <= i; ++j) {
+      dp[i] = min(dp[i], dp[i - j * j] + 1);
+    }
+  }
+  cout << dp[n] << "\n";
 }
