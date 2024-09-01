@@ -1,8 +1,17 @@
 #include <algorithm>
+#include <climits>
+#include <deque>
 #include <iostream>
+#include <map>
+#include <numeric>
+#include <queue>
 #include <set>
+#include <stack>
+#include <tuple>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
-#define ll long long
+#define PATH "/Users/leedongha/Downloads/PS/input.txt"
 #define fastio cin.tie(0)->sync_with_stdio(0);
 #define for_in(n) for (int i = 0; i < n; ++i)
 #define si(x) int(x.size())
@@ -10,23 +19,23 @@
 #define pb(...) push_back(__VA_ARGS__)
 #define X first
 #define Y second
+#define ROOT 1
+#define INF 0x3f3f3f3f
+using ll = long long;
 using namespace std;
 
-int d[1005];
-int f(vector<int>& a, int k) {
-  if (k == 0) return 0;
-  if (k < 0) return -0x3f3f3f3f;
-  if (d[k]) return d[k];
-  int ret = 0;
-  for (int i = 0; i < si(a); ++i) ret = max(ret, a[i] + f(a, k - i - 1));
-  d[k] = ret;
-  return ret;
-}
+int dp[1005];
+int n, k;
 int main() {
   fastio;
   int n;
   cin >> n;
-  vector<int> a(n);
-  for (auto& i : a) cin >> i;
-  cout << f(a, n) << "\n";
+  vector<int> a(n + 1);
+  for (int i = 1; i <= n; ++i) cin >> a[i];
+  for (int i = 1; i <= n; ++i) {
+    for (int j = 1; j <= n; ++j) {
+      if (i >= j) dp[i] = max(dp[i], dp[i - j] + a[j]);
+    }
+  }
+  cout << dp[n] << "\n";
 }
