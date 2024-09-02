@@ -1,72 +1,76 @@
-#define TUPLE tuple<int, int, int>
 #include <algorithm>
+#include <climits>
+#include <deque>
 #include <iostream>
+#include <map>
+#include <numeric>
+#include <queue>
+#include <set>
+#include <stack>
+#include <tuple>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
+#define PATH "/Users/leedongha/Downloads/PS/input.txt"
+#define fastio cin.tie(0)->sync_with_stdio(0);
+#define for_in(n) for (int i = 0; i < n; ++i)
+#define si(x) int(x.size())
+#define all(x) (x).begin(), (x).end()
+#define pb(...) push_back(__VA_ARGS__)
+#define X first
+#define Y second
+#define ROOT 1
+#define INF 0x3f3f3f3f
+using ll = long long;
 using namespace std;
 
-const int INF = 0x3f3f3f3f;
-int n, m, a, b, c;
-int d[101][101], nxt[101][101];
-
-void loop(void (*func)(int i, int j)) {
-  for (int i = 1; i <= n; i++) {
-    for (int j = 1; j <= n; j++) {
-      func(i, j);
+vector<vector<int>> d(105, vector<int>(105, INF)), nxt(105, vector<int>(105, 0));
+int main() {
+  fastio;
+  int n, m, u, v, c;
+  cin >> n >> m;
+  for (int i = 0; i <= m; ++i) {
+    cin >> u >> v >> c;
+    if (d[u][v] > c) {
+      d[u][v] = c;
+      nxt[u][v] = v;
     }
   }
-}
-
-void path_tracing(int u, int v) {
-  if (u == v || d[u][v] == INF) {
-    cout << "0\n";
-    return;
-  }
-
-  vector<int> path;
-
-  while (u != v) {
-    path.push_back(u);
-    u = nxt[u][v];
-  }
-  path.push_back(v);
-
-  cout << path.size() << " ";
-  for (auto n : path) cout << n << " ";
-  cout << "\n";
-}
-
-int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
-  cin >> n >> m;
-  for (int i = 1; i <= n; i++) {
-    fill(d[i], d[i] + n + 1, INF);
-    d[i][i] = 0;
-  }
-
-  while (m--) {
-    cin >> a >> b >> c;
-    if (d[a][b] <= c) continue;
-    d[a][b] = c;
-    nxt[a][b] = b;
-  }
-
-  for (int k = 1; k <= n; k++) {
-    for (int i = 1; i <= n; i++) {
-      for (int j = 1; j <= n; j++) {
-        if (d[i][j] <= d[i][k] + d[k][j]) continue;
-        d[i][j] = d[i][k] + d[k][j];
-        nxt[i][j] = nxt[i][k];
+  for (int i = 1; i <= n; ++i) d[i][i] = 0;
+  for (int k = 1; k <= n; ++k) {
+    for (int i = 1; i <= n; ++i) {
+      for (int j = 1; j <= n; ++j) {
+        if (d[i][j] > d[i][k] + d[k][j]) {
+          d[i][j] = d[i][k] + d[k][j];
+          nxt[i][j] = nxt[i][k];
+        }
       }
     }
   }
 
-  loop([](int i, int j) {
-    if (d[i][j] == INF)
-      cout << "0 ";
-    else
-      cout << d[i][j] << " ";
-    if (j == n) cout << "\n";
-  });
-  loop(path_tracing);
+  for (int i = 1; i <= n; ++i) {
+    for (int j = 1; j <= n; ++j) {
+      if (d[i][j] == INF) cout << "0 ";
+      else cout << d[i][j] << " ";
+    }
+    cout << "\n";
+  }
+
+  for (int i = 1; i <= n; ++i) {
+    for (int j = 1; j <= n; ++j) {
+      vector<int> path;
+      int cur = i;
+      while (nxt[cur][j]) {
+        path.pb(cur);
+        cur = nxt[cur][j];
+      }
+      path.pb(j);
+      if (si(path) == 1) cout << "0\n";
+      else {
+        cout << si(path) << " ";
+        for (auto& v : path) cout << v << " ";
+        cout << "\n";
+      }
+    }
+  }
 }
