@@ -35,14 +35,11 @@ int main() {
   tie(l, r) = a[0];
   for (int i = 1; i < n; ++i) {
     auto [nl, nr] = a[i];
-    if (r < nl || nr < l) {
+    if (r < nl) {
       ans += r - l;
       l = nl;
       r = nr;
-    } else {
-      l = min(l, nl);
-      r = max(r, nr);
-    }
+    } else r = max(r, nr);
   }
   ans += r - l;
   cout << ans << "\n";
