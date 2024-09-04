@@ -70,7 +70,7 @@ int main() {
   ll ans = 0;
   for (int i = 1; i < n; ++i) {
     cin >> a >> b >> c;
-    ans += 1ll * min(sum(ROOT, 0, _size, i, i + 1) * a, sum(ROOT, 0, _size, i, i + 1) * b + c);
+    ans += 1ll * min(1ll * sum(ROOT, 0, _size, i, i + 1) * a, 1ll * sum(ROOT, 0, _size, i, i + 1) * b + c);
   }
 
   cout << ans << "\n";
