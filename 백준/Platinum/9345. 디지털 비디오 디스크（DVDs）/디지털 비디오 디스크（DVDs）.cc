@@ -6,8 +6,12 @@
 #include <numeric>
 #include <queue>
 #include <set>
+#include <stack>
 #include <tuple>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
+#define PATH "/Users/leedongha/Downloads/PS/input.txt"
 #define fastio cin.tie(0)->sync_with_stdio(0);
 #define for_in(n) for (int i = 0; i < n; ++i)
 #define si(x) int(x.size())
@@ -16,63 +20,61 @@
 #define X first
 #define Y second
 #define ROOT 1
+#define INF 0x3f3f3f3f
 using ll = long long;
 using namespace std;
 
-int _size, n, m;
-ll seg[2][300000];
+const int _size = 1 << 17;
+int t, n, k, q, a, b;
+int seg[_size << 1][2];
 void construct() {
   for (int i = _size - 1; i != 0; --i) {
-    seg[0][i] = max(seg[0][2 * i], seg[0][2 * i + 1]);
-    seg[1][i] = min(seg[1][2 * i], seg[1][2 * i + 1]);
+    seg[i][0] = min(seg[i << 1][0], seg[i << 1 | 1][0]);
+    seg[i][1] = max(seg[i << 1][1], seg[i << 1 | 1][1]);
   }
 }
 void init() {
-  cin >> n >> m;
-  _size = 1;
-  while (_size < n) _size <<= 1;
-  fill(seg[0], seg[0] + 300000, -1);
-  fill(seg[1], seg[1] + 300000, 0x3f3f3f3f);
-  for (int i = _size; i < _size + n; ++i) seg[0][i] = seg[1][i] = i - _size;
+  for (int i = _size; i < 2 * _size; ++i) {
+    if (i < _size + n) seg[i][0] = seg[i][1] = i - _size;
+    else {
+      seg[i][0] = INF;
+      seg[i][1] = -1;
+    }
+  }
   construct();
 }
-ll get_mx(int idx, int st, int en, int l, int r) {
-  if (en <= l || r <= st) return -1;
-  if (l <= st && en <= r) return seg[0][idx];
-  int mid = (st + en) / 2;
-  return max(get_mx(2 * idx, st, mid, l, r), get_mx(2 * idx + 1, mid, en, l, r));
-}
-ll get_mn(int idx, int st, int en, int l, int r) {
-  if (en <= l || r <= st) return 0x3f3f3f3f;
-  if (l <= st && en <= r) return seg[1][idx];
-  int mid = (st + en) / 2;
-  return min(get_mn(2 * idx, st, mid, l, r), get_mn(2 * idx + 1, mid, en, l, r));
-}
-void update(int idx, int val) {
-  idx += _size;
-  seg[0][idx] = seg[1][idx] = 1ll * val;
-  while (idx > 1) {
-    idx >>= 1;
-    seg[0][idx] = max(seg[0][2 * idx], seg[0][2 * idx + 1]);
-    seg[1][idx] = min(seg[1][2 * idx], seg[1][2 * idx + 1]);
+void update(int node, int x) {
+  node += _size;
+  seg[node][0] = seg[node][1] = x;
+  while (node > 1) {
+    node >>= 1;
+    seg[node][0] = min(seg[node << 1][0], seg[node << 1 | 1][0]);
+    seg[node][1] = max(seg[node << 1][1], seg[node << 1 | 1][1]);
   }
+}
+pair<int, int> sum(int node, int st, int en, int l, int r) {
+  if (en <= l || r <= st) return {INF, -1};
+  if (l <= st && en <= r) return {seg[node][0], seg[node][1]};
+  int mid = (st + en) / 2;
+  auto [mn1, mx1] = sum(node << 1, st, mid, l, r);
+  auto [mn2, mx2] = sum(node << 1 | 1, mid, en, l, r);
+  return {min(mn1, mn2), max(mx1, mx2)};
 }
 int main() {
   fastio;
-  int t, q, a, b;
   cin >> t;
   while (t--) {
+    cin >> n >> k;
     init();
-    while (m--) {
+    for (int i = 0; i < k; ++i) {
       cin >> q >> a >> b;
-      if (q == 0) {
-        if (a == b) continue;
-        int tmp = seg[0][a + _size];
-        update(a, seg[0][b + _size]);
+      if (!q) {
+        int tmp = seg[_size + a][0];
+        update(a, seg[_size + b][0]);
         update(b, tmp);
       } else {
-        int mx = get_mx(1, 0, _size, a, b + 1), mn = get_mn(1, 0, _size, a, b + 1);
-        if (mx == b && mn == a) cout << "YES\n";
+        auto [l, r] = sum(ROOT, 0, _size, a, b + 1);
+        if (l == a && r == b) cout << "YES\n";
         else cout << "NO\n";
       }
     }
