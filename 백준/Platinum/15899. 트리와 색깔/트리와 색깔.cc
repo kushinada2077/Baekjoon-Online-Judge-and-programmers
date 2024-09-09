@@ -40,7 +40,7 @@ void construct() {
   }
 }
 int find(int node, int st, int en, int l, int r, int k) {
-  if (en <= l || r <= st || si(seg[node]) == 0) return 0;
+  if (en <= l || r <= st) return 0;
   if (l <= st && en <= r) return upper_bound(all(seg[node]), k) - seg[node].begin();
   int mid = (st + en) / 2;
   return find(node << 1, st, mid, l, r, k) + find(node << 1 | 1, mid, en, l, r, k);
@@ -63,8 +63,7 @@ int main() {
   for (int i = 0; i < m; ++i) {
     cin >> v >> c;
     auto [l, r] = section[v];
-    ans += find(ROOT, 0, _size, l, r, c);
-    ans %= MOD;
+    ans = (ans + find(ROOT, 0, _size, l, r, c)) % MOD;
   }
   cout << ans << "\n";
 }
