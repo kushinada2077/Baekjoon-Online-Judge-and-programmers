@@ -35,10 +35,7 @@ void find(int node, int st, int en, int l, int r, vector<int>& group) {
     auto& arr = seg[node];
     int si = si(arr);
     if (si == 1) group.pb(seg[node].front());
-    else if (si > 1) {
-      if (si % 2 && (arr[si / 2] == arr[si / 2 - 1] || arr[si / 2] == arr[si / 2 + 1])) group.pb(arr[si / 2]);
-      else if (si % 2 == 0 && arr[si / 2] == arr[si / 2 - 1]) group.pb(arr[si / 2]);
-    }
+    else if (si > 1 && arr[si / 2] == arr[si / 2 - 1]) group.pb(arr[si / 2]);
     return;
   }
   int mid = (st + en) / 2;
