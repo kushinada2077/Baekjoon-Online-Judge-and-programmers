@@ -1,50 +1,44 @@
 #include <algorithm>
+#include <climits>
 #include <iostream>
-#include <queue>
+#include <stack>
 #include <vector>
-
+#define PATH "/Users/leedongha/Downloads/PS/input.txt"
+#define fastio cin.tie(0)->sync_with_stdio(0);
+#define for_in(n) for (int i = 0; i < n; ++i)
+#define si(x) int(x.size())
+#define all(x) (x).begin(), (x).end()
+#define pb(...) push_back(__VA_ARGS__)
+#define X first
+#define Y second
+#define ROOT 1
+#define INF 0x3f3f3f3f
+using ll = long long;
 using namespace std;
 
-int adj[101][101];
-int N, x;
+int n;
+bool adj[105][105], ans[105][105];
 
-bool bfs(int v, int dest) {
-  queue<int> q;
-  bool vis[101];
-  fill(vis + 1, vis + 1 + N, false);
-  q.push(v);
-
-  while (!q.empty()) {
-    auto cur = q.front();
-    q.pop();
-    for (int i = 1; i < N + 1; i++) {
-      if (adj[cur][i] == 0) continue;
-      if (vis[i]) continue;
-      if (i == dest) return true;
-      q.push(i);
-      vis[i] = true;
-    }
+void dfs(int cur, int st) {
+  for (int nxt = 0; nxt < n; ++nxt) {
+    if (cur == nxt || !adj[cur][nxt] || ans[st][nxt]) continue;
+    ans[st][nxt] = 1;
+    dfs(nxt, st);
   }
-
-  return false;
 }
-
 int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
-  cin >> N;
-
-  for (int i = 1; i < N + 1; i++) {
-    for (int j = 1; j < N + 1; j++) {
-      cin >> x;
-      adj[i][j] = x;
-    }
+  fastio;
+  cin >> n;
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) cin >> adj[i][j];
   }
 
-  for (int i = 1; i < N + 1; i++) {
-    for (int j = 1; j < N + 1; j++) {
-      cout << bfs(i, j) << " ";
-    }
+  for (int i = 0; i < n; ++i) {
+    dfs(i, i);
+  }
+
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) cout << ans[i][j] << " ";
     cout << "\n";
   }
 }
