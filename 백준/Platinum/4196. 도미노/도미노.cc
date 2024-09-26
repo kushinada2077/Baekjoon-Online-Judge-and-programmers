@@ -16,70 +16,66 @@
 using ll = long long;
 using namespace std;
 
-int t, n, m, a, b, cnt;
-vector<vector<int>> scc;
-vector<int> adj[100005], dfsn, sn, indg;
+int t, n, m, u, v, dfsn[100001], SN, indg[100001], scc[100001], cnt = 1;
+bool finished[100001];
+vector<int> adj[100001];
 vector<pair<int, int>> edge;
-vector<bool> finished;
 stack<int> s;
-void init() {
-  cnt = 1;
-  for (int i = 0; i < n + 5; ++i) adj[i].clear();
-  dfsn = vector<int>(n + 5);
-  sn = vector<int>(n + 5);
-  indg = vector<int>(n + 5);
-  scc.clear();
-  s = stack<int>();
-  finished = vector<bool>(n + 5);
-  edge.clear();
-}
 int dfs(int cur) {
   dfsn[cur] = cnt++;
   s.push(cur);
+  int res = dfsn[cur];
 
-  int ret = dfsn[cur];
   for (auto& nxt : adj[cur]) {
-    if (!dfsn[nxt]) ret = min(ret, dfs(nxt));
-    else if (!finished[nxt]) ret = min(ret, dfsn[nxt]);
+    if (dfsn[nxt] == 0) res = min(res, dfs(nxt));
+    else if (finished[nxt] == 0) res = min(res, dfsn[nxt]);
   }
 
-  if (ret == dfsn[cur]) {
-    vector<int> tmp;
+  if (res == dfsn[cur]) {
     while (1) {
-      int t = s.top();
+      int curr = s.top();
       s.pop();
-      sn[t] = si(scc);
-      finished[t] = 1;
-      tmp.pb(t);
-      if (t == cur) break;
+      finished[curr] = 1;
+      scc[curr] = SN;
+      if (curr == cur) break;
     }
-    scc.pb(tmp);
+    SN++;
   }
-  return ret;
+
+  return res;
+}
+void init() {
+  cin >> n >> m;
+  for (int i = 0; i < n + 1; ++i) {
+    adj[i].clear();
+    dfsn[i] = indg[i] = scc[i] = finished[i] = 0;
+  }
+  cnt = 1;
+  SN = 0;
+  edge.clear();
+  for (int i = 0; i < m; ++i) {
+    cin >> u >> v;
+    edge.pb({u, v});
+    adj[u].pb(v);
+  }
 }
 int main() {
   fastio;
   cin >> t;
   while (t--) {
-    cin >> n >> m;
-    int ans = 0;
     init();
-    for (int i = 0; i < m; ++i) {
-      cin >> a >> b;
-      adj[a].pb(b);
-      edge.pb({a, b});
-    }
 
     for (int i = 1; i <= n; ++i) {
-      if (dfsn[i]) continue;
-      dfs(i);
+      if (dfsn[i] == 0) dfs(i);
     }
 
-    for (auto& [a, b] : edge) {
-      if (sn[a] != sn[b]) indg[sn[b]]++;
+    for (auto& [u, v] : edge) {
+      indg[scc[v]] += scc[u] != scc[v];
     }
-    for (int i = 0; i < si(scc); ++i) {
-      if (!indg[i]) ans++;
+
+    int ans = 0;
+    for (int i = 0; i < SN; ++i) {
+      if (indg[i] == 0) ans++;
     }
 
     cout << ans << "\n";
