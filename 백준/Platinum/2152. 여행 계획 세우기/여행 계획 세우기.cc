@@ -68,13 +68,14 @@ int main() {
   queue<int> q;
 
   for (int i = 0; i < SN; ++i) {
-    dp[i] = scc_city_num[i];
     if (indg[i] == 0) {
       q.push(i);
+      dp[i] = scc_city_num[i];
     }
   }
 
   poss[scc[st]] = 1;
+  dp[scc[st]] = scc_city_num[scc[st]];
   while (!q.empty()) {
     int cur = q.front();
     q.pop();
