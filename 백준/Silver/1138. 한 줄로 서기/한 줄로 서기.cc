@@ -17,38 +17,21 @@
 using ll = long long;
 using namespace std;
 
+int a[11], seq[11];
 int main() {
   fastio;
-  int n, x;
+  int n;
   cin >> n;
-  vector<int> seq, a(n);
-  for (int i = 0; i < n; ++i) {
-    cin >> a[i];
-    seq.pb(i + 1);
+  for (int i = 0; i < n; ++i) cin >> a[i + 1];
+  for (int i = 1; i <= n; ++i) {
+    int cnt = 0;
+    int* loc = find(seq, seq + n, 0);
+    while (cnt != a[i]) {
+      loc++;
+      if (*loc == 0) cnt++;
+    }
+    *loc = i;
   }
 
-  do {
-    bool chk = 1;
-    vector<int> tmp(n);
-    for (int i = 0; i < n; ++i) {
-      int cnt = 0;
-      for (int j = 0; j < i; ++j) {
-        if (seq[j] > seq[i]) cnt++;
-      }
-      tmp[seq[i] - 1] = cnt;
-    }
-
-    for (int i = 0; i < n; ++i) {
-      if (a[i] != tmp[i]) {
-        chk = 0;
-        break;
-      }
-    }
-
-    if (chk) {
-      for (auto& i : seq) cout << i << " ";
-      break;
-    }
-
-  } while (next_permutation(all(seq)));
+  for (int i = 0; i < n; ++i) cout << seq[i] << " ";
 }
