@@ -19,9 +19,9 @@ using namespace std;
 
 const int MX = 24 * 51 + 1;
 int n, x, hash_cnt, cnt, SN;
-int dfsn[MX], scc_size[MX], scc[MX], indg[MX];
+int dfsn[MX], scc[MX], indg[MX];
 ll dp[MX];
-bool finished[MX], chk[MX][MX];
+bool finished[MX];
 string su, sv;
 stack<int> s;
 unordered_map<string, int> s_hash;
@@ -43,7 +43,6 @@ int dfs(int cur) {
       s.pop();
       finished[curr] = 1;
       scc[curr] = SN;
-      scc_size[SN]++;
       scc_elem[SN].pb(curr);
       if (cur == curr) break;
     }
@@ -82,13 +81,7 @@ int main() {
   int dest = s_hash[su];
 
   for (auto& [u, v] : edge) {
-    if (scc[u] != scc[v]) {
-      if (chk[scc[u]][scc[v]] == 0) {
-        indg[scc[v]]++;
-        scc_adj[scc[u]].pb(scc[v]);
-        chk[scc[u]][scc[v]] = 1;
-      }
-    }
+    if (scc[u] != scc[v]) indg[scc[v]]++;
   }
 
   queue<int> q;
@@ -108,10 +101,8 @@ int main() {
       for (auto& nxt_elem : adj[cur_elem]) {
         if (scc[cur_elem] == scc[nxt_elem]) continue;
         dp[nxt_elem] += dp[cur_elem];
+        if (--indg[scc[nxt_elem]] == 0) q.push(scc[nxt_elem]);
       }
-    }
-    for (auto& nxt : scc_adj[cur]) {
-      if (--indg[nxt] == 0) q.push(nxt);
     }
   }
 
