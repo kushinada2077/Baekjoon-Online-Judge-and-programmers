@@ -1,7 +1,10 @@
 #include <algorithm>
 #include <iostream>
 #include <queue>
+#include <set>
 #include <stack>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #define PATH "/Users/leedongha/Downloads/PS/input.txt"
 #define fastio cin.tie(0)->sync_with_stdio(0);
@@ -16,31 +19,31 @@
 using ll = long long;
 using namespace std;
 
-bool my_next_permutation(vector<int>& arr) {
-  int pivot = si(arr) - 2;
+bool n_permutation(vector<int>& a) {
+  int pivot = si(a) - 2;
   for (; pivot >= 0; --pivot) {
-    if (arr[pivot] < arr[pivot + 1]) break;
+    if (a[pivot] < a[pivot + 1]) break;
   }
 
   if (pivot < 0) return 0;
 
-  int j = si(arr) - 1;
+  int j = si(a) - 1;
   for (; j > pivot; --j) {
-    if (arr[pivot] < arr[j]) break;
+    if (a[pivot] < a[j]) break;
   }
 
-  swap(arr[pivot], arr[j]);
-  reverse(arr.begin() + pivot + 1, arr.end());
+  swap(a[pivot], a[j]);
+  reverse(a.begin() + pivot + 1, a.end());
   return 1;
 }
-
 int main() {
   fastio;
   int n;
   cin >> n;
-  vector<int> arr(n);
-  for (auto& i : arr) cin >> i;
-  if (my_next_permutation(arr)) {
-    for (auto& i : arr) cout << i << " ";
-  } else cout << "-1\n";
+  vector<int> a(n);
+  for (auto& i : a) cin >> i;
+  bool f = n_permutation(a);
+  if (f)
+    for (auto& i : a) cout << i << " ";
+  else cout << "-1\n";
 }
