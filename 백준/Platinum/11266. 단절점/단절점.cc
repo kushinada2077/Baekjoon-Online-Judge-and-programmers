@@ -19,14 +19,13 @@ using namespace std;
 
 const int MX = 10001;
 int n, m, u, v, cnt = 1, root;
-int dfsn[MX], chk[MX];
+int dfsn[MX];
 vector<int> adj[MX], ans;
 vector<vector<pair<int, int>>> bcc;
 stack<pair<int, int>> s;
 
 int DFS(int cur, int prev = -1) {
-  int res = dfsn[cur] = cnt++;
-  bool f = 0;
+  int res = dfsn[cur] = cnt++, child = 0;
   for (auto& nxt : adj[cur]) {
     if (nxt == prev) continue;
     if (dfsn[cur] > dfsn[nxt]) s.push({cur, nxt});
@@ -34,7 +33,9 @@ int DFS(int cur, int prev = -1) {
     else {
       int tmp = DFS(nxt, cur);
       res = min(res, tmp);
+      child++;
       if (tmp >= dfsn[cur]) {
+        if (cur != root && child) ans.pb(cur);
         vector<pair<int, int>> cBcc;
         while (1) {
           auto [u, v] = s.top();
@@ -46,6 +47,7 @@ int DFS(int cur, int prev = -1) {
       }
     }
   }
+  if (cur == root && child > 1) ans.pb(cur);
   return res;
 }
 
@@ -65,19 +67,8 @@ int main() {
     }
   }
 
-  for (int i = 0; i < si(bcc); ++i) {
-    auto& c = bcc[i];
-    for (auto& [u, v] : c) {
-      if (chk[u] == 0) chk[u] = i + 1;
-      else if (chk[u] > 0 && chk[u] != i + 1) ans.pb(u);
-      if (chk[v] == 0) chk[v] = i + 1;
-      else if (chk[v] > 0 && chk[v] != i + 1) ans.pb(v);
-    }
-  }
-
   sort(all(ans));
   ans.erase(unique(all(ans)), ans.end());
   cout << si(ans) << "\n";
   for (auto& i : ans) cout << i << " ";
-  cout << "\n";
 }
