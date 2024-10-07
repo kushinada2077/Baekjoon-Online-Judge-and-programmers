@@ -28,7 +28,7 @@ int main() {
   }
 
   int ans_t = 0x3f3f3f3f, ans_h = -1;
-  for (int brute = 0; brute <= 256; ++brute) {
+  for (int brute = 256; brute >= 0; --brute) {
     int limit = b, cnt = 0;
 
     for (int i = 0; i < n; ++i) {
@@ -44,7 +44,7 @@ int main() {
     }
 
     if (limit < 0) continue;
-    if (ans_t >= cnt) {
+    if (ans_t > cnt) {
       ans_t = cnt;
       ans_h = brute;
     }
