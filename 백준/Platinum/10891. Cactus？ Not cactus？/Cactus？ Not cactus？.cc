@@ -2,8 +2,8 @@
 #include <deque>
 #include <iostream>
 #include <queue>
-#include <set>
 #include <stack>
+#include <unordered_set>
 #include <vector>
 #define PATH "/Users/leedongha/Downloads/PS/input.txt"
 #define fastio cin.tie(0)->sync_with_stdio(0);
@@ -19,10 +19,11 @@ using ll = long long;
 using namespace std;
 
 const int MX = 100001;
-int n, m, u, v, cnt, dup;
-int dfsn[MX], chk[MX];
+int n, m, u, v, cnt, dup, BN;
+int dfsn[MX], bSize[MX];
+bool chk[MX];
 vector<int> adj[MX];
-vector<vector<pair<int, int>>> bcc;
+unordered_set<int> bcc_member[MX];
 stack<pair<int, int>> s;
 
 int dfs(int cur, int prev = -1) {
@@ -36,14 +37,15 @@ int dfs(int cur, int prev = -1) {
       int tmp = dfs(nxt, cur);
       res = min(res, tmp);
       if (tmp >= dfsn[cur]) {
-        vector<pair<int, int>> edge;
         while (1) {
           auto [u, v] = s.top();
           s.pop();
-          edge.pb({u, v});
+          bcc_member[BN].insert(u);
+          bcc_member[BN].insert(v);
+          bSize[BN]++;
           if (u == cur && v == nxt) break;
         }
-        bcc.pb(edge);
+        BN++;
       }
     }
   }
@@ -64,25 +66,21 @@ int main() {
   }
 
   int cntt = 0;
-  for (int i = 0; i < si(bcc); ++i) {
-    auto& edge_list = bcc[i];
-    if (si(edge_list) > 2) {
-      set<int> v_list;
-      for (auto& [u, v] : edge_list) {
-        if ((chk[u] && chk[u] != i + 1) || chk[v] && chk[v] != i + 1) {
-          cout << "Not cactus\n";
-          return 0;
-        }
-        v_list.insert(u);
-        v_list.insert(v);
-        chk[u] = chk[v] = i + 1;
-      }
-      if (si(edge_list) != si(v_list)) {
+  for (int i = 0; i < BN; ++i) {
+    if (bSize[i] < 3) continue;
+
+    if (bSize[i] != si(bcc_member[i])) {
+      cout << "Not cactus\n";
+      return 0;
+    }
+
+    for (auto& u : bcc_member[i]) {
+      if (chk[u]) {
         cout << "Not cactus\n";
         return 0;
       }
+      chk[u] = 1;
     }
   }
-
   cout << "Cactus\n";
 }
