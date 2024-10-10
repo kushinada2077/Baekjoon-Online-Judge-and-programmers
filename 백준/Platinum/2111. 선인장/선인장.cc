@@ -26,7 +26,7 @@ vector<int> adj[MX];
 stack<pair<int, int>> s;
 vector<int> ans = {1};
 
-vector<int> mul(vector<int> A, int B) {
+vector<int> mul(vector<int>& A, int B) {
   int asz = A.size(), rsz = asz, p = 0, n;
   vector<int> result(rsz);
   while (B) {
