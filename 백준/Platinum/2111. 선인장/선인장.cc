@@ -39,7 +39,7 @@ vector<int> mul(vector<int>& A, int B) {
 
   for (int i = 0, n; i < rsz; i++) {
     n = result[i] % 10;
-    result[i + 1] += (result[i] - n) / 10;
+    result[i + 1] += result[i] / 10;
     result[i] = n;
   }
 
