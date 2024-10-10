@@ -2,8 +2,8 @@
 #include <deque>
 #include <iostream>
 #include <queue>
-#include <set>
 #include <stack>
+#include <unordered_set>
 #include <vector>
 #define PATH "/Users/leedongha/Downloads/PS/input.txt"
 #define fastio cin.tie(0)->sync_with_stdio(0);
@@ -21,7 +21,7 @@ using namespace std;
 const int MX = 20001;
 int n, m, u, v, x, cnt, BN, cN;
 int dfsn[MX], bccSize[MX];
-vector<pair<int, int>> bcc[MX];
+unordered_set<int> bccMember[MX];
 vector<int> adj[MX];
 stack<pair<int, int>> s;
 vector<int> ans = {1};
@@ -62,7 +62,8 @@ int dfs(int cur, int prev = -1) {
         while (1) {
           auto& [u, v] = s.top();
           s.pop();
-          bcc[BN].pb({u, v});
+          bccMember[BN].insert(u);
+          bccMember[BN].insert(v);
           bccSize[BN]++;
           if (u == cur && v == nxt) break;
         }
@@ -101,13 +102,7 @@ int main() {
   for (int i = 0; i < BN; ++i) {
     if (bccSize[i] < 3) continue;
 
-    set<int> tmp;
-    for (auto& [u, v] : bcc[i]) {
-      tmp.insert(u);
-      tmp.insert(v);
-    }
-
-    if (si(tmp) != bccSize[i]) {
+    if (si(bccMember[i]) != bccSize[i]) {
       cout << "0\n";
       return 0;
     }
