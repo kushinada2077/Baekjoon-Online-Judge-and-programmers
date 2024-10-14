@@ -18,43 +18,34 @@ using ll = long long;
 using namespace std;
 
 const int MX = 10001;
-int n, m, u, v, cnt = 1, root;
+int n, m, cnt, root;
 int dfsn[MX];
-vector<int> adj[MX], ans;
-vector<vector<pair<int, int>>> bcc;
+vector<int> adj[MX];
+set<int> ans;
 stack<pair<int, int>> s;
 
-int DFS(int cur, int prev = -1) {
-  int res = dfsn[cur] = cnt++, child = 0;
+int dfs(int cur, int prev = -1) {
+  int res = dfsn[cur] = ++cnt, child = 0;
   for (auto& nxt : adj[cur]) {
     if (nxt == prev) continue;
-    if (dfsn[cur] > dfsn[nxt]) s.push({cur, nxt});
+    // if (dfsn[cur] > dfsn[nxt]) s.push({cur, nxt});
     if (dfsn[nxt] > 0) res = min(res, dfsn[nxt]);
     else {
-      int tmp = DFS(nxt, cur);
-      res = min(res, tmp);
       child++;
-      if (tmp >= dfsn[cur]) {
-        if (cur != root && child) ans.pb(cur);
-        vector<pair<int, int>> cBcc;
-        while (1) {
-          auto [u, v] = s.top();
-          s.pop();
-          cBcc.pb({u, v});
-          if (u == cur && v == nxt) break;
-        }
-        bcc.pb(cBcc);
-      }
+      int tmp = dfs(nxt);
+      res = min(res, tmp);
+      if (tmp >= dfsn[cur] && child && cur != root) ans.insert(cur);
     }
   }
-  if (cur == root && child > 1) ans.pb(cur);
+
+  if (cur == root && child > 1) ans.insert(cur);
   return res;
 }
 
 int main() {
   fastio;
   cin >> n >> m;
-  for (int i = 0; i < m; ++i) {
+  for (int u, v; m--;) {
     cin >> u >> v;
     adj[u].pb(v);
     adj[v].pb(u);
@@ -63,12 +54,10 @@ int main() {
   for (int i = 1; i <= n; ++i) {
     if (dfsn[i] == 0) {
       root = i;
-      DFS(i);
+      dfs(i);
     }
   }
 
-  sort(all(ans));
-  ans.erase(unique(all(ans)), ans.end());
   cout << si(ans) << "\n";
   for (auto& i : ans) cout << i << " ";
 }
