@@ -1,54 +1,70 @@
 #include <algorithm>
-#include <climits>
-#include <deque>
+#include <cmath>
 #include <iostream>
-#include <map>
-#include <numeric>
-#include <queue>
-#include <set>
-#include <tuple>
+#include <stack>
 #include <vector>
+#define PATH "/Users/leedongha/Downloads/PS/input.txt"
+#define L_PATH "input.txt"
 #define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
+#define rep(n) for (int i = 0; i < n; ++i)
 #define si(x) int(x.size())
 #define all(x) (x).begin(), (x).end()
 #define pb(...) push_back(__VA_ARGS__)
 #define X first
 #define Y second
 #define ROOT 1
-using ll = long long;
+#define INF 0x3f3f3f3f
 using namespace std;
+using ll = long long;
+using T = tuple<int, int, int>;
+using P = pair<int, int>;
 
-int _size = 1, seg[2][300000];
-void construct() {
-  for (int i = _size - 1; i != 0; --i) {
-    seg[0][i] = max(seg[0][2 * i], seg[0][2 * i + 1]);
-    seg[1][i] = min(seg[1][2 * i], seg[1][2 * i + 1]);
-  }
-}
-pair<int, int> get_m(int idx, int st, int en, int l, int r) {
-  if (en <= l || r <= st) return {-1, 0x3f3f3f3f};
-  if (l <= st && en <= r) return {seg[0][idx], seg[1][idx]};
-  int mid = (st + en) / 2;
-  auto ret = get_m(idx * 2, st, mid, l, r);
-  auto ret2 = get_m(idx * 2 + 1, mid, en, l, r);
-  return {max(ret.X, ret2.X), min(ret.Y, ret2.Y)};
-}
+const int MX = 100000;
+
+int n, m, sqrtN;
+int arr[MX], mxNode[317], mnNode[317];
+
 int main() {
   fastio;
-  int n, m, a, b;
+  fill(mnNode, mnNode + 317, INF);
   cin >> n >> m;
-  while (_size < n) _size <<= 1;
-  fill(seg[0], seg[0] + 300000, -1);
-  fill(seg[1], seg[1] + 300000, 0x3f3f3f3f);
-  for (int i = 0; i < n; ++i) {
-    cin >> seg[0][_size + i];
-    seg[1][_size + i] = seg[0][_size + i];
+  sqrtN = sqrt(n);
+  for (int i = 0; i < n; ++i) cin >> arr[i];
+  for (int i = 0; i <= (n / sqrtN); ++i) {
+    for (int j = sqrtN * i; j < min(n, sqrtN * (i + 1)); ++j) {
+      mxNode[i] = max(mxNode[i], arr[j]);
+      mnNode[i] = min(mnNode[i], arr[j]);
+    }
   }
-  construct();
-  while (m--) {
+
+  for (int a, b; m--;) {
     cin >> a >> b;
-    auto [mx, mn] = get_m(1, 0, _size, a - 1, b);
+    a--;
+    int mx = -1, mn = INF;
+
+    for (int i = (a / sqrtN); i <= (b - 1) / sqrtN; ++i) {
+      int st = i * sqrtN, en = (i + 1) * sqrtN;
+      if (i == n / sqrtN) en = n;
+      if (a <= st && en <= b) {
+        mx = max(mx, mxNode[i]);
+        mn = min(mn, mnNode[i]);
+      } else if (en <= b) {
+        for (int j = a; j < en; ++j) {
+          mx = max(mx, arr[j]);
+          mn = min(mn, arr[j]);
+        }
+      } else if (a <= st) {
+        for (int j = st; j < b; ++j) {
+          mx = max(mx, arr[j]);
+          mn = min(mn, arr[j]);
+        }
+      } else {
+        for (int j = a; j < b; ++j) {
+          mx = max(mx, arr[j]);
+          mn = min(mn, arr[j]);
+        }
+      }
+    }
     cout << mn << " " << mx << "\n";
   }
 }
