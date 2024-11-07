@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <map>
 #include <queue>
 #include <set>
 #include <sstream>
@@ -22,21 +23,18 @@ using TP = tuple<int, int, int>;
 using P = pair<int, int>;
 
 const int MOD = 9901;
-int dp[100005][3];
-
+int dp[100005];
 int main() {
   fastio;
   int n;
   cin >> n;
-  dp[1][0] = dp[1][1] = dp[1][2] = 1;
 
-  for (int i = 2; i <= n; ++i) {
-    dp[i][0] = (1ll * dp[i - 1][0] + dp[i - 1][1] + dp[i - 1][2]) % MOD;
-    dp[i][1] = (1ll * dp[i - 1][0] + dp[i - 1][2]) % MOD;
-    dp[i][2] = (1ll * dp[i - 1][0] + dp[i - 1][1]) % MOD;
+  dp[1] = 3;
+  dp[2] = 7;
+
+  for (int i = 3; i <= n; ++i) {
+    dp[i] = (2ll * dp[i - 1] + dp[i - 2]) % MOD;
   }
 
-  ll ans = 0;
-  for (int i = 0; i < 3; ++i) ans = (ans + dp[n][i]) % MOD;
-  cout << ans << "\n";
+  cout << dp[n] << "\n";
 }
