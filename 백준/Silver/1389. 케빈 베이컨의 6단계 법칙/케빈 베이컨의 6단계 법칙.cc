@@ -1,53 +1,66 @@
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <queue>
+#include <set>
+#include <sstream>
 #include <vector>
+#define PATH "/Users/leedongha/Downloads/PS/input.txt"
+#define L_PATH "input.txt"
+#define fastio cin.tie(0)->sync_with_stdio(0);
+#define rep(n) for (int i = 0; i < n; ++i)
+#define si(x) int(x.size())
+#define all(x) (x).begin(), (x).end()
+#define pb(...) push_back(__VA_ARGS__)
+#define X first
+#define Y second
+#define ROOT 1
+#define INF 0x3f3f3f3f
 using namespace std;
+using ll = long long;
+using TP = tuple<int, int, int>;
+using P = pair<int, int>;
 
-int N, M, v1, v2;
-vector<int> adj[101];
-vector<int> ans{0};
+vector<int> adj[105];
+int main() {
+  fastio;
+  int n, m;
+  cin >> n >> m;
 
-int bfs(int V) {
-  int dis[N + 1];
-  queue<int> q;
-  fill(dis + 1, dis + 1 + N, -1);
-  q.push(V);
-  dis[V] = 0;
+  for (int u, v, i = 0; i < m; ++i) {
+    cin >> u >> v;
+    adj[u].pb(v);
+    adj[v].pb(u);
+  }
 
-  while (!q.empty()) {
-    auto cur = q.front();
-    q.pop();
-    for (auto nxt : adj[cur]) {
-      if (dis[nxt] != -1) continue;
-      q.push(nxt);
-      dis[nxt] = dis[cur] + 1;
+  int cnt = INF, ans = 0;
+  for (int i = n; i != 0; --i) {
+    queue<int> q;
+    q.push(i);
+    vector<int> dist(105, -1);
+    dist[i] = 0;
+
+    while (!q.empty()) {
+      int cur = q.front();
+      q.pop();
+      for (auto nxt : adj[cur]) {
+        if (dist[nxt] != -1) continue;
+        q.push(nxt);
+        dist[nxt] = dist[cur] + 1;
+      }
+    }
+
+    int tot = 0;
+    for (int j = 1; j <= n; ++j) {
+      if (i == j) continue;
+      tot += dist[j];
+    }
+
+    if (cnt >= tot) {
+      ans = i;
+      cnt = tot;
     }
   }
 
-  int sum = 0;
-  for (int i = 1; i < N + 1; i++) {
-    if (i != V) sum += dis[i];
-  }
-
-  return sum;
-}
-
-int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
-
-  cin >> N >> M;
-  while (M--) {
-    cin >> v1 >> v2;
-    adj[v1].push_back(v2);
-    adj[v2].push_back(v1);
-  }
-
-  for (int i = 1; i < N + 1; i++) {
-    ans.push_back(bfs(i));
-  }
-
-  auto ret = min_element(next(ans.begin()), ans.end()) - ans.begin();
-  cout << ret;
+  cout << ans << "\n";
 }
