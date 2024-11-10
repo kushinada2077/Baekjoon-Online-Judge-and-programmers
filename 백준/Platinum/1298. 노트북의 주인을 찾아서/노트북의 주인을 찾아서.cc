@@ -22,7 +22,7 @@ using TP = tuple<int, int, int>;
 using P = pair<int, int>;
 
 const int MX = 300;
-int n, m, A[MX], B[MX];
+int n, m, B[MX];
 bool vis[MX];
 vector<int> adj[MX];
 
@@ -30,7 +30,6 @@ bool dfs(int a) {
   vis[a] = 1;
   for (int b : adj[a]) {
     if (B[b] == -1 || !vis[B[b]] && dfs(B[b])) {
-      A[a] = b;
       B[b] = a;
       return 1;
     }
@@ -41,7 +40,7 @@ int main() {
   fastio;
   cin >> n >> m;
 
-  for (int i = 0; i < MX; ++i) A[i] = B[i] = -1;
+  for (int i = 0; i < MX; ++i) B[i] = -1;
   for (int u, v, i{}; i < m; ++i) {
     cin >> u >> v;
     u *= 2;
