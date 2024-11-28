@@ -21,19 +21,18 @@ using ll = long long;
 using TP = tuple<int, int, int>;
 using P = pair<int, int>;
 
-int n, l, ans = 1, arr[1010];
+int n, l, ans, arr[1010];
 int main() {
   fastio;
   cin >> n >> l;
   for (int i = 0; i < n; ++i) cin >> arr[i];
   sort(arr, arr + n);
-  int st = arr[0];
-  for (int i = 1; i < n; ++i) {
-    if (arr[i] - st > l - 1) {
-      ans++;
-      st = arr[i];
-    }
-  }
+  int p = 0;
+
+  do {
+    ans++;
+    p = lower_bound(arr + p, arr + n, arr[p] + l) - arr;
+  } while (p < n);
 
   cout << ans << "\n";
 }
