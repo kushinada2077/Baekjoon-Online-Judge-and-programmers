@@ -21,18 +21,15 @@ using ll = long long;
 using TP = tuple<int, int, int>;
 using P = pair<int, int>;
 
-int n, ans = -INF, arr[100001];
-set<int> sum;
+int n, d[100001];
+
+// d[i] = i번째에서 시작했을 때 가장 큰 연속합
 int main() {
   fastio;
   cin >> n;
-  sum.insert(0);
   for (int x, i = 0; i < n; ++i) {
     cin >> x;
-    arr[i + 1] = arr[i] + x;
-    ans = max(ans, arr[i + 1] - *sum.begin());
-    sum.insert(arr[i + 1]);
+    d[i + 1] = max(x, d[i] + x);
   }
-
-  cout << ans << "\n";
+  cout << *max_element(d + 1, d + 1 + n) << "\n";
 }
