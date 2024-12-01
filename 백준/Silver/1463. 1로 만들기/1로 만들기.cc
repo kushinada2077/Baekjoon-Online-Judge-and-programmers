@@ -1,41 +1,52 @@
 #include <algorithm>
-#include <climits>
-#include <deque>
+#include <cmath>
 #include <iostream>
 #include <map>
-#include <numeric>
 #include <queue>
 #include <set>
-#include <stack>
-#include <tuple>
-#include <unordered_map>
-#include <unordered_set>
 #include <vector>
 #define PATH "/Users/leedongha/Downloads/PS/input.txt"
+#define L_PATH "input.txt"
 #define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
+#define rep(n) for (int i = 0; i < n; ++i)
 #define si(x) int(x.size())
 #define all(x) (x).begin(), (x).end()
 #define pb(...) push_back(__VA_ARGS__)
 #define X first
 #define Y second
 #define ROOT 1
-using ll = long long;
+#define INF 0x3f3f3f3f
 using namespace std;
+using ll = long long;
+using TP = tuple<int, int, int>;
+using P = pair<int, int>;
 
-const int INF = 0x3f3f3f3f;
-
-vector<int> dp(1000005, INF);
-
+int n, dist[1000001];
+queue<int> q;
 int main() {
   fastio;
-  int x;
-  cin >> x;
-  dp[1] = 0;
-  for (int i = 1; i < x; ++i) {
-    dp[i + 1] = min(dp[i + 1], dp[i] + 1);
-    if (2 * i <= x) dp[2 * i] = min(dp[2 * i], dp[i] + 1);
-    if (3 * i <= x) dp[3 * i] = min(dp[3 * i], dp[i] + 1);
+  cin >> n;
+  fill(dist, dist + n + 1, -1);
+
+  q.push(n);
+  dist[n] = 0;
+  while (!q.empty()) {
+    int cur = q.front();
+    q.pop();
+    if (cur < 1) continue;
+
+    if (cur % 3 == 0 && dist[cur / 3] == -1) {
+      q.push(cur / 3);
+      dist[cur / 3] = dist[cur] + 1;
+    }
+    if (cur % 2 == 0 && dist[cur / 2] == -1) {
+      q.push(cur / 2);
+      dist[cur / 2] = dist[cur] + 1;
+    }
+    if (dist[cur - 1] == -1) {
+      q.push(cur - 1);
+      dist[cur - 1] = dist[cur] + 1;
+    }
   }
-  cout << dp[x] << "\n";
+  cout << dist[1] << "\n";
 }
