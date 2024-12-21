@@ -38,7 +38,7 @@ int maxProfit(int x) {
 int main() {
   fastio;
   cin >> n;
-  fill(dp, dp + MX, -1);
+  fill(dp, dp + n + 1, -1);
   for (int i = 0; i < n; ++i) {
     cin >> nxt[i] >> p[i];
     nxt[i] += i;
