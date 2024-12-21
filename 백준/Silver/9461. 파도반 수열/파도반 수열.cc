@@ -1,29 +1,37 @@
-#define ll long long
-#define PAIR pair<int, int>
 #include <algorithm>
+#include <cmath>
 #include <iostream>
-#include <iterator>
+#include <map>
 #include <queue>
+#include <set>
 #include <vector>
+#define PATH "/Users/leedongha/Downloads/PS/input.txt"
+#define L_PATH "input.txt"
+#define fastio cin.tie(0)->sync_with_stdio(0);
+#define rep(n) for (int i = 0; i < n; ++i)
+#define si(x) int(x.size())
+#define all(x) (x).begin(), (x).end()
+#define pb(...) push_back(__VA_ARGS__)
+#define X first
+#define Y second
+#define ROOT 1
+#define INF 0x3f3f3f3f
 using namespace std;
+using ll = long long;
+using TP = tuple<int, int, int>;
+using P = pair<int, int>;
 
-int t, n;
-ll d[101];
-
+int n;
+ll dp[101];
 int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
-  d[1] = 1;
-  d[2] = 1;
-  d[3] = 1;
-  d[4] = 2;
-  d[5] = 2;
-  for (int i = 6; i <= 100; ++i) {
-    d[i] = d[i - 1] + d[i - 5];
-  }
-  cin >> t;
-  while (t--) {
-    cin >> n;
-    cout << d[n] << "\n";
+  fastio;
+  cin >> n;
+  dp[1] = dp[2] = dp[3] = 1;
+  dp[4] = dp[5] = 2;
+
+  for (int i = 6; i <= 100; ++i) dp[i] = dp[i - 1] + dp[i - 5];
+  for (int x; n; --n) {
+    cin >> x;
+    cout << dp[x] << "\n";
   }
 }
