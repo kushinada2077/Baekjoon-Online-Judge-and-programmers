@@ -22,7 +22,7 @@ using TP = tuple<int, int, int>;
 using P = pair<int, int>;
 
 // dp[n] = 마지막 숫자가 n인 가장 긴 등차부분수열의 길이
-int n, ans = 1, A[100001], dp[101];
+int n, ans = 0, A[100001], dp[101];
 int main() {
   fastio;
   cin >> n;
