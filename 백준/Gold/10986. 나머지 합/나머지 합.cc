@@ -1,40 +1,24 @@
-#include <algorithm>
-#include <climits>
-#include <deque>
-#include <iostream>
-#include <map>
-#include <numeric>
-#include <queue>
-#include <set>
-#include <stack>
-#include <tuple>
-#include <unordered_map>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
+#include <bits/stdc++.h>
 #define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
 #define si(x) int(x.size())
 #define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-using ll = long long;
+#define INF 0x3f3f3f3f
 using namespace std;
+using ll = long long;
+using TP = tuple<int, int, int>;
+using P = pair<int, int>;
 
+int n, k, cnt[1001];
+ll ans, sum;
 int main() {
   fastio;
-  int n, m, x;
-  ll ans = 0;
-  cin >> n >> m;
-  vector<int> cnt(1000, 0);
-  cnt[0] = 1;
-  ll tot = 0;
-  for (int i = 0; i < n; ++i) {
+  cin >> n >> k;
+  cnt[0]++;
+  for (int x, i = 0; i < n; ++i) {
     cin >> x;
-    tot = (tot + x) % m;
-    ans += cnt[tot];
-    cnt[tot]++;
+    sum = (sum + x) % k;
+    ans += cnt[sum];
+    cnt[sum]++;
   }
 
   cout << ans << "\n";
