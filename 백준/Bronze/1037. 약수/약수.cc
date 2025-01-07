@@ -1,34 +1,12 @@
-#include <algorithm>
-#include <climits>
-#include <deque>
-#include <iostream>
-#include <map>
-#include <numeric>
-#include <queue>
-#include <set>
-#include <stack>
-#include <tuple>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-using ll = long long;
-using namespace std;
+#include <bits/stdc++.h>
+using i64 = long long;
 
 int main() {
-  fastio;
+  std::cin.tie(nullptr)->sync_with_stdio(false);
   int n;
-  cin >> n;
-  vector<int> a(n);
-  for (auto& i : a) cin >> i;
-  sort(all(a));
-  cout << a[0] * a.back() << "\n";
+  std::cin >> n;
+  std::vector<int> a(n);
+  for (int i = 0; i < n; ++i) std::cin >> a[i];
+  sort(a.begin(), a.end());
+  std::cout << a.front() * a.back() << "\n";
 }
