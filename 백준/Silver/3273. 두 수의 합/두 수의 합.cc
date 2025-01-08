@@ -1,39 +1,18 @@
-#include <algorithm>
-#include <iostream>
-#include <queue>
-#include <set>
-#include <stack>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-#define INF 0x3f3f3f3f
-using ll = long long;
-using namespace std;
-
-int n, x;
-int arr[1000001], cnt[1000001];
+#include <bits/stdc++.h>
+using i64 = long long;
 
 int main() {
-  fastio;
-  cin >> n;
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  int n;
+  std::cin >> n;
+  std::vector<int> a(n), c(1000001);
+  for (int i = 0; i < n; ++i) std::cin >> a[i];
+  int x, ans = 0;
+  std::cin >> x;
   for (int i = 0; i < n; ++i) {
-    cin >> arr[i];
-  }
-  cin >> x;
-
-  ll ans = 0;
-  for (int i = 0; i < n; ++i) {
-    int diff = x - arr[i];
-    if (0 < diff && diff < 1000001) ans += 1ll * cnt[diff];
-    cnt[arr[i]]++;
+    if (x - a[i] > 0 && x - a[i] <= 1000000) ans += c[x - a[i]];
+    c[a[i]]++;
   }
 
-  cout << ans << "\n";
+  std::cout << ans << "\n";
 }
