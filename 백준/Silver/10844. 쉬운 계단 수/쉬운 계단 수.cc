@@ -1,35 +1,43 @@
-#define ll long long
 #include <algorithm>
+#include <cmath>
 #include <iostream>
-#include <unordered_map>
-#include <unordered_set>
+#include <map>
+#include <queue>
+#include <set>
 #include <vector>
+#define PATH "/Users/leedongha/Downloads/PS/input.txt"
+#define L_PATH "input.txt"
+#define fastio cin.tie(0)->sync_with_stdio(0);
+#define rep(n) for (int i = 0; i < n; ++i)
+#define si(x) int(x.size())
+#define all(x) (x).begin(), (x).end()
+#define pb(...) push_back(__VA_ARGS__)
+#define X first
+#define Y second
+#define ROOT 1
+#define INF 0x3f3f3f3f
 using namespace std;
+using ll = long long;
+using TP = tuple<int, int, int>;
+using P = pair<int, int>;
 
-int n, N, M = 1e9;
-int d[105][10];
-
-// 처음 숫자가 k면서 길이가 n인 계단수의 개수
-ll f(int n, int k) {
-  if (n == 1) return 1;
-  if (d[n][k]) return d[n][k];
-
-  ll result;
-  if (k == 9)
-    result = f(n - 1, k - 1) % M;
-  else if (k == 0)
-    result = f(n - 1, k + 1) % M;
-  else
-    result = (f(n - 1, k + 1) + f(n - 1, k - 1)) % M;
-  d[n][k] = result;
-  return result;
+const int MOD = 1e9;
+int n;
+ll dp[101][10];
+ll f(int x, int y) {
+  ll& ret = dp[x][y];
+  if (ret != -1) return ret;
+  if (y == 0) return ret = f(x - 1, 1) % MOD;
+  if (y == 9) return ret = f(x - 1, 8) % MOD;
+  return ret = (f(x - 1, y - 1) + f(x - 1, y + 1)) % MOD;
 }
-
 int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
-  cin >> N;
-  int sum = 0;
-  for (int i = 1; i < 10; ++i) sum = (sum + f(N, i)) % M;
-  cout << sum;
+  fastio;
+  cin >> n;
+  fill(&dp[0][0], &dp[0][0] + 101 * 10, -1);
+  dp[1][0] = 0;
+  fill(&dp[1][1], &dp[1][1] + 9, 1);
+  ll ans = 0;
+  for (int i = 0; i < 10; ++i) ans = (ans + f(n, i)) % MOD;
+  cout << ans << "\n";
 }
