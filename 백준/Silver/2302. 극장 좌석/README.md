@@ -12,7 +12,7 @@
 
 ### 제출 일자
 
-2024년 7월 11일 21:42:08
+2025년 1월 27일 00:33:33
 
 ### 문제 설명
 
@@ -24,7 +24,7 @@
 
 <p>예를 들어서, 그림과 같이 좌석이 9개이고, 4번 좌석과 7번 좌석이 VIP석인 경우에 <123456789>는 물론 가능한 배치이다. 또한 <213465789> 와 <132465798> 도 가능한 배치이다. 그러나 <312456789> 와 <123546789> 는 허용되지 않는 배치 방법이다.</p>
 
-<p style="text-align: center;"><img alt="" src="" style="width: 273px; height: 250px;"></p>
+<p style="text-align: center;"><img alt="" src="https://upload.acmicpc.net/80caa675-30d4-44ec-8100-01f8eac2a3e3/-/preview/" style="width: 273px; height: 250px;"></p>
 
 ### 입력 
 
