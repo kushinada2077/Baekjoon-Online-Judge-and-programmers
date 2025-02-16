@@ -1,48 +1,24 @@
-#include <algorithm>
-#include <iostream>
-#include <list>
-using namespace std;
-
-struct ListNode {
-  int val;
-  ListNode* next;
-  ListNode() : val(0), next(nullptr) {}
-  ListNode(int x) : val(x), next(nullptr) {}
-  ListNode(int x, ListNode* next) : val(x), next(next) {}
-};
+#include <bits/stdc++.h>
+using i64 = long long;
 
 int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
-
+  std::cin.tie(nullptr)->sync_with_stdio(false);
   int n, k;
-  vector<string> arr;
-  cin >> n >> k;
-  ListNode* dummyHead = new ListNode();
-  ListNode* cur = dummyHead;
-
-  for (int i = 0; i < n; i++) {
-    ListNode* newNode = new ListNode(i + 1);
-    cur->next = newNode;
-    cur = cur->next;
+  std::cin >> n >> k;
+  k--;
+  std::deque<int> dq;
+  for (int i = 1; i <= n; ++i) {
+    dq.push_back(i);
   }
 
-  cur->next = dummyHead->next;
-  cur = dummyHead->next;
-
-  while (true) {
-    for (int i = 0; i < k - 1; i++) {
-      cur = cur->next;
+  std::cout << "<";
+  while (!dq.empty()) {
+    for (int i = 0; i < k; ++i) {
+      dq.push_back(dq.front());
+      dq.pop_front();
     }
 
-    arr.push_back(to_string(cur->val));
-    if (cur->next == cur) break;
-    arr.push_back(", ");
-    cur->val = cur->next->val;
-    cur->next = cur->next->next;
+    std::cout << dq.front() << ",>"[dq.size() == 1] << " ";
+    dq.pop_front();
   }
-
-  cout << "<";
-  for (auto c : arr) cout << c;
-  cout << ">";
 }
