@@ -1,40 +1,34 @@
-#define ll long long
-#include <algorithm>
-#include <iostream>
-#include <unordered_set>
-#include <vector>
-using namespace std;
+#include <bits/stdc++.h>
+using i64 = long long;
 
-ll N, L, I, d[35][35];
-
-ll f(int n, int l) {
-  if (d[n][l]) return d[n][l];
-  if (n == 0 || l == 0) return 1;
-
-  ll result = f(n - 1, l) + f(n - 1, l - 1);
-  d[n][l] = result;
-  return result;
-}
-void track(ll n, ll m, ll i, string& num) {
-  if (n == 0) return;
-  if (m == 0) {
-    while (num.size() < N) num += '0';
-    return;
-  }
-  ll pivot = f(n - 1, m);
-  if (i >= pivot) {
-    num += '1';
-    track(n - 1, m - 1, i - pivot, num);
-  } else {
-    num += '0';
-    track(n - 1, m, i, num);
-  }
-}
+i64 dp[32][32];
 int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
-  cin >> N >> L >> I;
-  string num;
-  track(N, L, I - 1, num);
-  cout << num;
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  i64 N, L, I;
+  std::cin >> N >> L >> I;
+  dp[0][0] = 1;
+  for (int i = 1; i <= N; ++i) {
+    dp[i][0] = dp[i][i] = 1;
+    for (int j = 1; j < i; ++j) {
+      dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j];
+    }
+  }
+
+  std::string ans = "";
+  i64 l = L;
+  for (int i = N; i > 0; --i) {
+    i64 tot = 0;
+    for (int j = 0; j <= l; ++j) {
+      tot += dp[i - 1][j];
+    }
+    if (I > tot) {
+      I -= tot;
+      ans += '1';
+      l--;
+    } else {
+      ans += '0';
+    }
+  }
+
+  std::cout << ans << "\n";
 }
