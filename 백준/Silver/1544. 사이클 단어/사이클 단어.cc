@@ -1,49 +1,54 @@
-#include <algorithm>
-#include <iostream>
-#include <queue>
-#include <vector>
-#define ll long long
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-using namespace std;
+#include <bits/stdc++.h>
+using i64 = long long;
 
-bool comp(const string& s1, const string& s2) {
-  if (si(s1) != si(s2)) return false;
-  int l = si(s1);
-  for (int st = 0; st < l; ++st) {
-    int idx = st;
-    bool f = true;
-    for (int i = 0; i < l; ++i) {
-      if (s1[i] != s2[idx]) {
-        f = false;
-        break;
-      }
-      idx = (idx + 1) % l;
-    }
-    if (f) return true;
-  }
-  return false;
-}
 int main() {
-  fastio;
+  std::cin.tie(nullptr)->sync_with_stdio(false);
   int n;
-  cin >> n;
-  vector<string> a(n);
-  vector<bool> c(n, false);
-  for (auto& i : a) cin >> i;
-  for (int i = 0; i < si(a); ++i) {
-    if (c[i]) continue;
-    for (int j = i + 1; j < si(a); ++j) {
-      if (comp(a[i], a[j])) {
-        n--;
-        c[j] = true;
+  std::cin >> n;
+  std::vector<std::string> a(n);
+  for (int i = 0; i < n; ++i) {
+    std::cin >> a[i];
+  }
+
+  auto same = [&](std::string& a, std::string& b) {
+    if (a.size() != b.size()) {
+      return false;
+    }
+
+    int length = a.size();
+    for (int i = 0; i < length; ++i) {
+      bool ok = true;
+      for (int j = 0; j < length; ++j) {
+        if (a[(i + j) % length] != b[j]) {
+          ok = false;
+          break;
+        }
+      }
+
+      if (ok) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  int ans = 0;
+  std::vector<bool> chk(n);
+  for (int i = 0; i < n; ++i) {
+    if (chk[i] == true) {
+      continue;
+    }
+    ans++;
+    for (int j = i + 1; j < n; ++j) {
+      if (chk[j] == true) {
+        continue;
+      }
+      if (same(a[i], a[j])) {
+        chk[j] = true;
       }
     }
   }
-  cout << n << "\n";
+
+  std::cout << ans << "\n";
 }
