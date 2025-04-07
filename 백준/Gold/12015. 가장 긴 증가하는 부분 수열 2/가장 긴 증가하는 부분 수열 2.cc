@@ -1,56 +1,45 @@
-#include <algorithm>
-#include <climits>
-#include <deque>
-#include <iostream>
-#include <map>
-#include <numeric>
-#include <queue>
-#include <set>
-#include <stack>
-#include <tuple>
-#include <vector>
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-using ll = long long;
-using namespace std;
+#include <bits/stdc++.h>
+using i64 = long long;
 
-const int _size = (1 << 20);
-int seg[_size << 1];
-
-void update(int idx, int val) {
-  idx += _size;
-  seg[idx] = val;
-  while (idx > 1) {
-    idx >>= 1;
-    seg[idx] = max(seg[2 * idx], seg[2 * idx + 1]);
+const int MX = 1 << 20;
+int info[MX << 1];
+void update(int node, int x) {
+  node += MX;
+  info[node] = std::max(info[node], x);
+  while (node > 0) {
+    node /= 2;
+    info[node] = std::max(info[2 * node], info[2 * node + 1]);
   }
 }
-int mx(int idx, int st, int en, int l, int r) {
-  if (en <= l || r <= st) return 0;
-  if (l <= st && en <= r) return seg[idx];
+int max(int node, int st, int en, int l, int r) {
+  if (r <= st || en <= l) {
+    return -1;
+  }
+  if (l <= st && en <= r) {
+    return info[node];
+  }
   int mid = (st + en) / 2;
-  return max(mx(2 * idx, st, mid, l, r), mx(2 * idx + 1, mid, en, l, r));
+  return std::max(max(2 * node, st, mid, l, r), max(2 * node + 1, mid, en, l, r));
 }
 int main() {
-  fastio;
-  int n, x;
-  cin >> n;
-  vector<pair<int, int>> a;
-  for (int i = 0; i < n; ++i) {
-    cin >> x;
-    a.pb({x, -i});
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  int N;
+  std::cin >> N;
+  std::vector<std::pair<int, int>> A(N);
+  for (int i = 0; i < N; ++i) {
+    int x;
+    std::cin >> x;
+    A[i] = {x, -i};
   }
-  sort(all(a));
-  for (auto& [x, i] : a) {
-    i *= -1;
-    int len = mx(1, 0, _size, 0, i + 1) + 1;
-    if (len > seg[_size + i]) update(i, len);
+  sort(A.begin(), A.end());
+  for (int i = 0; i < N; ++i) {
+    int j = -A[i].second;
+    int len = max(1, 0, MX, 0, j + 1);
+    update(j, len + 1);
   }
-  cout << seg[1] << "\n";
+  int ans = 0;
+  for (int i = 0; i < N; ++i) {
+    ans = std::max(ans, info[MX + i]);
+  }
+  std::cout << ans << "\n";
 }
