@@ -1,55 +1,41 @@
-#include <algorithm>
-#include <climits>
-#include <deque>
-#include <iostream>
-#include <map>
-#include <numeric>
-#include <queue>
-#include <set>
-#include <stack>
-#include <tuple>
-#include <unordered_map>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-using ll = long long;
-using namespace std;
+#include <bits/stdc++.h>
+using i64 = long long;
 
-const int _size = 1 << 21;
-int seg[_size << 1];
-
-void update(int idx, int x) {
-  idx += _size;
-  seg[idx] += x;
-  while (idx > 1) {
-    idx >>= 1;
-    seg[idx] = seg[idx << 1] + seg[idx << 1 | 1];
+const int MAX = 1 << 21;
+int info[MAX << 1];
+void update(int node, int x) {
+  node += MAX;
+  info[node] += x;
+  while (node > 1) {
+    node /= 2;
+    info[node] = info[2 * node] + info[2 * node + 1];
   }
 }
-int find(int node, int st, int en, int k) {
-  if (st + 1 == en) return st;
+int solve(int node, int st, int en, int k) {
+  if (st + 1 == en) {
+    return st;
+  }
+  int l = info[2 * node];
   int mid = (st + en) / 2;
-  if (seg[node << 1] >= k) return find(node << 1, st, mid, k);
-  else return find(node << 1 | 1, mid, en, k - seg[node << 1]);
+  if (k > l) {
+    return solve(2 * node + 1, mid, en, k - l);
+  } else {
+    return solve(2 * node, st, mid, k);
+  }
 }
 int main() {
-  fastio;
-  int n, t, x;
-  cin >> n;
-  for (int i = 0; i < n; ++i) {
-    cin >> t >> x;
-    if (t == 1) update(x, 1);
-    else {
-      int num = find(1, 0, _size, x);
-      cout << num << "\n";
-      update(num, -1);
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  int N;
+  std::cin >> N;
+  for (int i = 0; i < N; ++i) {
+    int T, X;
+    std::cin >> T >> X;
+    if (T == 1) {
+      update(X, 1);
+    } else if (T == 2) {
+      int x = solve(1, 0, MAX, X);
+      update(x, -1);
+      std::cout << x << "\n";
     }
   }
 }
