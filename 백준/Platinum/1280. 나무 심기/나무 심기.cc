@@ -1,60 +1,47 @@
-#include <algorithm>
-#include <climits>
-#include <deque>
-#include <iostream>
-#include <map>
-#include <numeric>
-#include <queue>
-#include <set>
-#include <stack>
-#include <tuple>
-#include <vector>
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-using ll = long long;
-using namespace std;
+#include <bits/stdc++.h>
+using i64 = long long;
 
-const int M = 1e9 + 7, _size = 1 << 18;
-ll seg[2][_size << 1];  // [0] 갯수 [1] 거리 합
-void update(int i, ll x) {
-  i += _size;
-  seg[0][i] += 1;
-  seg[1][i] += x;
-  while (i > 1) {
-    i >>= 1;
-    seg[0][i] = seg[0][2 * i] + seg[0][2 * i + 1];
-    seg[1][i] = seg[1][2 * i] + seg[1][2 * i + 1];
+const int MOD = 1e9 + 7;
+const int MAX = 1 << 18;
+i64 info[MAX << 1][2];
+void update(int node, std::pair<i64, i64> x) {
+  node += MAX;
+  info[node][0] += x.first;
+  info[node][1] += x.second;
+  while (node > 1) {
+    node /= 2;
+    info[node][0] = info[2 * node][0] + info[2 * node + 1][0];
+    info[node][1] = info[2 * node][1] + info[2 * node + 1][1];
   }
 }
-pair<ll, ll> sum(int i, int st, int en, int l, int r) {
-  if (r <= st || en <= l) return {0, 0};
-  if (l <= st && en <= r) return {seg[0][i], seg[1][i]};
+std::pair<i64, i64> sum(int node, int st, int en, int l, int r) {
+  if (en <= l || r <= st) {
+    return {0LL, 0LL};
+  }
+  if (l <= st && en <= r) {
+    return {info[node][0], info[node][1]};
+  }
   int mid = (st + en) / 2;
-  auto [l1, l2] = sum(2 * i, st, mid, l, r);
-  auto [r1, r2] = sum(2 * i + 1, mid, en, l, r);
-  return {l1 + r1, l2 + r2};
+  auto [v1, n1] = sum(2 * node, st, mid, l, r);
+  auto [v2, n2] = sum(2 * node + 1, mid, en, l, r);
+  return {v1 + v2, n1 + n2};
 }
-
 int main() {
-  fastio;
-  int n;
-  ll x;
-  cin >> n >> x;
-  update(x, x);
-  ll ans = 1;
-  for (int i = 2; i <= n; ++i) {
-    cin >> x;
-    auto [l_cnt, l_tot] = sum(1, 0, _size, 0, x);
-    auto [r_cnt, r_tot] = sum(1, 0, _size, x + 1, _size);
-    ll r1 = (x * l_cnt - l_tot) % M, r2 = (r_tot - r_cnt * x) % M, r = (r1 + r2) % M;
-    update(x, x);
-    ans = (ans * r) % M;
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  int N;
+  i64 x;
+  i64 ans = 1;
+  std::cin >> N >> x;
+  update(x, {x, 1});
+  for (int i = 0; i < N - 1; ++i) {
+    std::cin >> x;
+    auto [tl, nl] = sum(1, 0, MAX, 0, x);
+    auto [tr, nr] = sum(1, 0, MAX, x, MAX);
+    i64 l = (nl * x - tl) % MOD;
+    i64 r = (tr - nr * x) % MOD;
+    i64 tot = (l + r) % MOD;
+    ans = (ans * tot) % MOD;
+    update(x, {x, 1});
   }
-  cout << ans << "\n";
+  std::cout << ans << "\n";
 }
