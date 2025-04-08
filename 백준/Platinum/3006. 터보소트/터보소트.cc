@@ -1,64 +1,48 @@
-#include <algorithm>
-#include <climits>
-#include <deque>
-#include <iostream>
-#include <map>
-#include <numeric>
-#include <queue>
-#include <set>
-#include <stack>
-#include <tuple>
-#include <vector>
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-using ll = long long;
-using namespace std;
+#include <bits/stdc++.h>
+using i64 = long long;
 
-const int _size = 1 << 17;
-int seg[_size << 1];
-void update(int i, int x) {
-  i += _size;
-  seg[i] = x;
-  while (i > 1) {
-    i >>= 1;
-    seg[i] = seg[2 * i] + seg[2 * i + 1];
+const int MAX = 1 << 17;
+int info[MAX << 1];
+void construct() {
+  for (int i = MAX - 1; i != 0; --i) {
+    info[i] = info[2 * i] + info[2 * i + 1];
   }
 }
-int sum(int i, int st, int en, int l, int r) {
-  if (r <= st || en <= l) return 0;
-  if (l <= st && en <= r) return seg[i];
+void update(int node, int x) {
+  node += MAX;
+  info[node] += x;
+  while (node > 1) {
+    node /= 2;
+    info[node] = info[2 * node] + info[2 * node + 1];
+  }
+}
+int sum(int node, int st, int en, int l, int r) {
+  if (en <= l || r <= st) {
+    return 0;
+  }
+  if (l <= st && en <= r) {
+    return info[node];
+  }
   int mid = (st + en) / 2;
-  return sum(2 * i, st, mid, l, r) + sum(2 * i + 1, mid, en, l, r);
+  return sum(2 * node, st, mid, l, r) + sum(2 * node + 1, mid, en, l, r);
 }
 int main() {
-  fastio;
-  int n, x;
-  cin >> n;
-  vector<pair<int, int>> a;
-  for (int i = 0; i < n; ++i) {
-    cin >> x;
-    a.pb({x, i});
-    seg[i + _size] = 1;
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  int N;
+  std::cin >> N;
+  std::vector<int> idx(N);
+  for (int i = 0; i < N; ++i) {
+    int x;
+    std::cin >> x;
+    idx[x - 1] = i;
+    info[MAX + i] = 1;
   }
-  sort(all(a));
-  for (int i = _size - 1; i != 0; --i) seg[i] = seg[2 * i] + seg[2 * i + 1];
-  int l = 0, r = n - 1;
-  for (int i = 0; i < n; ++i) {
-    int x, idx;
-    tie(x, idx) = a[i];
-    if (i & 1) {
-      tie(x, idx) = a[n - 1 - i / 2];
-      cout << sum(1, 0, _size, idx + 1, _size) << "\n";
-    } else {
-      tie(x, idx) = a[i / 2];
-      cout << sum(1, 0, _size, 0, idx) << "\n";
-    }
-    update(idx, 0);
+  construct();
+  for (int i = 0; i < N; ++i) {
+    int cur = i % 2 == 0 ? i / 2 : N - 1 - i / 2;
+    int j = idx[cur];
+    int dis = i % 2 == 0 ? sum(1, 0, MAX, 0, j) : sum(1, 0, MAX, j + 1, N);
+    update(j, -1);
+    std::cout << dis << "\n";
   }
 }
