@@ -1,67 +1,56 @@
-#include <algorithm>
-#include <climits>
-#include <deque>
-#include <iostream>
-#include <map>
-#include <numeric>
-#include <queue>
-#include <set>
-#include <stack>
-#include <tuple>
-#include <vector>
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-using ll = long long;
-using namespace std;
+#include <bits/stdc++.h>
+using i64 = long long;
 
-const int _size = 1 << 17;
-ll seg[_size << 1];
-// d[i] = a[i] - a[i - 1], d[0] = 0
-void update(int l, int r, ll x) {
-  l += _size;
-  r += _size + 1;
-  seg[l] += x;
-  seg[r] -= x;
-  while (l > 1) {
-    l >>= 1;
-    seg[l] = seg[2 * l] + seg[2 * l + 1];
-  }
-  while (r > 1) {
-    r >>= 1;
-    seg[r] = seg[2 * r] + seg[2 * r + 1];
+const int MAX = 1 << 17;
+i64 info[MAX << 1];
+void construct() {
+  for (int i = MAX - 1; i != 0; --i) {
+    info[i] = info[2 * i] + info[2 * i + 1];
   }
 }
-ll sum(int i, int st, int en, int l, int r) {
-  if (en <= l || r <= st) return 0;
-  if (l <= st && en <= r) return seg[i];
-  int mid = (st + en) / 2;
-  return sum(2 * i, st, mid, l, r) + sum(2 * i + 1, mid, en, l, r);
+void update(int p, int x) {
+  p += MAX;
+  info[p] += x;
+  while (p > 1) {
+    p /= 2;
+    info[p] = info[2 * p] + info[2 * p + 1];
+  }
+}
+i64 rangeQuery(int p, int l, int r, int x, int y) {
+  if (r <= x || y <= l) {
+    return 0;
+  }
+  if (x <= l && r <= y) {
+    return info[p];
+  }
+  int m = (l + r) / 2;
+  return rangeQuery(2 * p, l, m, x, y) + rangeQuery(2 * p + 1, m, r, x, y);
 }
 int main() {
-  fastio;
-  int n, m, a, b, c, pre = 0, x;
-  cin >> n;
-  for (int i = 0; i < n; ++i) {
-    cin >> x;
-    seg[i + _size] = x - pre;
-    pre = x;
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  int N, M;
+  std::cin >> N;
+  for (int i = 0; i < N; ++i) {
+    int x;
+    std::cin >> x;
+    info[MAX + i] += x;
+    info[MAX + i + 1] -= x;
   }
-  for (int i = _size - 1; i != 0; --i) seg[i] = seg[2 * i] + seg[2 * i + 1];
-  cin >> m;
-  while (m--) {
-    cin >> a;
-    if (a == 1) {
-      cin >> b >> c >> x;
-      update(b - 1, c - 1, x);
-    } else {
-      cin >> x;
-      cout << sum(1, 0, _size, 0, x) << "\n";
+  construct();
+  std::cin >> M;
+  for (int i = 0; i < M; ++i) {
+    int q;
+    std::cin >> q;
+    if (q == 1) {
+      int l, r, k;
+      std::cin >> l >> r >> k;
+      l--;
+      update(l, k);
+      update(r, -k);
+    } else if (q == 2) {
+      int x;
+      std::cin >> x;
+      std::cout << rangeQuery(1, 0, MAX, 0, x) << "\n";
     }
   }
 }
