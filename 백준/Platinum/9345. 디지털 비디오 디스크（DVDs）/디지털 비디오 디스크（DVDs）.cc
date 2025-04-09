@@ -1,82 +1,66 @@
-#include <algorithm>
-#include <climits>
-#include <deque>
-#include <iostream>
-#include <map>
-#include <numeric>
-#include <queue>
-#include <set>
-#include <stack>
-#include <tuple>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-#define INF 0x3f3f3f3f
-using ll = long long;
-using namespace std;
+#include <bits/stdc++.h>
+using i64 = long long;
 
-const int _size = 1 << 17;
-int t, n, k, q, a, b;
-int seg[_size << 1][2];
+const int MAX = 1 << 17;
+constexpr int INF = 0x3f3f3f3f;
+int info[MAX << 1][2];
 void construct() {
-  for (int i = _size - 1; i != 0; --i) {
-    seg[i][0] = min(seg[i << 1][0], seg[i << 1 | 1][0]);
-    seg[i][1] = max(seg[i << 1][1], seg[i << 1 | 1][1]);
+  for (int i = MAX - 1; i != 0; --i) {
+    info[i][0] = std::max(info[2 * i][0], info[2 * i + 1][0]);
+    info[i][1] = std::min(info[2 * i][1], info[2 * i + 1][1]);
   }
-}
-void init() {
-  for (int i = _size; i < 2 * _size; ++i) {
-    if (i < _size + n) seg[i][0] = seg[i][1] = i - _size;
-    else {
-      seg[i][0] = INF;
-      seg[i][1] = -1;
-    }
-  }
-  construct();
 }
 void update(int node, int x) {
-  node += _size;
-  seg[node][0] = seg[node][1] = x;
+  node += MAX;
+  info[node][0] = x;
+  info[node][1] = x;
   while (node > 1) {
-    node >>= 1;
-    seg[node][0] = min(seg[node << 1][0], seg[node << 1 | 1][0]);
-    seg[node][1] = max(seg[node << 1][1], seg[node << 1 | 1][1]);
+    node /= 2;
+    info[node][0] = std::max(info[2 * node][0], info[2 * node + 1][0]);
+    info[node][1] = std::min(info[2 * node][1], info[2 * node + 1][1]);
   }
 }
-pair<int, int> sum(int node, int st, int en, int l, int r) {
-  if (en <= l || r <= st) return {INF, -1};
-  if (l <= st && en <= r) return {seg[node][0], seg[node][1]};
+std::pair<int, int> rangeQuery(int node, int st, int en, int l, int r) {
+  if (r <= st || en <= l) {
+    return {0, INF};
+  }
+  if (l <= st && en <= r) {
+    return {info[node][0], info[node][1]};
+  }
   int mid = (st + en) / 2;
-  auto [mn1, mx1] = sum(node << 1, st, mid, l, r);
-  auto [mn2, mx2] = sum(node << 1 | 1, mid, en, l, r);
-  return {min(mn1, mn2), max(mx1, mx2)};
+  auto [l1, l2] = rangeQuery(2 * node, st, mid, l, r);
+  auto [r1, r2] = rangeQuery(2 * node + 1, mid, en, l, r);
+  return {std::max(l1, r1), std::min(l2, r2)};
 }
-int main() {
-  fastio;
-  cin >> t;
-  while (t--) {
-    cin >> n >> k;
-    init();
-    for (int i = 0; i < k; ++i) {
-      cin >> q >> a >> b;
-      if (!q) {
-        int tmp = seg[_size + a][0];
-        update(a, seg[_size + b][0]);
-        update(b, tmp);
+void solve() {
+  int N, K;
+  std::cin >> N >> K;
+  for (int i = 0; i < MAX; ++i) {
+    info[MAX + i][0] = info[MAX + i][1] = i;
+  }
+  construct();
+  for (int i = 0; i < K; ++i) {
+    int q, a, b;
+    std::cin >> q >> a >> b;
+    if (q == 0) {
+      int tmp = info[a + MAX][0];
+      update(a, info[b + MAX][0]);
+      update(b, tmp);
+    } else if (q == 1) {
+      auto [max, min] = rangeQuery(1, 0, MAX, a, b + 1);
+      if (min == a && max == b) {
+        std::cout << "YES\n";
       } else {
-        auto [l, r] = sum(ROOT, 0, _size, a, b + 1);
-        if (l == a && r == b) cout << "YES\n";
-        else cout << "NO\n";
+        std::cout << "NO\n";
       }
     }
+  }
+}
+int main() {
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  int T;
+  std::cin >> T;
+  while (T--) {
+    solve();
   }
 }
