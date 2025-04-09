@@ -1,55 +1,44 @@
-#include <algorithm>
-#include <climits>
-#include <deque>
-#include <iostream>
-#include <map>
-#include <numeric>
-#include <queue>
-#include <set>
-#include <stack>
-#include <tuple>
-#include <vector>
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-using ll = long long;
-using namespace std;
+#include <bits/stdc++.h>
+using i64 = long long;
 
-const int _size = 1 << 20;
-int seg[2 * _size];
-
-void update(int idx, int delta) {
-  idx += _size;
-  seg[idx] += delta;
-  while (idx > 1) {
-    idx >>= 1;
-    seg[idx] = seg[2 * idx] + seg[2 * idx + 1];
+const int MAX = 1 << 20;
+int info[MAX << 1];
+void update(int p, int x) {
+  p += MAX;
+  info[p] += x;
+  while (p > 1) {
+    p /= 2;
+    info[p] = info[2 * p] + info[2 * p + 1];
   }
 }
-int kth(int idx, int st, int en, int k) {
-  if (st + 1 == en) return st;
-  int mid = (st + en) / 2, l = seg[2 * idx];
-  if (k <= l) return kth(2 * idx, st, mid, k);
-  return kth(2 * idx + 1, mid, en, k - l);
+int find(int p, int l, int r, int k) {
+  if (l + 1 == r) {
+    return l;
+  }
+  int ln = info[2 * p];
+  int m = (l + r) / 2;
+  if (k > ln) {
+    return find(2 * p + 1, m, r, k - ln);
+  }
+  return find(2 * p, l, m, k);
 }
 int main() {
-  fastio;
-  int n, a, b, c;
-  cin >> n;
-  while (n--) {
-    cin >> a >> b;
-    if (a == 1) {
-      int res = kth(1, 0, _size, b);
-      update(res, -1);
-      cout << res << "\n";
-    } else {
-      cin >> c;
-      update(b, c);
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  int N;
+  std::cin >> N;
+  for (int i = 0; i < N; ++i) {
+    int A;
+    std::cin >> A;
+    if (A == 1) {
+      int B;
+      std::cin >> B;
+      int x = find(1, 0, MAX, B);
+      update(x, -1);
+      std::cout << x << "\n";
+    } else if (A == 2) {
+      int B, C;
+      std::cin >> B >> C;
+      update(B, C);
     }
   }
 }
