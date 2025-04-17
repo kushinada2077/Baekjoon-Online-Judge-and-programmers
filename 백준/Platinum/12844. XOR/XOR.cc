@@ -1,78 +1,67 @@
-#include <algorithm>
-#include <climits>
-#include <deque>
-#include <iostream>
-#include <map>
-#include <numeric>
-#include <queue>
-#include <set>
-#include <stack>
-#include <tuple>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-#define INF 0x3f3f3f3f
-using ll = long long;
-using namespace std;
+#include <bits/stdc++.h>
+using i64 = long long;
 
-const int _size = 1 << 19;
-ll seg[_size << 1], lazy[_size << 1];
-
-void construct() {
-  for (int i = _size - 1; i != 0; --i) seg[i] = seg[i << 1] ^ seg[i << 1 | 1];
-}
-void propagate(int node, int st, int en) {
-  if (lazy[node]) {
-    if (node < _size) {
-      lazy[node << 1] ^= lazy[node];
-      lazy[node << 1 | 1] ^= lazy[node];
-    } else seg[node] ^= lazy[node];
-    lazy[node] = 0;
+const int MAX = 1 << 19;
+int info[MAX << 1], lazy[MAX << 1];
+void propagate(int p, int l, int r) {
+  if (lazy[p] != 0) {
+    if (p < MAX) {
+      lazy[2 * p] ^= lazy[p];
+      lazy[2 * p + 1] ^= lazy[p];
+    }
+    if ((r - l) % 2 == 1) {
+      info[p] ^= lazy[p];
+    }
+    lazy[p] = 0;
   }
 }
-ll sum(int node, int st, int en, int l, int r) {
-  propagate(node, st, en);
-  if (en <= l || r <= st) return 0;
-  if (l <= st && en <= r) return seg[node];
-  int mid = (st + en) / 2;
-  return sum(node << 1, st, mid, l, r) ^ sum(node << 1 | 1, mid, en, l, r);
-}
-void add(int node, int st, int en, int l, int r, ll x) {
-  propagate(node, st, en);
-  if (en <= l || r <= st) return;
-  if (l <= st && en <= r) {
-    lazy[node] ^= x;
-    propagate(node, st, en);
+void modify(int p, int l, int r, int x, int y, int k) {
+  propagate(p, l, r);
+  if (r <= x || y <= l) {
     return;
   }
-  int mid = (st + en) / 2;
-  add(node << 1, st, mid, l, r, x);
-  add(node << 1 | 1, mid, en, l, r, x);
-  seg[node] = seg[node << 1] ^ seg[node << 1 | 1];
+  if (x <= l && r <= y) {
+    lazy[p] ^= k;
+    propagate(p, l, r);
+    return;
+  }
+  int m = (l + r) / 2;
+  modify(2 * p, l, m, x, y, k);
+  modify(2 * p + 1, m, r, x, y, k);
+  info[p] = info[2 * p] ^ info[2 * p + 1];
 }
+int rangeQuery(int p, int l, int r, int x, int y) {
+  propagate(p, l, r);
+  if (r <= x || y <= l) {
+    return 0;
+  }
+  if (x <= l && r <= y) {
+    return info[p];
+  }
+  int m = (l + r) / 2;
+  return rangeQuery(2 * p, l, m, x, y) ^ rangeQuery(2 * p + 1, m, r, x, y);
+}
+
 int main() {
-  fastio;
-  int n, m, a, b, c;
-  ll d;
-  cin >> n;
-  for (int i = 0; i < n; ++i) cin >> seg[i + _size];
-  cin >> m;
-  construct();
-  for (int i = 0; i < m; ++i) {
-    cin >> a >> b >> c;
-    if (b > c) swap(b, c);
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  int N, M;
+  std::cin >> N;
+  for (int i = 0; i < N; ++i) {
+    std::cin >> info[MAX + i];
+  }
+  for (int i = MAX - 1; i != 0; --i) {
+    info[i] = info[2 * i] ^ info[2 * i + 1];
+  }
+  std::cin >> M;
+  for (int i = 0; i < M; ++i) {
+    int a, b, c;
+    std::cin >> a >> b >> c;
     if (a == 1) {
-      cin >> d;
-      add(ROOT, 0, _size, b, c + 1, d);
-    } else cout << sum(ROOT, 0, _size, b, c + 1) << "\n";
+      int d;
+      std::cin >> d;
+      modify(1, 0, MAX, b, c + 1, d);
+    } else if (a == 2) {
+      std::cout << rangeQuery(1, 0, MAX, b, c + 1) << "\n";
+    }
   }
 }
