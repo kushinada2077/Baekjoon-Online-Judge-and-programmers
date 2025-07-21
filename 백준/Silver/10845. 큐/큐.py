@@ -1,53 +1,77 @@
+class Node:
+  def __init__(self, val):
+    self.next = None
+    self.val = val 
+
 class Queue:
-    def __init__(self, max_size=1000005):
-        self.dat = [0] * max_size
-        self.head = 0
-        self.tail = 0
+  def __init__(self):
+    self.head = Node(0)
+    self.tail = self.head
+    self.sz = 0
+  
+  def size(self):
+    return self.sz
+  def push(self, val):
+    newNode = Node(val)
+    self.tail.next = newNode
+    self.tail = self.tail.next 
+    self.sz += 1
+  def front(self):
+    if self.size() == 0:
+      return
+    return self.head.next.val
+  def back(self):
+    if self.size() == 0:
+      return
+    return self.tail.val
+      
 
-    def push(self, x):
-        self.dat[self.tail] = x
-        self.tail += 1
+  def pop(self): 
+    if self.size() == 0:
+      return 
+    t = self.head.next
+    self.head.next = t.next
+    self.sz -= 1
+    if self.tail == t:
+      self.tail = self.head
+    del t
 
-    def pop(self):
-        self.head += 1
-    
-    def empty(self):
-        return not (self.tail - self.head)
-
-    def front(self):
-        return self.dat[self.head]
-
-    def back(self):
-        return self.dat[self.tail - 1]
-
-
-q = Queue()
-n = int(input())
+N = int(input())
+Q = Queue()
 ans = []
+for i in range(N):
+  l = input().split(" ")
+  op = l[0]
 
-for i in range(n):
-    op = input()
-    if op == "pop":
-        if q.empty():
-            ans.append('-1') 
-            continue
-        ans.append(q.front())
-        q.pop()
-    elif op == 'size':
-        ans.append(str(q.tail - q.head))
-    elif op == 'empty':
-        ans.append(str(int(q.empty())))
-    elif op == 'front':
-        if q.empty():
-            ans.append('-1')
-            continue
-        ans.append(q.front())
-    elif op == 'back':
-        if q.empty():
-            ans.append('-1')
-            continue
-        ans.append(q.back())
+  if op == 'push':
+    Q.push(l[1])
+
+  elif op == 'pop':
+    if Q.size() == 0:
+      ans.append('-1')
     else:
-        num = op.split()[1]
-        q.push(num)
-print("\n".join(ans))
+      ans.append(Q.front())
+      Q.pop()
+
+  elif op == 'size':
+    ans.append(str(Q.size()))
+
+  elif op == 'empty':
+    if Q.size() == 0:
+      ans.append('1')
+    else:
+      ans.append('0')
+
+  elif op == 'front':
+    if Q.size() == 0:
+      ans.append('-1')
+    else:
+      ans.append(Q.front())
+
+  elif op == 'back':
+    if Q.size() == 0:
+      ans.append('-1')
+    else:
+      ans.append(Q.back())
+     
+print('\n'.join(ans)) 
