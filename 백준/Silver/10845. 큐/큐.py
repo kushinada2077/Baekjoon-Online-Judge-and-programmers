@@ -1,41 +1,49 @@
 class Node:
   def __init__(self, val):
+    self.val = val
     self.next = None
-    self.val = val 
-
+    
 class Queue:
   def __init__(self):
-    self.head = Node(0)
-    self.tail = self.head
     self.sz = 0
+    self.head = None
+    self.tail = None
   
   def size(self):
     return self.sz
+  
   def push(self, val):
-    newNode = Node(val)
-    self.tail.next = newNode
-    self.tail = self.tail.next 
+    n_node = Node(val)
+    if self.size() == 0:
+      self.head = self.tail = n_node 
+    
+    else:
+      self.tail.next = n_node
+      self.tail = n_node
+
     self.sz += 1
+
+  def pop(self):
+    if self.size() == 0:
+      return
+    
+    t_node = self.head
+    self.head = self.head.next
+    del t_node
+    self.sz -= 1
+    if self.size() == 0:
+      self.tail = None
+  
   def front(self):
     if self.size() == 0:
       return
-    return self.head.next.val
+    return self.head.val
+  
   def back(self):
     if self.size() == 0:
       return
     return self.tail.val
-      
-
-  def pop(self): 
-    if self.size() == 0:
-      return 
-    t = self.head.next
-    self.head.next = t.next
-    self.sz -= 1
-    if self.tail == t:
-      self.tail = self.head
-    del t
-
+  
 N = int(input())
 Q = Queue()
 ans = []
