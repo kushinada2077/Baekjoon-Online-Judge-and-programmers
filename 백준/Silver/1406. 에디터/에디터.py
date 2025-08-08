@@ -1,65 +1,70 @@
 class Node:
-  def __init__(self, data):
-    self.data = data
-    self.prev = None
+  def __init__(self, val):
+    self.val = val
     self.next = None
+    self.prev = None
 
 class LinkedList:
   def __init__(self):
-    self.head = Node(None)
+    self.head = None
+    self.sz = 0
   
-  def insert(self, addr, data):
-    newNode = Node(data)
-    newNode.next = addr.next
-    newNode.prev = addr
-    if (addr.next): addr.next.prev = newNode
-    addr.next = newNode 
-
-  def erase(self, addr):
-    if addr == self.head: return
-    if (addr.next == None):
-      addr.prev.next = None
+  def size(self):
+    return self.sz
+  
+  def insert(self, val, ptr = None):
+    ptr = ptr or self.head
+    n_node = Node(val)
+    if self.size() == 0:
+      self.head = n_node
+      n_node.next = n_node
+      n_node.prev = n_node
+    else:
+      if ptr.next != None:
+        ptr.next.prev = n_node
+      n_node.next = ptr.next
+      n_node.prev = ptr
+      ptr.next = n_node
+    self.sz += 1
+  
+  def erase(self, ptr):
+    if self.size() == 0:
       return
-    
-    addr.prev.next = addr.next
-    addr.next.prev = addr.prev
-  
-  def traverse(self):
-    cur = self.head.next
+    if self.size() == 1:
+      self.head = None 
+    else:
+      ptr.prev.next = ptr.next
+      ptr.next.prev = ptr.prev
+    self.sz -= 1
+    ret = ptr.prev
+    del ptr
+    return ret
 
-    while cur:
-      print(cur.data, end="")
-      cur = cur.next
-
-text = input()
+S = input()
 N = int(input())
-ll = LinkedList()
-cursor = ll.head
-
-for c in text:
-  ll.insert(cursor, c)
+L = LinkedList()
+L.insert(-1)
+cursor = L.head
+for c in S:
+  L.insert(c, cursor)
   cursor = cursor.next
 
 for i in range(N):
-  splited = input().split()
-  op = splited[0]
-
-  if op == "L":
-    if cursor == ll.head: continue
-    cursor = cursor.prev
-
-  elif op == "D":
-    if cursor.next == None: continue
+  line = input().split()
+  if line[0] == 'P':
+    L.insert(line[1], cursor)
     cursor = cursor.next
-
-  elif op == "B":
-    if cursor == ll.head: continue
-    ll.erase(cursor)
+  elif line[0] == 'L' and cursor != L.head:
     cursor = cursor.prev
-
-  elif op == "P":
-    c = splited[1]
-    ll.insert(cursor, c) 
+  elif line[0] == 'D' and cursor.next != L.head:
     cursor = cursor.next
+  elif line[0] == 'B' and cursor != L.head:
+    cursor = L.erase(cursor)
 
-ll.traverse()
+ptr = L.head.next
+ans = []
+while ptr != L.head:
+  ans.append(ptr.val)
+  ptr = ptr.next
+
+print(''.join(ans))
