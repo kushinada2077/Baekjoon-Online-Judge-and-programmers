@@ -23,21 +23,6 @@ int main() {
     return ret;
   };
 
-  auto padding = [&](int x, int digit) {
-    std::string ret = "";
-    while (x > 0) {
-      ret += std::to_string(x % 10);
-      x /= 10;
-    }
-
-    while ((int)ret.size() < digit) {
-      ret += ' ';
-    }
-
-    std::reverse(ret.begin(), ret.end());
-    return ret;
-  };
-
   auto solve = [&](int y, int x) -> i64 {
     int layer = std::max(std::abs(y), std::abs(x));
     i64 ret = f(f, layer);
@@ -62,7 +47,7 @@ int main() {
 
   for (int i = 0; i < r2 - r1 + 1; ++i) {
     for (int j = 0; j < c2 - c1 + 1; ++j) {
-      std::cout << padding(ans[i][j], max_digit) << " \n"[j == c2 - c1];
+      std::cout << std::setw(max_digit) << std::setfill(' ') << ans[i][j] << " \n"[j == c2 - c1];
     }
   }
 }
