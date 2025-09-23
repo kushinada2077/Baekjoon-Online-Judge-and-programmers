@@ -4,14 +4,8 @@ using i64 = long long;
 int main() {
   std::cin.tie(nullptr)->sync_with_stdio(false);
   int max_digit = 0;
-  std::vector<i64> dp(5001, -1);
 
-  auto f = [&](auto&& f, int x) -> i64 {
-    if (x == 0) return 1LL;
-    if (x == 1) return 3LL;
-    if (dp[x] != -1) return dp[x];
-    return dp[x] = 2 * f(f, x - 1) - f(f, x - 2) + 8;
-  };
+  auto f = [&](auto&& f, i64 x) -> i64 { return 4 * x * x - 2 * x + 1; };
 
   auto digit = [&](int x) {
     int ret = 0;
@@ -47,7 +41,7 @@ int main() {
 
   for (int i = 0; i < r2 - r1 + 1; ++i) {
     for (int j = 0; j < c2 - c1 + 1; ++j) {
-      std::cout << std::setw(max_digit) << std::setfill(' ') << ans[i][j] << " \n"[j == c2 - c1];
+      std::cout << std::setw(max_digit) << ans[i][j] << " \n"[j == c2 - c1];
     }
   }
 }
