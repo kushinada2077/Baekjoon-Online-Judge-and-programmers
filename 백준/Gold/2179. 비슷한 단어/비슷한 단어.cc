@@ -2,55 +2,48 @@
 using i64 = long long;
 using P = std::pair<int, int>;
 
-template <class T, class U>
-inline bool chmax(T& a, const U& b) {
-  if (a < b) {
-    a = b;
-    return true;
-  }
-  return false;
-}
-
 int main() {
   std::cin.tie(nullptr)->sync_with_stdio(false);
   int n;
   std::cin >> n;
-  std::vector<std::string> a(n);
-  int max_len = 0;
+  std::vector<std::pair<std::string, int>> a(n);
+  std::vector<std::string> b(n);
   for (int i = 0; i < n; ++i) {
-    std::cin >> a[i];
-    chmax(max_len, (int)a[i].size());
+    std::cin >> a[i].first;
+    a[i].second = i;
+    b[i] = a[i].first;
   }
 
-  for (int l = max_len; l >= 0; --l) {
-    std::map<std::string, int> h;
-    std::set<std::string> ans_prefix;
+  auto common_prefix_len = [&](const std::string& s, const std::string& t) {
+    int n = std::min((int)s.size(), (int)t.size());
     for (int i = 0; i < n; ++i) {
-      std::string prefix = a[i].substr(0, std::min((int)a[i].size(), l));
-      if (h[prefix] == 1) ans_prefix.insert(prefix);
-      h[prefix]++;
+      if (s[i] != t[i]) return i;
     }
 
-    if (!ans_prefix.empty()) {
-      int j;
-      std::string pre;
-      for (j = 0; j < n; ++j) {
-        std::string prefix = a[j].substr(0, std::min((int)a[j].size(), l));
-        if (ans_prefix.contains(prefix)) {
-          pre = prefix;
-          std::cout << a[j] << "\n";
-          break;
-        }
-      }
+    return n;
+  };
 
-      for (int k = j + 1; k < n; ++k) {
-        if (a[k].starts_with(pre)) {
-          std::cout << a[k] << "\n";
-          break;
-        }
-      }
+  std::ranges::sort(a);
 
-      return 0;
+  std::string prefix = "";
+  int idx = 0x3f3f3f3f;
+  for (int i = 0; i < n - 1; ++i) {
+    auto [s1, idx1] = a[i];
+    auto [s2, idx2] = a[i + 1];
+    int l = common_prefix_len(s1, s2);
+    if ((int)prefix.size() < l) {
+      prefix = s1.substr(0, l);
+      idx = std::min(idx1, idx2);
+    } else if ((int)prefix.size() == l && std::min(idx1, idx2) < idx) {
+      prefix = s1.substr(0, l);
+      idx = std::min(idx1, idx2);
+    }
+  }
+
+  for (int i = 0, cnt = 0; i < n && cnt < 2; ++i) {
+    if (b[i].starts_with(prefix)) {
+      std::cout << b[i] << "\n";
+      cnt++;
     }
   }
 }
