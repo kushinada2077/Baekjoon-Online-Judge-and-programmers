@@ -17,16 +17,14 @@ int main() {
   std::string s;
   std::cin >> n >> s;
 
-  int ans = 0;
+  int ans = 0, kind = 0;
   std::vector<int> cnt(26);
-  std::set<char> a_list;
 
   for (int i = 0, j = 0; i < (int)s.size(); ++i) {
-    cnt[s[i] - 'a']++;
-    a_list.insert(s[i]);
-    while ((int)a_list.size() > n) {
+    if (cnt[s[i] - 'a']++ == 0) kind++;
+    while (kind > n) {
       if (--cnt[s[j] - 'a'] == 0) {
-        a_list.erase(s[j]);
+        kind--;
       }
       j++;
     }
