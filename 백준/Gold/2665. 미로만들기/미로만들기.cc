@@ -26,11 +26,12 @@ int main() {
       int ny = y + "2101"[dir] - '1';
       int nx = x + "1210"[dir] - '1';
       if (ny < 0 || ny >= n || nx < 0 || nx >= n) continue;
-      if (board[ny][nx] == '1' && dist[ny][nx] > dist[y][x]) {
+      if (dist[ny][nx] != INF) continue;
+      if (board[ny][nx] == '1') {
         dq.push_front({ny, nx});
         dist[ny][nx] = dist[y][x];
       }
-      if (board[ny][nx] == '0' && dist[ny][nx] > dist[y][x] + 1) {
+      if (board[ny][nx] == '0') {
         dq.push_back({ny, nx});
         dist[ny][nx] = dist[y][x] + 1;
       }
