@@ -8,30 +8,25 @@ int main() {
   int g;
   std::cin >> g;
 
-  std::vector<i64> a;
-  std::set<i64> b;
+  std::vector<i64> b;
   std::map<i64, i64> c;
-
   i64 x = 1;
 
-  while ((x + 1) * (x + 1) - x * x <= g) {
-    a.push_back(x);
-    b.insert(x * x);
-    c[x * x] = x;
+  while (x * x - (x - 1) * (x - 1) <= g) {
+    b.push_back(x);
     x++;
   }
 
-  a.push_back(x);
-  b.insert(x * x);
-  c[x * x] = x;
-
+  int n = (int)b.size();
   bool ok = false;
-  for (auto x : a) {
-    if (b.contains(x * x - g)) {
-      std::cout << c[x * x] << "\n";
+  int j = 0;
+  for (int i = 0; i < n; ++i) {
+    for (; b[i] * b[i] - b[j] * b[j] > g; ++j);
+    if (b[i] * b[i] - b[j] * b[j] == g) {
+      std::cout << b[i] << "\n";
       ok = true;
     }
   }
 
-  if (ok == false) std::cout << -1 << "\n";
+  if (ok == false) std::cout << "-1\n";
 }
