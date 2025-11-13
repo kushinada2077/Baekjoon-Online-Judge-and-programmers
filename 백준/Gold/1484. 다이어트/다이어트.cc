@@ -9,9 +9,7 @@ int main() {
   std::cin >> g;
 
   std::vector<i64> b;
-  std::map<i64, i64> c;
   i64 x = 1;
-
   while (x * x - (x - 1) * (x - 1) <= g) {
     b.push_back(x);
     x++;
