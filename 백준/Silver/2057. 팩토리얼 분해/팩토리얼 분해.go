@@ -20,36 +20,33 @@ func init() {
 	writer = bufio.NewWriter(os.Stdout)
 }
 
-var (
-	MAX int64  = 20
-	ans string = "NO"
-	n   int64
-	fac [21]int64
-)
-
-func f(k, sum int64) {
-	if k == MAX {
-		if sum == n {
-			ans = "YES"
-		}
-		return
-	}
-
-	f(k+1, sum)
-	f(k+1, sum+fac[k])
-}
 func main() {
 	defer writer.Flush()
+	var n int64
 	fmt.Fscan(reader, &n)
 	if n == 0 {
 		n = -1
 	}
+	var fac int64 = 1
 
-	fac[0] = 1
-	for i := int64(1); i <= 20; i++ {
-		fac[i] = fac[i-1] * i
+	for i := int64(2); i <= 20; i++ {
+		fac *= i
 	}
 
-	f(0, 0)
-	fmt.Fprintln(writer, ans)
+	for i := int64(20); i > 0; i-- {
+		if n >= fac {
+			n -= fac
+		}
+		fac /= i
+	}
+
+	if n == 1 {
+		n -= 1
+	}
+
+	if n == 0 {
+		fmt.Fprintln(writer, "YES")
+	} else {
+		fmt.Fprintln(writer, "NO")
+	}
 }
