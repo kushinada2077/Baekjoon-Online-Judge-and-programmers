@@ -21,39 +21,36 @@ int main() {
       std::cin >> board[i][j];
     }
   }
-  std::vector<int> comb(n * n, 1);
-  std::fill(comb.begin(), comb.begin() + 3, 0);
+
   int ans = 0x3f3f3f3f;
-
   std::vector dy = {0, 1, 0, -1, 0}, dx = {0, 0, 1, 0, -1};
-  do {
-    std::vector vis(n, std::vector<bool>(n));
-    std::vector<P> coor;
-    for (int i = 0; i < n * n; ++i) {
-      if (comb[i] == 0) coor.push_back({i / n, i % n});
-    }
+  std::vector<P> coor;
+  auto dfs = [&](auto&& dfs, int k) {
+    if ((int)coor.size() == 3) {
+      std::set<P> s;
+      int sum = 0;
 
-    for (auto [y, x] : coor) {
-      for (int dir = 0; dir < 5; ++dir) {
-        int ny = y + dy[dir];
-        int nx = x + dx[dir];
-        if (ny < 0 || ny >= n || nx < 0 || nx >= n) continue;
-        vis[ny][nx] = true;
-      }
-    }
-
-    int cnt = 0, sum = 0;
-    for (int i = 0; i < n; ++i) {
-      for (int j = 0; j < n; ++j) {
-        if (vis[i][j] == true) {
-          cnt++;
-          sum += board[i][j];
+      for (auto [y, x] : coor) {
+        for (int dir = 0; dir < 5; ++dir) {
+          int ny = y + dy[dir];
+          int nx = x + dx[dir];
+          if (ny < 0 || ny >= n || nx < 0 || nx >= n) continue;
+          s.insert({ny, nx});
+          sum += board[ny][nx];
         }
       }
+
+      if ((int)s.size() == 15) ans = std::min(ans, sum);
+      return;
     }
 
-    if (cnt == 15) ans = std::min(ans, sum);
-  } while (std::next_permutation(comb.begin(), comb.end()));
+    for (int i = k; i < n * n; ++i) {
+      coor.push_back({i / n, i % n});
+      dfs(dfs, i + 1);
+      coor.pop_back();
+    }
+  };
 
+  dfs(dfs, 0);
   std::cout << ans << "\n";
 }
