@@ -25,29 +25,28 @@ int main() {
   int ans = 0x3f3f3f3f;
   std::vector dy = {0, 1, 0, -1, 0}, dx = {0, 0, 1, 0, -1};
   std::vector<P> coor;
+  std::vector vis(n, std::vector<bool>(n));
   auto dfs = [&](auto&& dfs, int k) {
     if ((int)coor.size() == 3) {
-      std::set<P> s;
       int sum = 0;
 
       for (auto [y, x] : coor) {
-        for (int dir = 0; dir < 5; ++dir) {
-          int ny = y + dy[dir];
-          int nx = x + dx[dir];
-          if (ny < 0 || ny >= n || nx < 0 || nx >= n) continue;
-          s.insert({ny, nx});
-          sum += board[ny][nx];
-        }
+        sum += board[y][x] + board[y + 1][x] + board[y - 1][x] + board[y][x + 1] + board[y][x - 1];
       }
 
-      if ((int)s.size() == 15) ans = std::min(ans, sum);
+      ans = std::min(ans, sum);
       return;
     }
 
     for (int i = k; i < n * n; ++i) {
-      coor.push_back({i / n, i % n});
+      int y = i / n, x = i % n;
+      if (y == 0 || y == n - 1 || x == 0 || x == n - 1) continue;
+      if (vis[y][x] || vis[y + 1][x] || vis[y - 1][x] || vis[y][x + 1] || vis[y][x - 1]) continue;
+      coor.push_back({y, x});
+      vis[y][x] = vis[y + 1][x] = vis[y - 1][x] = vis[y][x + 1] = vis[y][x - 1] = true;
       dfs(dfs, i + 1);
       coor.pop_back();
+      vis[y][x] = vis[y + 1][x] = vis[y - 1][x] = vis[y][x + 1] = vis[y][x - 1] = false;
     }
   };
 
