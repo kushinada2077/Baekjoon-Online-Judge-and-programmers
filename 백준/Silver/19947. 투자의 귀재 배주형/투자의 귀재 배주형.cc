@@ -15,24 +15,15 @@ int main() {
   kushinada;
   i64 h, y;
   std::cin >> h >> y;
+  std::vector<i64> dp(y + 1);
 
-  i64 ans = 0;
-  std::vector<P> c = {{5, 135}, {3, 120}, {1, 105}};
+  dp[y] = h;
 
-  auto dfs = [&](auto&& dfs, i64 h, i64 y) {
-    if (y == 0) {
-      ans = std::max(ans, h);
-      return;
-    }
-    for (int i = 0; i < 3; ++i) {
-      if (y >= c[i].first) {
-        dfs(dfs, h * c[i].second / 100, y - c[i].first);
-      }
-    }
+  for (int i = y - 1; i >= 0; --i) {
+    if (i + 5 <= y) dp[i] = std::max(dp[i], dp[i + 5] * 135 / 100);
+    if (i + 3 <= y) dp[i] = std::max(dp[i], dp[i + 3] * 120 / 100);
+    if (i + 1 <= y) dp[i] = std::max(dp[i], dp[i + 1] * 105 / 100);
+  }
 
-    return;
-  };
-
-  dfs(dfs, h, y);
-  std::cout << ans << "\n";
+  std::cout << dp[0] << "\n";
 }
