@@ -1,95 +1,93 @@
-#include <algorithm>
-#include <iostream>
-#include <queue>
-#include <stack>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-#define INF 0x3f3f3f3f
-using ll = long long;
-using namespace std;
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
 
-const int MX = 100001;
-int t, n, m, u, v, cnt = 1, SN, dfsn[MX], indg[MX], scc[MX];
-bool finished[MX];
-vector<int> adj[MX], scc_node[MX];
-vector<pair<int, int>> edge;
-stack<int> s;
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
 
-void init() {
-  cnt = 1;
-  SN = 0;
-  edge.clear();
-  for (int i = 0; i < n; ++i) {
-    finished[i] = dfsn[i] = indg[i] = scc[i] = 0;
-    adj[i].clear();
-    scc_node[i].clear();
-  }
-}
-int dfs(int cur) {
-  dfsn[cur] = cnt++;
-  s.push(cur);
-  int res = dfsn[cur];
-
-  for (auto& nxt : adj[cur]) {
-    if (dfsn[nxt] == 0) res = min(res, dfs(nxt));
-    else if (finished[nxt] == 0) res = min(res, dfsn[nxt]);
+void solve() {
+  int n, m;
+  std::cin >> n >> m;
+  std::vector adj(n, std::vector<int>());
+  for (int i = 0; i < m; ++i) {
+    int u, v;
+    std::cin >> u >> v;
+    adj[u].push_back(v);
   }
 
-  if (dfsn[cur] == res) {
-    while (1) {
-      int curr = s.top();
-      s.pop();
-      finished[curr] = 1;
-      scc[curr] = SN;
-      scc_node[SN].pb(curr);
-      if (cur == curr) break;
-    }
-    SN++;
-  }
-  return res;
-}
-int main() {
-  fastio;
-  cin >> t;
-  while (t--) {
-    cin >> n >> m;
-    init();
-    for (int i = 0; i < m; ++i) {
-      cin >> u >> v;
-      adj[u].pb(v);
-      edge.pb({u, v});
-    }
-    for (int i = 0; i < n; ++i) {
-      if (dfsn[i] == 0) dfs(i);
+  int dfsn_cnt = 0;
+  std::stack<int> s;
+  std::vector<int> dfsn(n, -1), v_to_scc(n, -1);
+  std::vector<bool> finished(n);
+  std::vector<std::vector<int>> scc;
+
+  auto dfs = [&](auto&& dfs, int u) -> int {
+    dfsn[u] = dfsn_cnt++;
+    s.push(u);
+    int res = dfsn[u];
+
+    for (auto v : adj[u]) {
+      if (dfsn[v] == -1) res = std::min(res, dfs(dfs, v));
+      else if (!finished[v]) res = std::min(res, dfsn[v]);
     }
 
-    for (auto& [u, v] : edge) {
-      if (scc[u] != scc[v]) indg[scc[v]]++;
-    }
-
-    int node = -1;
-    bool f = 1;
-    for (int i = 0; i < n; ++i) {
-      if (node == -1 && indg[scc[i]] == 0) node = scc[i];
-      else if (indg[scc[i]] == 0 && scc[i] != node) {
-        f = 0;
-        cout << "Confused\n";
-        break;
+    if (res == dfsn[u]) {
+      std::vector<int> tmp;
+      while (!s.empty()) {
+        int p = s.top();
+        s.pop();
+        tmp.push_back(p);
+        v_to_scc[p] = (int)scc.size();
+        finished[p] = true;
+        if (p == u) break;
       }
+
+      scc.push_back(tmp);
     }
 
-    if (f) {
-      sort(all(scc_node[node]));
-      for (auto& i : scc_node[node]) cout << i << "\n";
+    return res;
+  };
+
+  for (int i = 0; i < n; ++i) {
+    if (dfsn[i] == -1) dfs(dfs, i);
+  }
+
+  int scc_n = (int)scc.size();
+  std::vector<int> indg(scc_n);
+  for (int u = 0; u < n; ++u) {
+    for (auto v : adj[u]) {
+      if (v_to_scc[u] != v_to_scc[v]) indg[v_to_scc[v]]++;
     }
-    cout << "\n";
+  }
+
+  std::vector<int> ans;
+  for (int i = 0; i < scc_n; ++i) {
+    if (indg[i] == 0) ans.push_back(i);
+  }
+
+  if ((int)ans.size() > 1) {
+    std::cout << "Confused\n";
+  } else {
+    int x = ans.front();
+    std::sort(scc[x].begin(), scc[x].end());
+    for (auto u : scc[x]) {
+      std::cout << u << "\n";
+    }
+  }
+
+  std::cout << "\n";
+}
+
+int main() {
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  int t;
+  std::cin >> t;
+  while (t--) {
+    solve();
   }
 }

@@ -4,7 +4,7 @@
 
 ### 성능 요약
 
-메모리: 16032 KB, 시간: 152 ms
+메모리: 13540 KB, 시간: 200 ms
 
 ### 분류
 
@@ -12,19 +12,27 @@
 
 ### 제출 일자
 
-2024년 9월 29일 18:09:26
+2026년 2월 6일 19:54:23
 
 ### 문제 설명
 
-<p>World Soccer Championship is coming soon and coach Yogi wants to prepare his team as well as possible. So he made up a strategy field plan for every player of the team. One plan describes a number of possible locations for the player on the field. Moreover, if Yogi wants the player to be able to move from one location A to another location B then the plan specifies the ordered pair (A, B). He is sure that his team will win if the players run over the field from one location to another using only moves of the plan.</p>
+<p><img alt="" src="https://www.acmicpc.net/upload/images2/field(1).png" style="float:right; height:124px; line-height:20.8px; opacity:0.9; width:188px">World Soccer Championship이 다가오고 있다! 천재적인 전술을 창조하는 플랜 아티스트 감독 도현이는 자신의 팀이 승리하도록 만반의 준비를 가하고 있다. 도현이의 전략은 경기장을 여러 개의 구역으로 나누고, 어떤 선수가 A구역에서 B구역으로 이동하게 하는 움직임을 (A, B)로 표현한다. 모든 도현이의 팀 선수들이 이 움직임만을 따라서 이동한다면 승리하리라고 도현이는 확신한다.</p>
 
-<p><img alt="" src="https://www.acmicpc.net/upload/images2/field(1).png" style="float:right; height:124px; width:188px">Yogi tells every player to follow his plan and to start from a location that reaches every other location on the plan (by possibly multiple moves). However, it is quite difficult for some soccer players, simple minded as they are, to find a suitable starting location. Can you help every player to figure out the set of possible start locations?</p>
+<p>도현이는 선수들에게 자신의 전술을 말해주며, 다른 모든 구역에 도달할 수 있는 시작 구역을 찾은 뒤 지시한 움직임만을 따라가라고 했다. 그러나 도현이는 한 가지 간과한 것이 있었는데 그건 선수들이 자신만큼 똑똑하지 않다는 것이다. 선수들은 그러한 시작 구역을 찾는 것이 어려웠다. 이제 당신이 적절한 시작 구역을 찾아줘야 한다.</p>
+
+<div> </div>
 
 ### 입력 
 
- <p>The first line gives the number of field plans. The input contains at most eleven field plans (what else?). Every plan starts with a line of two integers N and M, with 1 ≤ N ≤ 100 000 and 1 ≤ M ≤ 100 000, giving the number of locations and the number of moves. In the following M lines a plan specifies moves (A, B) by two white space separated integers 0 ≤ A, B < N. The plans are separated by a blank line.</p>
+ <p>첫 번째 줄에 테스트 케이스의 개수가 주어지며, 이는 11보다 작거나 같은 정수이다.</p>
+
+<p>그 다음 줄부터 여러 개의 테스트 케이스가 주어지는데, 각 테스트 케이스마다 첫 번째 줄에 구역의 수 N, 지시한 움직임의 수 M이 주어지며 1 ≤ N, M ≤ 100,000 이다. 그 다음 M개의 줄에 걸쳐서 움직임 (A, B)가 주어지며, A, B는 0 ≤ A, B < N인 정수이다.</p>
+
+<p>각 테스트 케이스는 하나의 빈 줄로 구분된다.</p>
 
 ### 출력 
 
- <p>For every plan print out all possible starting locations, sorted increasingly and one per line. If there are no possible locations to start, print “Confused”. Print a blank line after each plan output.</p>
+ <p>각 테스트 케이스마다 가능한 모든 시작 구역을 오름차순으로 한 줄에 하나씩 출력한다. 만약 그러한 시작 구역이 없으면, "Confused"를 출력한다.</p>
+
+<p>각 테스트 케이스의 끝에는 하나의 빈 줄을 출력한다.</p>
 
