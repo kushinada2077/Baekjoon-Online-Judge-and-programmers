@@ -1,109 +1,128 @@
 #include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
+
 using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
 
-const int MAX = 500000;
-int N, M, S, P;
-std::vector adj(MAX, std::vector<int>());
-int cash[MAX], dfsn[MAX], cashSCC[MAX], cashAcc[MAX], SCC[MAX], indg[MAX];
-bool restaur[MAX], restaurSCC[MAX], finished[MAX];
-int cnt, SN;
-std::stack<int> ST;
-int dfs(int u) {
-  dfsn[u] = ++cnt;
-  ST.push(u);
-  int result = dfsn[u];
-  for (auto v : adj[u]) {
-    if (dfsn[v] == 0) {
-      result = std::min(result, dfs(v));
-    } else if (finished[v] == 0) {
-      result = std::min(result, dfsn[v]);
-    }
-  }
-
-  if (result == dfsn[u]) {
-    while (true) {
-      int t = ST.top();
-      ST.pop();
-      cashSCC[SN] += cash[t];
-      finished[t] = true;
-      SCC[t] = SN;
-      if (restaur[t] == true && restaurSCC[SN] == false) {
-        restaurSCC[SN] = true;
-      }
-      if (t == u) {
-        break;
-      }
-    }
-    SN++;
-  }
-  return result;
-}
 int main() {
   std::cin.tie(nullptr)->sync_with_stdio(false);
-  std::cin >> N >> M;
-  for (int i = 0; i < M; ++i) {
+  kushinada;
+  int n, m;
+  std::cin >> n >> m;
+  std::vector<int> atm_cash(n);
+  std::vector<bool> has_restaurant(n);
+  std::vector adj(n, std::vector<int>());
+  for (int i = 0; i < m; ++i) {
     int u, v;
     std::cin >> u >> v;
     adj[u - 1].push_back(v - 1);
   }
-  for (int i = 0; i < N; ++i) {
-    std::cin >> cash[i];
+  for (int i = 0; i < n; ++i) {
+    std::cin >> atm_cash[i];
   }
-  std::cin >> S >> P;
-  S--;
-  for (int i = 0; i < P; ++i) {
+
+  int s, p;
+  std::cin >> s >> p;
+  s--;
+  for (int i = 0; i < p; ++i) {
     int x;
     std::cin >> x;
-    restaur[x - 1] = true;
+    has_restaurant[x - 1] = true;
   }
 
-  for (int i = 0; i < N; ++i) {
-    if (dfsn[i] == 0) {
-      dfs(i);
+  int dfsn_cnt = 0;
+  std::stack<int> stack;
+  std::vector<int> dfsn(n, -1), v_to_scc(n, -1);
+  std::vector<bool> finished(n), scc_has_restuarant;
+  std::vector<std::vector<int>> scc;
+  std::vector<int> scc_cash_sum;
+
+  auto dfs = [&](auto&& dfs, int u) -> int {
+    dfsn[u] = dfsn_cnt++;
+    stack.push(u);
+    int res = dfsn[u];
+
+    for (auto v : adj[u]) {
+      if (dfsn[v] == -1) res = std::min(res, dfs(dfs, v));
+      else if (!finished[v]) res = std::min(res, dfsn[v]);
     }
-  }
 
-  std::vector sAdj(MAX, std::vector<int>());
-  bool isPoss[MAX];
-  for (int u = 0; u < N; ++u) {
-    for (int v : adj[u]) {
-      if (SCC[u] != SCC[v]) {
-        sAdj[SCC[u]].push_back(SCC[v]);
-        indg[SCC[v]]++;
+    if (res == dfsn[u]) {
+      std::vector<int> cur_scc;
+      int sum = 0;
+      bool has = false;
+      while (!stack.empty()) {
+        int p = stack.top();
+        stack.pop();
+        cur_scc.push_back(p);
+        finished[p] = true;
+        v_to_scc[p] = (int)scc.size();
+        sum += atm_cash[p];
+        if (has_restaurant[p] == true) has = true;
+        if (p == u) break;
       }
+      scc.push_back(cur_scc);
+      scc_cash_sum.push_back(sum);
+      scc_has_restuarant.push_back(has);
+    }
+
+    return res;
+  };
+
+  for (int i = 0; i < n; ++i) {
+    if (dfsn[i] == -1) dfs(dfs, i);
+  }
+
+  int scc_n = (int)scc.size();
+  std::vector<int> indg(scc_n);
+  for (int u = 0; u < n; ++u) {
+    for (auto v : adj[u]) {
+      if (v_to_scc[u] != v_to_scc[v]) indg[v_to_scc[v]]++;
     }
   }
 
-  std::queue<int> Q;
-  for (int i = 0; i < SN; ++i) {
-    cashAcc[i] = cashSCC[i];
-    if (SCC[S] == i) {
-      isPoss[i] = true;
-    }
+  std::queue<int> q;
+  for (int i = 0; i < scc_n; ++i) {
     if (indg[i] == 0) {
-      Q.push(i);
+      q.push(i);
     }
   }
 
-  while (!Q.empty()) {
-    int u = Q.front();
-    Q.pop();
-    for (auto v : sAdj[u]) {
-      if (isPoss[u]) {
-        isPoss[v] = true;
-        cashAcc[v] = std::max(cashAcc[v], cashAcc[u] + cashSCC[v]);
-      }
-      if (--indg[v] == 0) {
-        Q.push(v);
+  int scc_s = v_to_scc[s];
+  std::vector<int> dp(scc_n);
+  std::vector<bool> reachable(scc_n);
+  while (!q.empty()) {
+    int scc_u = q.front();
+    q.pop();
+    if (scc_u == scc_s) {
+      dp[scc_s] = scc_cash_sum[scc_s];
+      reachable[scc_s] = true;
+    }
+
+    for (auto u : scc[scc_u]) {
+      for (auto v : adj[u]) {
+        int scc_v = v_to_scc[v];
+        if (scc_u == scc_v) continue;
+        if (reachable[scc_u]) {
+          dp[scc_v] = std::max(dp[scc_v], dp[scc_u] + scc_cash_sum[scc_v]);
+          reachable[scc_v] = true;
+        }
+        if (--indg[scc_v] == 0) {
+          q.push(scc_v);
+        }
       }
     }
   }
 
-  int ans = -1;
-  for (int i = 0; i < SN; ++i) {
-    if (restaurSCC[i] == true && isPoss[i] == true) {
-      ans = std::max(ans, cashAcc[i]);
-    }
+  int ans = 0;
+  for (int i = 0; i < scc_n; ++i) {
+    if (scc_has_restuarant[i]) ans = std::max(ans, dp[i]);
   }
+
   std::cout << ans << "\n";
 }
