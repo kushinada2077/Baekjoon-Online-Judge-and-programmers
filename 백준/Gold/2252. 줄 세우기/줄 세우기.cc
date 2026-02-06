@@ -1,38 +1,40 @@
-#include <algorithm>
-#include <iostream>
-#include <queue>
-#include <vector>
-using namespace std;
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
 
-vector<int> adj[32001];
-vector<int> ans;
-queue<int> q;
-int deg[32001];
-int N, M, u, v;
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
 
 int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
-  cin >> N >> M;
-  while (M--) {
-    cin >> u >> v;
-    adj[u].push_back(v);
-    deg[v]++;
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  int n, m;
+  std::cin >> n >> m;
+  std::vector adj(n, std::vector<int>());
+  std::vector<int> indg(n);
+  for (int i = 0; i < m; ++i) {
+    int u, v;
+    std::cin >> u >> v;
+    adj[u - 1].push_back(v - 1);
+    indg[v - 1]++;
   }
 
-  for (int i = 1; i <= N; i++) {
-    if (deg[i] == 0) q.push(i);
+  std::queue<int> q;
+  for (int i = 0; i < n; ++i) {
+    if (indg[i] == 0) q.push(i);
   }
 
   while (!q.empty()) {
-    auto cur = q.front();
+    int u = q.front();
     q.pop();
-    ans.push_back(cur);
-    for (auto nxt : adj[cur]) {
-      deg[nxt]--;
-      if (deg[nxt] == 0) q.push(nxt);
+    std::cout << u + 1 << " ";
+
+    for (auto v : adj[u]) {
+      if (--indg[v] == 0) q.push(v);
     }
   }
-
-  for (auto n : ans) cout << n << " ";
 }
