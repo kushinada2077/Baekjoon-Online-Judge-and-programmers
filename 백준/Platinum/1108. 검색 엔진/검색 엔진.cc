@@ -1,110 +1,107 @@
-#include <algorithm>
-#include <iostream>
-#include <queue>
-#include <stack>
-#include <unordered_map>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-#define INF 0x3f3f3f3f
-using ll = long long;
-using namespace std;
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
 
-const int MX = 24 * 51 + 1;
-int n, x, hash_cnt, cnt, SN;
-int dfsn[MX], scc[MX], indg[MX];
-ll dp[MX];
-bool finished[MX];
-string su, sv;
-stack<int> s;
-unordered_map<string, int> s_hash;
-vector<int> adj[MX], scc_adj[MX], scc_elem[MX];
-vector<pair<int, int>> edge;
-int dfs(int cur) {
-  dfsn[cur] = ++cnt;
-  s.push(cur);
-  int res = dfsn[cur];
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
 
-  for (auto& nxt : adj[cur]) {
-    if (dfsn[nxt] == 0) res = min(res, dfs(nxt));
-    else if (finished[nxt] == 0) res = min(res, dfsn[nxt]);
-  }
+struct SCC {
+  int n;
+  int cur, cnt;
+  std::vector<std::vector<int>> adj;
+  std::vector<int> dfn, low, bel;
+  std::vector<int> stk;
 
-  if (dfsn[cur] == res) {
-    while (1) {
-      int curr = s.top();
-      s.pop();
-      finished[curr] = 1;
-      scc[curr] = SN;
-      scc_elem[SN].pb(curr);
-      if (cur == curr) break;
+  SCC(int n) : n(n), cur(0), cnt(0), adj(n), dfn(n, -1), low(n), bel(n, -1) {}
+
+  void addEdge(int u, int v) { adj[u].push_back(v); }
+
+  void dfs(int u) {
+    dfn[u] = low[u] = cur++;
+    stk.push_back(u);
+
+    for (auto v : adj[u]) {
+      if (dfn[v] == -1) {
+        dfs(v);
+        low[u] = std::min(low[u], low[v]);
+      } else if (bel[v] == -1) {
+        low[u] = std::min(low[u], dfn[v]);
+      }
     }
-    SN++;
+
+    if (dfn[u] == low[u]) {
+      int v;
+      do {
+        v = stk.back();
+        stk.pop_back();
+        bel[v] = cnt;
+      } while (v != u);
+      cnt++;
+    }
   }
 
-  return res;
-}
+  std::vector<int> work() {
+    for (int i = 0; i < n; ++i) {
+      if (dfn[i] == -1) dfs(i);
+    }
+    return bel;
+  }
+};
+
 int main() {
-  fastio;
-  cin >> n;
-  for (int i = 0; i < n; ++i) {
-    cin >> sv >> x;
-    int v;
-    if (s_hash[sv] == 0) {
-      s_hash[sv] = ++hash_cnt;
-      v = hash_cnt;
-    } else v = s_hash[sv];
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  int m;
+  std::cin >> m;
+  std::map<std::string, int> vs;
+  std::vector<P> queries;
+  std::string s;
+  for (int i = 0; i < m; ++i) {
+    int x;
+    std::cin >> s >> x;
+    if (!vs.contains(s)) {
+      vs[s] = (int)vs.size();
+    }
+    int v = vs[s];
     for (int j = 0; j < x; ++j) {
-      cin >> su;
-      int u;
-      if (s_hash[su] == 0) {
-        s_hash[su] = ++hash_cnt;
-        u = hash_cnt;
-      } else u = s_hash[su];
-      adj[u].pb(v);
-      edge.pb({u, v});
-    }
-  }
-  cin >> su;
-
-  for (int i = 1; i <= hash_cnt; ++i) {
-    if (dfsn[i] == 0) dfs(i);
-  }
-
-  int dest = s_hash[su];
-
-  for (auto& [u, v] : edge) {
-    if (scc[u] != scc[v]) indg[scc[v]]++;
-  }
-
-  queue<int> q;
-  for (int i = 0; i < SN; ++i) {
-    if (indg[i] == 0) {
-      q.push(i);
+      std::cin >> s;
+      if (!vs.contains(s)) {
+        vs[s] = (int)vs.size();
+      }
+      int u = vs[s];
+      queries.push_back({u, v});
     }
   }
 
-  fill(dp, dp + MX, 1);
-  while (!q.empty()) {
-    int cur = q.front();
-    q.pop();
+  int n = (int)vs.size();
+  SCC scc(n);
 
-    auto& cur_elem_list = scc_elem[cur];
-    for (auto& cur_elem : cur_elem_list) {
-      for (auto& nxt_elem : adj[cur_elem]) {
-        if (scc[cur_elem] == scc[nxt_elem]) continue;
-        dp[nxt_elem] += dp[cur_elem];
-        if (--indg[scc[nxt_elem]] == 0) q.push(scc[nxt_elem]);
+  for (auto [u, v] : queries) {
+    scc.addEdge(u, v);
+  }
+
+  std::cin >> s;
+  int st = vs[s];
+  auto bel = scc.work();
+  int scc_n = scc.cnt;
+  std::vector<i64> dp(n, 1);
+  std::vector groups(scc_n, std::vector<int>());
+
+  for (int i = 0; i < n; ++i) {
+    groups[bel[i]].push_back(i);
+  }
+  for (int i = scc_n - 1; i >= 0; --i) {
+    for (auto u : groups[i]) {
+      for (auto v : scc.adj[u]) {
+        int nxt_i = bel[v];
+        if (nxt_i != i) dp[v] += dp[u];
       }
     }
   }
 
-  cout << dp[dest] << "\n";
+  std::cout << dp[st] << "\n";
 }
