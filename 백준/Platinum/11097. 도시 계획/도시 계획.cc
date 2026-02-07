@@ -91,6 +91,7 @@ void solve() {
 
   for (int i = 0; i < scc_n; ++i) {
     for (int j = 0; j < scc_n; ++j) {
+      if (!scc_adj[i][j]) continue;
       for (int k = 0; k < scc_n; ++k) {
         if (scc_adj[i][k] && scc_adj[k][j] && scc_adj[i][j]) {
           scc_adj[i][j] = false;
