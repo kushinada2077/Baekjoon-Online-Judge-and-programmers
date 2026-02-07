@@ -1,114 +1,121 @@
-#include <algorithm>
-#include <iostream>
-#include <queue>
-#include <stack>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-#define INF 0x3f3f3f3f
-using ll = long long;
-using namespace std;
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
 
-const int MX = 301;
-int t, n, SN, cnt = 1;
-int dfsn[MX], scc[MX], indg[MX];
-bool finished[MX], chk[MX][MX], dp[MX][MX];
-string str;
-vector<int> scc_elem[MX], adj[MX], scc_adj[MX];
-stack<int> s;
-void init() {
-  cin >> n;
-  SN = 0;
-  cnt = 1;
-  for (int i = 0; i < n + 1; ++i) {
-    scc[i] = dfsn[i] = indg[i] = finished[i] = 0;
-    scc_elem[i].clear();
-    scc_adj[i].clear();
-    adj[i].clear();
-    for (int j = 0; j < n + 1; ++j) {
-      chk[i][j] = dp[i][j] = 0;
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
+
+struct SCC {
+  int n;
+  int cur, cnt;
+  std::vector<std::vector<int>> adj;
+  std::vector<int> dfn, low, bel;
+  std::vector<int> stk;
+
+  SCC(int n) : n(n), cur(0), cnt(0), adj(n), dfn(n, -1), low(n), bel(n, -1) {}
+
+  void addEdge(int u, int v) { adj[u].push_back(v); }
+
+  void dfs(int u) {
+    dfn[u] = low[u] = cur++;
+    stk.push_back(u);
+
+    for (auto v : adj[u]) {
+      if (dfn[v] == -1) {
+        dfs(v);
+        low[u] = std::min(low[u], low[v]);
+      } else if (bel[v] == -1) {
+        low[u] = std::min(low[u], dfn[v]);
+      }
+    }
+
+    if (dfn[u] == low[u]) {
+      int v;
+      do {
+        v = stk.back();
+        stk.pop_back();
+        bel[v] = cnt;
+      } while (v != u);
+      cnt++;
     }
   }
+
+  std::vector<int> work() {
+    for (int i = 0; i < n; ++i) {
+      if (dfn[i] == -1) dfs(i);
+    }
+    return bel;
+  }
+};
+
+void solve() {
+  int n;
+  std::cin >> n;
+  SCC scc(n);
+  char x;
   for (int i = 0; i < n; ++i) {
-    cin >> str;
     for (int j = 0; j < n; ++j) {
-      if (i != j && str[j] == '1') {
-        chk[i + 1][j + 1] = 1;
-        adj[i + 1].pb(j + 1);
+      std::cin >> x;
+      if (x == '0' || i == j) continue;
+      scc.addEdge(i, j);
+    }
+  }
+
+  auto bel = scc.work();
+  int scc_n = scc.cnt;
+  std::vector groups(scc_n, std::vector<int>());
+  for (int i = 0; i < n; ++i) {
+    groups[bel[i]].push_back(i);
+  }
+
+  std::vector<P> ans;
+  for (int i = 0; i < scc_n; ++i) {
+    int sz = (int)groups[i].size();
+    if (sz == 1) continue;
+    for (int j = 0; j < sz; ++j) {
+      ans.push_back({groups[i][j], groups[i][(j + 1) % sz]});
+    }
+  }
+
+  std::vector scc_adj(scc_n, std::vector<bool>(scc_n));
+  for (int u = 0; u < n; ++u) {
+    for (auto v : scc.adj[u]) {
+      if (bel[u] == bel[v] || scc_adj[bel[u]][bel[v]]) continue;
+      scc_adj[bel[u]][bel[v]] = true;
+    }
+  }
+
+  for (int k = 0; k < scc_n; ++k) {
+    for (int i = 0; i < scc_n; ++i) {
+      for (int j = 0; j < scc_n; ++j) {
+        if (scc_adj[i][k] && scc_adj[k][j] && scc_adj[i][j]) scc_adj[i][j] = false;
       }
     }
   }
-}
-int dfs(int cur) {
-  dfsn[cur] = cnt++;
-  s.push(cur);
-  int res = dfsn[cur];
 
-  for (auto& nxt : adj[cur]) {
-    if (dfsn[nxt] == 0) res = min(res, dfs(nxt));
-    else if (finished[nxt] == 0) res = min(res, dfsn[nxt]);
-  }
-
-  if (dfsn[cur] == res) {
-    while (1) {
-      int curr = s.top();
-      s.pop();
-      finished[curr] = 1;
-      scc[curr] = SN;
-      scc_elem[SN].pb(curr);
-      if (curr == cur) break;
+  for (int i = 0; i < scc_n; ++i) {
+    for (int j = 0; j < scc_n; ++j) {
+      if (scc_adj[i][j]) {
+        ans.push_back({groups[i].front(), groups[j].front()});
+      }
     }
-    SN++;
   }
-  return res;
+
+  std::cout << (int)ans.size() << "\n";
+  for (auto [u, v] : ans) std::cout << u + 1 << " " << v + 1 << "\n";
+  std::cout << "\n";
 }
+
 int main() {
-  fastio;
-  cin >> t;
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  int t;
+  std::cin >> t;
   while (t--) {
-    init();
-    for (int i = 1; i <= n; ++i) {
-      if (dfsn[i] == 0) dfs(i);
-    }
-
-    vector<pair<int, int>> ans;
-    for (int i = 0; i < SN; ++i) {
-      auto& ver = scc_elem[i];
-      for (int j = 0; j < si(ver) - 1; ++j) ans.pb({ver[j], ver[j + 1]});
-      if (si(ver) > 1) ans.pb({ver.back(), ver.front()});
-    }
-
-    for (int i = 1; i <= n; ++i) {
-      for (int j = 1; j <= n; ++j) {
-        if (scc[i] == scc[j]) continue;
-        if (chk[i][j]) dp[scc[i]][scc[j]] = 1;
-      }
-    }
-
-    for (int i = 0; i < SN; ++i) {
-      for (int j = 0; j < SN; ++j) {
-        if (dp[i][j] == 0) continue;
-        bool is_unit = true;
-        for (int k = 0; k < SN; ++k) {
-          if (i == k || j == k) continue;
-          if (dp[i][k] && dp[k][j]) {
-            is_unit = false;
-            break;
-          }
-        }
-        if (is_unit) ans.pb({scc_elem[i].front(), scc_elem[j].front()});
-      }
-    }
-
-    cout << si(ans) << "\n";
-    for (auto& [u, v] : ans) cout << u << " " << v << "\n";
-    cout << "\n";
+    solve();
   }
 }

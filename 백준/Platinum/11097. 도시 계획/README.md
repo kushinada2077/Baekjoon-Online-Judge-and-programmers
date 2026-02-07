@@ -4,39 +4,39 @@
 
 ### 성능 요약
 
-메모리: 2892 KB, 시간: 56 ms
+메모리: 2424 KB, 시간: 224 ms
 
 ### 분류
 
-플로이드–워셜, 그래프 이론, 강한 연결 요소, 최단 경로
+그래프 이론, 최단 경로, 방향 비순환 그래프, 플로이드–워셜, 강한 연결 요소
 
 ### 제출 일자
 
-2024년 10월 1일 13:25:55
+2026년 2월 7일 15:20:02
 
 ### 문제 설명
 
-<p>The town of Pezinok wants to expand by building a new neighborhood. They hired some famous architects to design it, and your friend Jano is one of them. He is in charge of the road network. It is common to make one-way roads these days, so Jano went all out and decided to make all the roads one-way. (Of course, a pair of junctions can be connected by two roads – one in each direction.)</p>
+<p>경기도의 어떤 한 도시는 새 구역을 건설해서 도시를 확장하려고 한다. 그래서 이 도시에서는 우리의 친구 남서를 비롯한 여러 유명 건축가들을 불러 디자인을 시켰다. 남서는 도로망 디자인 담당이 되었는데, 귀찮았던 나머지 구역 내의 지역들을 잇는 모든 도로를 일방통행으로 만들어버렸다. (다행히도, 두 지역 A B간에 A에서 B로 가는 도로, B에서 A로 가는 도로를 놓아 서로 연결할 수 있다.)</p>
 
-<p>Once Jano made a map showing the planned roads, he noticed that some parts of the neighborhood might not be reachable from other parts. To estimate the impact of this issue, he decided to use a systematic approach: he took a piece of paper and wrote everything down. Namely, for each junction j he listed all other junctions that are (directly or indirectly) reachable from j. We call this information the reachability list of a road network.</p>
+<p>남서는 자신의 도로망 계획을 지도해 그려본 결과, 일방통행 도로들 때문에 몇몇 지역들에서 특정 지역으로 갈 수 없다는 것을 깨달았다. 이 문제를 해결하기 위해서, 남서는 놀라운 접근법을 사용하기로 했다: 종이에 갈 수 있는 모든 경우의 수를 쓰는 것이다. 좀 더 자세히 말하자면, 각 지역 j에 대해서 j로부터 갈 수 있는 모든 지역에 대해 리스트를 작성하는 것이다. 우리는 이 리스트를 도로망의 '갈 수 있는 지역 리스트'라고 부른다. (만약 A에서 B로 가는 길이, B에서 C로 가는 길이 있다면 A의 리스트에는 B,C가, B의 리스트에는 C가 적힐 것이다.)</p>
 
-<p>But then Jano’s hard drive crashed and he lost all the plans he had made. The only thing he has left is the piece of paper with the reachability list.</p>
+<p>그러나, 남서는 문제를 해결하던 도중 하드 디스크가 망가져 자기가 만든 도로망 계획을 모두 잃어버렸다. 그에게 남은 것은 책상 위의 종이 한 장 - '갈 수 있는 지역 리스트' 하나 뿐이다.</p>
 
-<p>Help Jano reconstruct his original road network. Of course, many different road networks can produce the same reachability list. Therefore, Jano asked you to find the smallest possible road network that has the given reachability list. That should help him reconstruct his original plans.</p>
+<p>우리는 불쌍한 남서를 도와 이 '갈 수 있는 리스트'를 통해서 원래 도로망 계획을 알아내려고 한다. 물론, 한 '갈 수 있는 리스트'에 대해서 여러 도로망 구조가 만들어질 수 있다. 우리는 이 중에서 각 지역을 잇는 도로의 개수가 가장 적은 도로망 계획을 구하고자 한다. 그러면 아마도 남서에게 큰 도움이 될 것이다.</p>
 
-<p>Find a road network with the smallest possible number of roads that has the given reachability list.</p>
+<p>주어진 '갈 수 있는 지역 리스트'에 대해서 가장 적은 도로로 이루어진 도로망 계획을 구하여라.</p>
 
 ### 입력 
 
- <p>The first line of the input file contains an integer t specifying the number of test cases. Each test case is preceded by a blank line.</p>
+ <p>첫 라인에는 전체 테스트 케이스의 개수 t 가 주어진다. 각 테스트 케이스는 빈 줄로 구분된다.</p>
 
-<p>Each test case starts with a line containing an integer n (1 ≤ n ≤ 300), denoting the number of junctions. The junctions are numbered 1 through n. Next, n lines follow, each containing a string of length n. The i-th of these lines specifies which junctions are reachable from junction i. Namely, the j-th character in the line is 1 if junction j is reachable from i and 0 otherwise. (Note that for each i, junction i is reachable from itself.)</p>
+<p>각 테스트 케이스의 첫 줄에는 지역의 개수를 나타내는 수 n (1 ≤ n ≤ 300)이 주어진다. 각 지역은 1부터 n까지 번호가 부여되어있다. 그 다음 n줄은 각각 길이 n의 문자열이 주어진다. 각 i번째 줄은 지역 i로부터 갈 수 있는 지역들에 대한 정보를 나타낸다. 정확하게 말하자면, j번째 문자가 0이라면 지역 i에서 j로 갈 수 없는 것이고, j번째 문자가 1이라면 지역 i에서 j로 가는 방법이 하나 이상 존재하는 것이다. (물론, 지역 i에서 i로는 항상 갈 수 있다.)</p>
 
-<p>The reachability list is consistent – it describes at least one real road network.</p>
+<p>주어진 '갈 수 있는 지역 리스트'는 실제로 하나 이상의 도로망을 구성할 수 있다.</p>
 
 ### 출력 
 
- <p>For each test case, output the smallest road network that corresponds to the given reachability list. The first line of the description should contain the number of roads m (which has to be as small as possible). Each of the next m lines should contain two integers a<sub>i</sub> and b<sub>i</sub> (1 ≤ a<sub>i</sub>, b<sub>i</sub> ≤ n) such that there is a one-way road going from junction a<sub>i</sub> to junction b<sub>i</sub>.</p>
+ <p>각 테스트 케이스에 대해서, 가장 적은 도로로 이루어진 도로망 계획을 구한다. 첫 번째 줄에는 도로의 개수 m (물론, 이 m은 가능한 한 작아야 한다!)이 주어진다. 그리고 그 뒤로 이어지는 m개의 줄에는 두 개의 수 a<sub>i</sub>와 b<sub>i</sub> (1 ≤ a<sub>i</sub>, b<sub>i</sub> ≤ n)을 출력한다. 이는 지역 a<sub>i</sub> 에서 b<sub>i</sub>로 가는 도로를 의미한다.</p>
 
-<p>You can print the roads in any order. If there are multiple optimal solutions, output any of them.</p>
+<p>도로는 어떤 순서로 출력해도 상관 없다. 만약 하나 이상의 해가 존재한다면 그 중 어떤 것을 출력해도 문제 없다.</p>
 
