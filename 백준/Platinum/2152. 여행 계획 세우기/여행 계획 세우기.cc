@@ -1,94 +1,99 @@
-#include <algorithm>
-#include <iostream>
-#include <queue>
-#include <stack>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-#define INF 0x3f3f3f3f
-using ll = long long;
-using namespace std;
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
 
-const int MX = 10001;
-int n, m, st, en, u, v, SN, cnt = 1;
-int dfsn[MX], scc[MX], scc_city_num[MX], indg[MX], dp[MX];
-bool finished[MX], poss[MX];
-vector<int> adj[MX], scc_adj[MX];
-vector<pair<int, int>> edge;
-stack<int> s;
-int dfs(int cur) {
-  dfsn[cur] = cnt++;
-  s.push(cur);
-  int res = dfsn[cur];
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
 
-  for (auto& nxt : adj[cur]) {
-    if (dfsn[nxt] == 0) res = min(res, dfs(nxt));
-    else if (finished[nxt] == 0) res = min(res, dfsn[nxt]);
-  }
+struct SCC {
+  int n;
+  int cur, cnt;
+  std::vector<std::vector<int>> adj;
+  std::vector<int> dfn, low, bel;
+  std::vector<int> stk;
 
-  if (dfsn[cur] == res) {
-    while (1) {
-      int curr = s.top();
-      s.pop();
-      finished[curr] = 1;
-      scc[curr] = SN;
-      scc_city_num[SN]++;
-      if (curr == cur) break;
-    }
-    SN++;
-  }
-  return res;
-}
-int main() {
-  fastio;
-  cin >> n >> m >> st >> en;
-  for (int i = 0; i < m; ++i) {
-    cin >> u >> v;
-    adj[u].pb(v);
-    edge.pb({u, v});
-  }
-  for (int i = 1; i <= n; ++i) {
-    if (dfsn[i] == 0) dfs(i);
-  }
+  SCC(int n) : n(n), cur(0), cnt(0), adj(n), dfn(n, -1), low(n), bel(n, -1) {}
 
-  for (auto& [u, v] : edge) {
-    if (scc[u] != scc[v]) {
-      indg[scc[v]]++;
-      scc_adj[scc[u]].pb(scc[v]);
-    }
-  }
+  void addEdge(int u, int v) { adj[u].push_back(v); }
 
-  queue<int> q;
+  void dfs(int u) {
+    dfn[u] = low[u] = cur++;
+    stk.push_back(u);
 
-  for (int i = 0; i < SN; ++i) {
-    if (indg[i] == 0) {
-      q.push(i);
-      dp[i] = scc_city_num[i];
-    }
-  }
-
-  poss[scc[st]] = 1;
-  dp[scc[st]] = scc_city_num[scc[st]];
-  while (!q.empty()) {
-    int cur = q.front();
-    q.pop();
-
-    for (auto& nxt : scc_adj[cur]) {
-      if (poss[cur]) {
-        poss[nxt] = poss[cur];
-        dp[nxt] = max(dp[nxt], dp[cur] + scc_city_num[nxt]);
+    for (auto v : adj[u]) {
+      if (dfn[v] == -1) {
+        dfs(v);
+        low[u] = std::min(low[u], low[v]);
+      } else if (bel[v] == -1) {
+        low[u] = std::min(low[u], dfn[v]);
       }
-      if (--indg[nxt] == 0) q.push(nxt);
+    }
+
+    if (dfn[u] == low[u]) {
+      int v;
+      do {
+        v = stk.back();
+        stk.pop_back();
+        bel[v] = cnt;
+      } while (v != u);
+      cnt++;
     }
   }
 
-  if (poss[scc[en]]) cout << dp[scc[en]] << "\n";
-  else cout << "0\n";
+  std::vector<int> work() {
+    for (int i = 0; i < n; ++i) {
+      if (dfn[i] == -1) dfs(i);
+    }
+    return bel;
+  }
+};
+
+int main() {
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  int n, m, s, t;
+  std::cin >> n >> m >> s >> t;
+  s--;
+  t--;
+
+  SCC scc(n);
+  for (int i = 0; i < m; ++i) {
+    int u, v;
+    std::cin >> u >> v;
+    scc.addEdge(u - 1, v - 1);
+  }
+
+  auto bel = scc.work();
+  int scc_n = scc.cnt;
+
+  std::vector<std::vector<int>> groups(scc_n);
+  for (int i = 0; i < n; ++i) {
+    groups[scc.bel[i]].push_back(i);
+  }
+
+  std::vector<int> dp(scc_n);
+  std::vector<bool> reachable(scc_n);
+  for (int i = 0; i < scc_n; ++i) {
+    dp[i] = (int)groups[i].size();
+  }
+  reachable[scc.bel[s]] = true;
+  for (int i = scc_n - 1; i >= 0; --i) {
+    if (!reachable[i]) continue;
+
+    for (auto u : groups[i]) {
+      for (auto v : scc.adj[u]) {
+        int nxt_i = scc.bel[v];
+        if (i == nxt_i) continue;
+        dp[nxt_i] = std::max(dp[nxt_i], dp[i] + (int)groups[nxt_i].size());
+        reachable[nxt_i] = true;
+      }
+    }
+  }
+
+  if (!reachable[scc.bel[t]]) std::cout << "0\n";
+  else std::cout << dp[scc.bel[t]] << "\n";
 }
