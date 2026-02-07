@@ -56,11 +56,11 @@ void solve() {
   int n;
   std::cin >> n;
   SCC scc(n);
-  char x;
+  std::string s;
   for (int i = 0; i < n; ++i) {
+    std::cin >> s;
     for (int j = 0; j < n; ++j) {
-      std::cin >> x;
-      if (x == '0' || i == j) continue;
+      if (i == j || s[j] == '0') continue;
       scc.addEdge(i, j);
     }
   }
@@ -89,10 +89,13 @@ void solve() {
     }
   }
 
-  for (int k = 0; k < scc_n; ++k) {
-    for (int i = 0; i < scc_n; ++i) {
-      for (int j = 0; j < scc_n; ++j) {
-        if (scc_adj[i][k] && scc_adj[k][j] && scc_adj[i][j]) scc_adj[i][j] = false;
+  for (int i = 0; i < scc_n; ++i) {
+    for (int j = 0; j < scc_n; ++j) {
+      for (int k = 0; k < scc_n; ++k) {
+        if (scc_adj[i][k] && scc_adj[k][j] && scc_adj[i][j]) {
+          scc_adj[i][j] = false;
+          break;
+        }
       }
     }
   }
