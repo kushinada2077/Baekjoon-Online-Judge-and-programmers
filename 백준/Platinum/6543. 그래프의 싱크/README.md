@@ -4,29 +4,47 @@
 
 ### 성능 요약
 
-메모리: 2640 KB, 시간: 12 ms
+메모리: 2784 KB, 시간: 16 ms
 
 ### 분류
 
-그래프 이론, 강한 연결 요소
+그래프 이론, 방향 비순환 그래프, 강한 연결 요소
 
 ### 제출 일자
 
-2024년 9월 29일 17:46:44
+2026년 2월 7일 13:45:34
 
 ### 문제 설명
 
-<p>We will use the following (standard) definitions from graph theory. Let <em>V</em> be a nonempty and finite set, its elements being called vertices (or nodes). Let <em>E</em> be a subset of the Cartesian product <em>V×V</em>, its elements being called edges. Then <em>G=(V,E)</em> is called a directed graph.</p>
+<p>방향 그래프 <em>G</em> = (<em>V</em>, <em>E</em>)가 주어져 있다.</p>
 
-<p>Let <em>n</em> be a positive integer, and let <em>p=(e<sub>1</sub>,...,e<sub>n</sub>)</em> be a sequence of length <em>n</em> of edges <em>e<sub>i</sub>∈E</em> such that <em>e<sub>i</sub>=(v<sub>i</sub>,v<sub>i+1</sub>)</em> for a sequence of vertices <em>(v<sub>1</sub>,...,v<sub>n+1</sub>)</em>. Then <em>p</em> is called a path from vertex <em>v<sub>1</sub></em> to vertex <em>v<sub>n+1</sub></em> in <em>G</em> and we say that <em>v<sub>n+1</sub></em> is reachable from <em>v<sub>1</sub></em>, writing <em>(v<sub>1</sub>→v<sub>n+1</sub>)</em>.</p>
+<p>임의의 노드 <em>u</em>, <em>v</em> ∈ <em>V</em>에 대해서 <em>u</em>에서 <em>v</em>로 E에 포함된 간선만을 이용해 갈 수 있는 경로가 있으면 <em>u</em>→<em>v</em>로 표현한다.</p>
 
-<p>Here are some new definitions. A node <em>v</em> in a graph <em>G=(V,E)</em> is called a sink, if for every node <em>w</em> in <em>G</em> that is reachable from <em>v</em>, <em>v</em> is also reachable from <em>w</em>. The bottom of a graph is the subset of all nodes that are sinks, i.e., <em>bottom(G)={v∈V|∀w∈V:(v→w)⇒(w→v)}</em>. You have to calculate the bottom of certain graphs.</p>
+<p>만약 어떤 노드 <em>v</em> ∈ <em>V</em>가 자신으로부터 도달할 수 있는 모든 노드로부터 돌아오는 경로가 있다면, 즉 다음 조건을 만족한다면 노드 <em>v</em> ∈ <em>V</em>를 싱크라고 부른다.</p>
+
+<ul>
+	<li>조건: ∀<em>w</em> ∈ <em>V</em>, (<em>v</em>→<em>w</em>) ⇒ (<em>w</em>→<em>v</em>)</li>
+</ul>
+
+<p>또한, 그래프 <em>G</em>의 싱크를 모아놓은 집합을 bottom(G)로 표현한다.</p>
+
+<ul>
+	<li>bottom(<em>G</em>) = {<em>v</em> ∈ <em>V</em>: ∀<em>w</em> ∈ <em>V</em>, (<em>v</em>→<em>w</em>) ⇒ (<em>w</em>→<em>v</em>)}</li>
+</ul>
+
+<p>주어진 그래프 <em>G</em>=(<em>V</em>, <em>E</em>)의 bottom(<em>G</em>)를 구하시오.</p>
 
 ### 입력 
 
- <p>The input contains several test cases, each of which corresponds to a directed graph <em>G</em>. Each test case starts with an integer number <em>v</em>, denoting the number of vertices of <em>G=(V,E)</em>, where the vertices will be identified by the integer numbers in the set <em>V={1,...,v}</em>. You may assume that 1 ≤ <em>v</em> ≤ 5000, 0 ≤ <em>e</em> ≤ 100,000. That is followed by a non-negative integer <em>e</em> and, thereafter, <em>e</em> pairs of vertex identifiers <em>v<sub>1</sub>,w<sub>1</sub>,...,v<sub>e</sub>,w<sub>e</sub></em> with the meaning that <em>(v<sub>i</sub>,w<sub>i</sub>)∈E</em>. There are no edges other than specified by these pairs. The last test case is followed by a zero.</p>
+ <p>입력은 여러 개의 테스트 케이스로 구분되어 있다.</p>
+
+<p>각 테스트 케이스의 첫 줄에는 노드의 수 <em>n</em> (1 ≤ <em>n</em> ≤ 5,000)과 음이 아닌 정수 <em>m</em> (0 ≤ m ≤ 100,000)이 주어진다. <em>V</em> = {1, 2, ..., <em>n</em>}이고, 간선의 수 |<em>E</em>|=<em>m</em>임을 의미한다.</p>
+
+<p>그 다음부터는 각 간선을 나타내는 <em>m</em>쌍의 수 <em>v</em><sub>1</sub> <em>w</em><sub>1</sub> <em>v</em><sub>2</sub> <em>w</em><sub>2</sub> ... <em>v<sub>m</sub></em> <em>w<sub>m</sub></em>이 공백으로 구분되어 주어진다. 이는 (<em>v<sub>i</sub></em>, <em>w<sub>i</sub></em>) ∈ <em>E</em>를 의미한다.</p>
+
+<p>마지막 줄에 0이 주어지고, 이 경우는 처리하지 않고 프로그램을 종료시켜야 한다.</p>
 
 ### 출력 
 
- <p>For each test case output the bottom of the specified graph on a single line. To this end, print the numbers of all nodes that are sinks in sorted order separated by a single space character. If the bottom is empty, print an empty line.</p>
+ <p>각 테스트 케이스마다 한 줄에 걸쳐 bottom(<em>G</em>)의 모든 노드를 출력한다. 노드는 공백으로 구분해야 하며, 오름차순이어야 한다. 만약, bottom(<em>G</em>)가 공집합이면 빈 줄을 출력한다.</p>
 
