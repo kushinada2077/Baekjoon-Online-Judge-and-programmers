@@ -1,77 +1,79 @@
-#include <algorithm>
-#include <iostream>
-#include <map>
-#include <set>
-#include <stack>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
-#define L_PATH "input.txt"
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define rep(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-#define INF 0x3f3f3f3f
-using namespace std;
-using ll = long long;
-using T = tuple<int, int, int>;
-using P = pair<int, int>;
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
 
-inline int oppo(int v) { return v % 2 ? v + 1 : v - 1; }
-const int MX = 10001;
-int n, m, cnt, SN;
-int dfsn[MX << 1], sn[MX << 1];
-bool finished[MX << 1];
-vector<int> adj[MX << 1];
-stack<int> s;
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
 
-int dfs(int cur) {
-  int res = dfsn[cur] = ++cnt;
-  s.push(cur);
+struct SCC {
+  int n;
+  int cur, cnt;
+  std::vector<std::vector<int>> adj;
+  std::vector<int> dfn, low, bel;
+  std::vector<int> stk;
 
-  for (auto& nxt : adj[cur]) {
-    if (dfsn[nxt] == 0) res = min(res, dfs(nxt));
-    else if (finished[nxt] == 0) res = min(res, dfsn[nxt]);
-  }
+  SCC(int n) : n(n), cur(0), cnt(0), adj(n), dfn(n, -1), low(n), bel(n, -1) {}
 
-  if (dfsn[cur] == res) {
-    while (1) {
-      int v = s.top();
-      s.pop();
-      finished[v] = 1;
-      sn[v] = SN;
-      if (cur == v) break;
+  void addEdge(int u, int v) { adj[u].push_back(v); }
+
+  void dfs(int u) {
+    dfn[u] = low[u] = cur++;
+    stk.push_back(u);
+
+    for (auto v : adj[u]) {
+      if (dfn[v] == -1) {
+        dfs(v);
+        low[u] = std::min(low[u], low[v]);
+      } else if (bel[v] == -1) {
+        low[u] = std::min(low[u], dfn[v]);
+      }
     }
-    SN++;
+
+    if (dfn[u] == low[u]) {
+      int v;
+      do {
+        v = stk.back();
+        stk.pop_back();
+        bel[v] = cnt;
+      } while (v != u);
+      cnt++;
+    }
   }
 
-  return res;
-}
+  std::vector<int> work() {
+    for (int i = 0; i < n; ++i) {
+      if (dfn[i] == -1) dfs(i);
+    }
+    return bel;
+  }
+};
 
 int main() {
-  fastio;
-  cin >> m >> n;
-  for (int u, v; m--;) {
-    cin >> u >> v;
-    u = u > 0 ? u * 2 : -u * 2 - 1;
-    v = v > 0 ? v * 2 : -v * 2 - 1;
-    adj[oppo(u)].pb(v);
-    adj[oppo(v)].pb(u);
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  int n, m;
+  std::cin >> m >> n;
+  SCC scc(2 * n);
+  for (int i = 0; i < m; ++i) {
+    int u, v;
+    std::cin >> u >> v;
+    u = 2 * (std::abs(u) - 1) + (u < 0);
+    v = 2 * (std::abs(v) - 1) + (v < 0);
+    scc.addEdge(u ^ 1, v);
+    scc.addEdge(v ^ 1, u);
   }
 
-  for (int i = 1; i <= 2 * n; ++i) {
-    if (dfsn[i] == 0) dfs(i);
-  }
-
-  for (int i = 1; i <= n; ++i) {
-    if (sn[2 * i - 1] == sn[2 * i]) {
-      cout << "OTL\n";
+  auto bel = scc.work();
+  for (int i = 0; i < n; ++i) {
+    if (bel[2 * i] == bel[2 * i + 1]) {
+      std::cout << "OTL\n";
       return 0;
     }
   }
 
-  cout << "^_^\n";
+  std::cout << "^_^\n";
 }
