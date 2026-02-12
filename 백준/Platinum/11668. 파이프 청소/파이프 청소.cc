@@ -64,10 +64,8 @@ int main() {
   int w, p;
   std::cin >> w >> p;
   std::vector<P> water(w);
-  std::set<P> water_set;
   for (int i = 0; i < w; ++i) {
     std::cin >> water[i].first >> water[i].second;
-    water_set.insert({water[i].first, water[i].second});
   }
 
   SCC scc(2 * p);
@@ -81,25 +79,18 @@ int main() {
   }
 
   auto ccw = [&](Point a, Point b, Point c) { return 1LL * (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x); };
+  auto onSeg = [&](Point a, Point b, Point c) { return std::min(a.x, b.x) <= c.x && c.x <= std::max(a.x, b.x) && std::min(a.y, b.y) <= c.y && c.y <= std::max(a.y, b.y); };
   auto intersect = [&](Point a, Point b, Point c, Point d) {
-    i64 ab_c = ccw(a, b, c);
-    i64 ab_d = ccw(a, b, d);
-    i64 cd_a = ccw(c, d, a);
-    i64 cd_b = ccw(c, d, b);
-
-    if (ab_c == 0 && (c.x - a.x) * (c.x - b.x) <= 0 && (c.y - a.y) * (c.y - b.y) <= 0) return true;
-    if (ab_d == 0 && (d.x - a.x) * (d.x - b.x) <= 0 && (d.y - a.y) * (d.y - b.y) <= 0) return true;
-    if (cd_a == 0 && (a.x - c.x) * (a.x - d.x) <= 0 && (a.y - c.y) * (a.y - d.y) <= 0) return true;
-    if (cd_b == 0 && (b.x - c.x) * (b.x - d.x) <= 0 && (b.y - c.y) * (b.y - d.y) <= 0) return true;
-
-    return ab_c * ab_d < 0 && cd_a * cd_b < 0;
+    if (ccw(a, b, d) == 0 && onSeg(a, b, d)) return true;
+    if (ccw(c, d, b) == 0 && onSeg(c, d, b)) return true;
+    return ccw(a, b, c) * ccw(a, b, d) < 0 && ccw(c, d, a) * ccw(c, d, b) < 0;
   };
 
   for (int i = 0; i < p; ++i) {
     for (int j = i + 1; j < p; ++j) {
       auto [x1, y1, x2, y2] = pipes[i];
       auto [x3, y3, x4, y4] = pipes[j];
-      if (x1 == x3 && y1 == y3) continue;
+      if (x1 == x3 && y1 == y3 || x1 == x4 && y1 == y4 || x2 == x3 && y2 == y3) continue;
       if (intersect(Point(x1, y1), Point(x2, y2), Point(x3, y3), Point(x4, y4))) {
         int u = 2 * i;
         int v = 2 * j;
