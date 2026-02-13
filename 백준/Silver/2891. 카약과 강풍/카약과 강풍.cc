@@ -25,42 +25,28 @@ int main() {
     int x;
     std::cin >> x;
     rr[x - 1] = 1;
-    if (ss[x - 1] == 1 && rr[x - 1] == 1) {
-      s--;
+    if (ss[x - 1] && rr[x - 1]) {
       ss[x - 1] = rr[x - 1] = 0;
+      s--;
     }
   }
 
   int res = 0;
-  std::vector<bool> chk(n);
 
-  auto dfs = [&](auto&& dfs, int k, int cnt) {
-    if (n == k) {
-      res = std::max(res, cnt);
-      return;
+  for (int i = 0; i < n; ++i) {
+    if (!ss[i]) continue;
+
+    if (i > 0 && rr[i - 1]) {
+      res++;
+      rr[i - 1] = 0;
+      continue;
     }
 
-    if (!ss[k] || rr[k]) dfs(dfs, k + 1, cnt);
-    else {
-      if (k > 0 && !chk[k - 1] && !ss[k - 1] && rr[k - 1]) {
-        chk[k - 1] = true;
-        rr[k - 1] = false;
-        dfs(dfs, k + 1, cnt + 1);
-        chk[k - 1] = false;
-        rr[k - 1] = true;
-      } else if (k + 1 < n && !chk[k + 1] && !ss[k + 1] && rr[k + 1]) {
-        chk[k + 1] = true;
-        rr[k + 1] = false;
-        dfs(dfs, k + 1, cnt + 1);
-        chk[k + 1] = false;
-        rr[k + 1] = true;
-      } else {
-        dfs(dfs, k + 1, cnt);
-      }
+    if (i + 1 < n && rr[i + 1]) {
+      res++;
+      rr[i + 1] = 0;
     }
-  };
-
-  dfs(dfs, 0, 0);
+  }
 
   std::cout << s - res << "\n";
 }
