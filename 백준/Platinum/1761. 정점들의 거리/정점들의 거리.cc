@@ -1,73 +1,81 @@
-#include <algorithm>
-#include <climits>
-#include <iostream>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-#define INF 0x3f3f3f3f
-using ll = long long;
-using namespace std;
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
 
-const int MX = 18;
-vector<pair<int, int>> adj[40005];
-vector<int> depth(40005, -1), dist(40005, -1);
-vector<vector<int>> p(18, vector<int>(40005, -1));
-void dfs(int cur) {
-  for (auto& [c, nxt] : adj[cur]) {
-    if (depth[nxt] != -1) continue;
-    depth[nxt] = depth[cur] + 1;
-    dist[nxt] = dist[cur] + c;
-    p[0][nxt] = cur;
-    dfs(nxt);
-  }
-}
-int lca(int u, int v) {
-  if (depth[u] < depth[v]) swap(u, v);
-  int diff = depth[u] - depth[v];
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
 
-  for (int i = 0; diff; ++i) {
-    if (diff & 1) u = p[i][u];
-    diff >>= 1;
-  }
-
-  if (u != v) {
-    for (int i = MX - 1; i >= 0; --i) {
-      if (p[i][u] != -1 && p[i][u] != p[i][v]) {
-        u = p[i][u];
-        v = p[i][v];
-      }
-    }
-    u = p[0][u];
-  }
-  return u;
-}
 int main() {
-  fastio;
-  int n, u, v, c, m;
-  cin >> n;
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  const int MAX = 16;
+  int n;
+  std::cin >> n;
+  std::vector<int> dist(n, -1), d(n, -1);
+  std::vector adj(n, std::vector<P>());
+  std::vector p(MAX, std::vector<int>(n, -1));
   for (int i = 0; i < n - 1; ++i) {
-    cin >> u >> v >> c;
-    adj[u].pb({c, v});
-    adj[v].pb({c, u});
+    int u, v, c;
+    std::cin >> u >> v >> c;
+    adj[u - 1].push_back({v - 1, c});
+    adj[v - 1].push_back({u - 1, c});
   }
-  depth[1] = dist[1] = 0;
-  dfs(1);
-  for (int j = 1; j < MX; ++j) {
-    for (int i = 1; i <= n; ++i) {
-      if (p[j - 1][i] != -1) p[j][i] = p[j - 1][p[j - 1][i]];
+
+  std::queue<int> q;
+  q.push(0);
+  d[0] = dist[0] = 0;
+  while (!q.empty()) {
+    int u = q.front();
+    q.pop();
+
+    for (auto [v, c] : adj[u]) {
+      if (p[0][u] == v) continue;
+      q.push(v);
+      p[0][v] = u;
+      d[v] = d[u] + 1;
+      dist[v] = dist[u] + c;
     }
   }
-  cin >> m;
+
+  for (int k = 1; k < MAX; ++k) {
+    for (int i = 0; i < n; ++i) {
+      if (p[k - 1][i] == -1) continue;
+      p[k][i] = p[k - 1][p[k - 1][i]];
+    }
+  }
+
+  auto LCA = [&](int u, int v) -> int {
+    if (d[u] < d[v]) std::swap(u, v);
+    int diff = d[u] - d[v];
+
+    for (int k = 0; diff; ++k, diff /= 2) {
+      if (diff % 2 == 0) continue;
+      u = p[k][u];
+    }
+
+    if (u == v) return u;
+
+    for (int k = MAX - 1; k >= 0; --k) {
+      if (p[k][u] == p[k][v]) continue;
+      u = p[k][u];
+      v = p[k][v];
+    }
+
+    return p[0][u];
+  };
+
+  int m;
+  std::cin >> m;
   for (int i = 0; i < m; ++i) {
-    cin >> u >> v;
-    int an = lca(u, v);
-    cout << dist[u] + dist[v] - 2 * dist[an] << "\n";
+    int u, v;
+    std::cin >> u >> v;
+    int m = LCA(u - 1, v - 1);
+    int d1 = dist[u - 1] - dist[m];
+    int d2 = dist[v - 1] - dist[m];
+    std::cout << d1 + d2 << "\n";
   }
 }
