@@ -14,8 +14,7 @@ int main() {
   kushinada;
   int m;
   std::cin >> m;
-  int b = 0;
-  while ((1 << b) <= 500000) b++;
+  int b = 19;
   std::vector f(b, std::vector<int>(m, -1));
   for (int i = 0; i < m; ++i) {
     std::cin >> f[0][i];
