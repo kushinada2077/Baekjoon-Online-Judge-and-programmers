@@ -1,70 +1,79 @@
-#include <algorithm>
-#include <climits>
-#include <iostream>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define for_in(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-#define INF 0x3f3f3f3f
-using ll = long long;
-using namespace std;
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
 
-int p[100005][18];
-vector<int> adj[100005], depth(100005, -1);
-void dfs(int cur) {
-  for (auto nxt : adj[cur]) {
-    if (depth[nxt] == -1) {
-      depth[nxt] = depth[cur] + 1;
-      p[nxt][0] = cur;
-      dfs(nxt);
-    }
-  }
-}
-int lca(int u, int v) {
-  if (depth[u] < depth[v]) swap(u, v);
-  int diff = depth[u] - depth[v];
-  for (int i = 0; (1 << i) <= diff; ++i) {
-    if (diff & (1 << i)) {
-      u = p[u][i];
-    }
-  }
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
 
-  if (v != u) {
-    for (int j = 17; j >= 0; --j) {
-      if (p[u][j] != -1 && p[v][j] != p[u][j]) {
-        v = p[v][j];
-        u = p[u][j];
-      }
-    }
-    u = p[u][0];
-  }
-  return u;
-}
 int main() {
-  fastio;
-  int n, m, v, u;
-  cin >> n;
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  const int MAX = 17;
+  int n;
+  std::cin >> n;
+  std::vector adj(n, std::vector<int>());
+  std::vector<int> d(n, -1);
+  std::vector p(MAX, std::vector<int>(n, -1));
   for (int i = 0; i < n - 1; ++i) {
-    cin >> v >> u;
-    adj[v].pb(u);
-    adj[u].pb(v);
+    int u, v;
+    std::cin >> u >> v;
+    adj[u - 1].push_back(v - 1);
+    adj[v - 1].push_back(u - 1);
   }
-  depth[1] = 0;
-  dfs(1);
-  for (int k = 1; k < 18; ++k) {
-    for (int i = 1; i <= n; ++i) {
-      if (p[i][k - 1] != -1) p[i][k] = p[p[i][k - 1]][k - 1];
+
+  std::queue<int> q;
+  q.push(0);
+  d[0] = 0;
+  while (!q.empty()) {
+    int u = q.front();
+    q.pop();
+
+    for (auto v : adj[u]) {
+      if (p[0][u] == v) continue;
+      q.push(v);
+      p[0][v] = u;
+      d[v] = d[u] + 1;
     }
   }
-  cin >> m;
+
+  for (int k = 1; k < MAX; ++k) {
+    for (int i = 0; i < n; ++i) {
+      p[k][i] = p[k - 1][p[k - 1][i]];
+    }
+  }
+
+  auto LCA = [&](int u, int v) -> int {
+    if (d[u] < d[v]) std::swap(u, v);
+    int diff = d[u] - d[v];
+
+    for (int cnt = 0; diff; ++cnt, diff /= 2) {
+      if (diff % 2 == 0) continue;
+      u = p[cnt][u];
+    }
+
+    if (u == v) return u;
+
+    int k = MAX - 1;
+    while (k >= 0 && p[k][u] == p[k][v]) k--;
+
+    for (; k >= 0; --k) {
+      if (p[k][u] == p[k][v]) continue;
+      u = p[k][u];
+      v = p[k][v];
+    }
+
+    return p[0][u];
+  };
+
+  int m;
+  std::cin >> m;
   for (int i = 0; i < m; ++i) {
-    cin >> u >> v;
-    cout << lca(u, v) << "\n";
+    int u, v;
+    std::cin >> u >> v;
+    std::cout << LCA(u - 1, v - 1) + 1 << "\n";
   }
 }
