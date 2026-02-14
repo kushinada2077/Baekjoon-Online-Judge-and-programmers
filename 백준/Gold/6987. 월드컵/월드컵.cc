@@ -22,9 +22,9 @@ int main() {
     }
 
     bool ans = false;
-    auto dfs = [&](auto&& dfs, int i, int j) {
+    auto dfs = [&](auto&& dfs, int k) {
       if (ans) return;
-      if (i == 5) {
+      if (k == 30) {
         bool ok = [&] {
           for (int i = 0; i < 6; ++i) {
             for (int j = 0; j < 3; ++j) {
@@ -39,11 +39,18 @@ int main() {
         return;
       }
 
+      int i = k / 6;
+      int j = k % 6;
+
+      if (i >= j) {
+        dfs(dfs, k + 1);
+        return;
+      }
+
       if (res[i][0] > 0 && res[j][2] > 0) {
         res[i][0]--;
         res[j][2]--;
-        if (j == 5) dfs(dfs, i + 1, i + 2);
-        else dfs(dfs, i, j + 1);
+        dfs(dfs, k + 1);
         res[i][0]++;
         res[j][2]++;
       }
@@ -51,8 +58,7 @@ int main() {
       if (res[i][1] > 0 && res[j][1] > 0) {
         res[i][1]--;
         res[j][1]--;
-        if (j == 5) dfs(dfs, i + 1, i + 2);
-        else dfs(dfs, i, j + 1);
+        dfs(dfs, k + 1);
         res[i][1]++;
         res[j][1]++;
       }
@@ -60,14 +66,13 @@ int main() {
       if (res[i][2] > 0 && res[j][0] > 0) {
         res[i][2]--;
         res[j][0]--;
-        if (j == 5) dfs(dfs, i + 1, i + 2);
-        else dfs(dfs, i, j + 1);
+        dfs(dfs, k + 1);
         res[i][2]++;
         res[j][0]++;
       }
     };
 
-    dfs(dfs, 0, 1);
+    dfs(dfs, 0);
     if (ans) std::cout << "1 ";
     else std::cout << "0 ";
   }
