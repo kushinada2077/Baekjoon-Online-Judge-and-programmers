@@ -113,11 +113,8 @@ int main() {
 
           int u = 4 * arounds[dirs[0]] + dirs[0];
           int v = 4 * arounds[dirs[1]] + dirs[1];
-
-          if ((dirs[0] ^ 1) != dirs[1]) {
-            scc.addEdge(u ^ 1, v);
-            scc.addEdge(v ^ 1, u);
-          }
+          scc.addEdge(u ^ 1, v);
+          scc.addEdge(v ^ 1, u);
 
         } else if (sum == 3) {
           int dir = 0;
