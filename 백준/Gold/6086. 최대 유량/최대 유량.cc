@@ -1,83 +1,71 @@
-#include <algorithm>
-#include <cmath>
-#include <iostream>
-#include <queue>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
-#define L_PATH "input.txt"
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define rep(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-#define INF 0x3f3f3f3f
-using namespace std;
-using ll = long long;
-using T = tuple<int, int, int>;
-using P = pair<int, int>;
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
 
-const int MX = 100;
-struct Edge {
-  int to, c, f;
-  Edge *dual;
-  Edge(int to, int c) : to(to), c(c), f(0), dual(nullptr) {}
-  int spare() { return c - f; }
-  void addFlow(int f1) {
-    f += f1;
-    dual->f -= f1;
-  }
-};
-inline int CtoI(int c) {
-  if (c <= 'Z') return c - 'A';
-  return c - 'a' + 26;
-}
-int n;
-char u, v;
-vector<Edge *> adj[MX];
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
+
 int main() {
-  fastio;
-  cin >> n;
-  for (int f, i{}; i < n; ++i) {
-    cin >> u >> v >> f;
-    u = CtoI(u);
-    v = CtoI(v);
-    Edge *e1 = new Edge(v, f), *e2 = new Edge(u, f);
-    e1->dual = e2;
-    e2->dual = e1;
-    adj[u].pb(e1);
-    adj[v].pb(e2);
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  int m;
+  std::cin >> m;
+
+  auto c_to_i = [](char c) {
+    if ('A' <= c && c <= 'Z') return c - 'A';
+    return c - 'a' + 26;
+  };
+
+  const int MAX = 52;
+  std::vector adj(MAX, std::vector<int>());
+  std::vector c(MAX, std::vector<int>(MAX)), f(MAX, std::vector<int>(MAX));
+  for (int i = 0; i < m; ++i) {
+    char a, b;
+    int w;
+    std::cin >> a >> b >> w;
+    int u = c_to_i(a);
+    int v = c_to_i(b);
+    c[u][v] = c[v][u] += w;
+    adj[u].push_back(v);
+    adj[v].push_back(u);
   }
 
-  int ans = 0, s = CtoI('A'), t = CtoI('Z');
-  while (1) {
-    vector<int> prev(MX, -1);
-    Edge *path[MX]{};
-    queue<int> q;
-    q.push(s);
-    while (!q.empty() && prev[t] == -1) {
-      int cur = q.front();
-      q.pop();
-      for (auto &e : adj[cur]) {
-        int nxt = e->to;
-        if (e->spare() && prev[nxt] == -1) {
-          q.push(nxt);
-          prev[nxt] = cur;
-          path[nxt] = e;
-          if (nxt == t) break;
+  int ans = 0, S = c_to_i('A'), E = c_to_i('Z');
+
+  while (true) {
+    std::vector<int> prev(MAX, -1);
+    std::queue<int> Q;
+    Q.push(S);
+
+    while (!Q.empty() && prev[E] == -1) {
+      int u = Q.front();
+      Q.pop();
+      for (auto v : adj[u]) {
+        if (c[u][v] - f[u][v] > 0 && prev[v] == -1) {
+          Q.push(v);
+          prev[v] = u;
+          if (v == E) break;
         }
       }
     }
 
-    if (prev[t] == -1) break;
+    if (prev[E] == -1) break;
 
-    int flow = INF;
-    for (int i = t; i != s; i = prev[i]) flow = min(flow, path[i]->spare());
-    for (int i = t; i != s; i = prev[i]) path[i]->addFlow(flow);
+    int flow = 0x3f3f3f3f;
+    for (int i = E; i != S; i = prev[i]) {
+      flow = std::min(flow, c[prev[i]][i] - f[prev[i]][i]);
+    }
+    for (int i = E; i != S; i = prev[i]) {
+      f[prev[i]][i] += flow;
+      f[i][prev[i]] -= flow;
+    }
+
     ans += flow;
   }
 
-  cout << ans << "\n";
+  std::cout << ans << "\n";
 }

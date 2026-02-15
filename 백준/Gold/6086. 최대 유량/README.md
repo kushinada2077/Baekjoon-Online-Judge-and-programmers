@@ -4,44 +4,43 @@
 
 ### 성능 요약
 
-메모리: 2160 KB, 시간: 0 ms
+메모리: 2156 KB, 시간: 0 ms
 
 ### 분류
 
-최대 유량, 그래프 이론, 구현, 시뮬레이션
+구현, 그래프 이론, 시뮬레이션, 최대 유량
 
 ### 제출 일자
 
-2024년 10월 26일 01:43:02
+2026년 2월 15일 16:29:24
 
 ### 문제 설명
 
-<p>Farmer John always wants his cows to have enough water and thus has made a map of the N (1 <= N <= 700) water pipes on the farm that connect the well to the barn. He was surprised to find a wild mess of different size pipes connected in an apparently haphazard way. He wants to calculate the flow through the pipes.</p>
+<p>농사꾼 존은 소들이 충분한 물을 마시길 원했다. 그래서 농장에서 우물에서 외양간을 잇는 N개의 배수관의 지도를 만들기로 했다. 존은 아주 다양한 크기의 배수관들이 완전히 우연한 방법으로 연결돼있음을 알았다. 존은 파이프를 통과하는 유량을 계산하고 싶다.</p>
 
-<p>Two pipes connected in a row allow water flow that is the minimum of the values of the two pipe's flow values. The example of a pipe with flow capacity 5 connecting to a pipe of flow capacity 3 can be reduced logically to a single pipe of flow capacity 3:</p>
+<p>두개의 배수관이 한줄로 연결 돼 있을 때 두 관의 유량 중 최솟값으로 흐르게 된다. 예를 들어 용량이 5인 파이프가 용량이 3인 파이프와 연결되면 한개의 용량 3짜리 파이프가 된다.</p>
 
-<pre>  +---5---+---3---+    ->    +---3---+
-</pre>
+<pre>  +---5---+---3---+    ->    +---3---+</pre>
 
-<p>Similarly, pipes in parallel let through water that is the sum of their flow capacities:</p>
+<p>게다가, 병렬로 연결돼 있는 배수관들은 각 용량의 합만큼의 물을 보낼 수 있다.</p>
 
 <pre>    +---5---+
  ---+       +---    ->    +---8---+
     +---3---+
 </pre>
 
-<p>Finally, a pipe that connects to nothing else can be removed; it contributes no flow to the final overall capacity:</p>
+<p>마지막으로, 어떤 것에도 연결돼 있지 않은 파이프는 물을 흐르게 하지 못하므로 제거된다.</p>
 
 <pre>    +---5---+
  ---+               ->    +---3---+
     +---3---+--
 </pre>
 
-<p>All the pipes in the many mazes of plumbing can be reduced using these ideas into a single total flow capacity.</p>
+<p>이로 인해 복잡하게 연결된 모든 배수관들은 한개의 최대 유량을 갖는 배수관으로 만들어진다.</p>
 
-<p>Given a map of the pipes, determine the flow capacity between the well (A) and the barn (Z).</p>
+<p>주어진 파이프들의 맵으로부터 우물(A)와 외양간(Z) 사이의 유량을 결정하라.</p>
 
-<p>Consider this example where node names are labeled with letters:</p>
+<p>각 노드의 이름은 알파벳으로 지어져 있다.</p>
 
 <pre>                 +-----------6-----------+
         A+---3---+B                      +Z
@@ -49,7 +48,7 @@
                          C       D
 </pre>
 
-<p>Pipe BC and CD can be combined:</p>
+<p>파이프 BC와 CD는 합쳐질 수 있다.</p>
 
 <pre>                 +-----------6-----------+
         A+---3---+B                      +Z
@@ -57,38 +56,32 @@
                              D
 </pre>
 
-<p>Then BD and DZ can be combined:</p>
+<p>그러면 BD와 DZ 역시 합쳐질 수 있다.</p>
 
 <pre>                 +-----------6-----------+
         A+---3---+B                      +Z
                  +-----------3-----------+
 </pre>
 
-<p>Then two legs of BZ can be combined:</p>
+<p>병렬 연결된 BZ 역시 합쳐진다.</p>
 
 <pre>                 B
         A+---3---+---9---+Z
 </pre>
 
-<p>Then AB and BZ can be combined to yield a net capacity of 3:</p>
+<p>그러면 AB와 BZ 역시 합쳐질 수 있고 용량 3인 배수관 하나가 만들어진다.</p>
 
-<pre>        A+---3---+Z
-</pre>
+<pre>        A+---3---+Z</pre>
 
-<p>Write a program to read in a set of pipes described as two endpoints and then calculate the net flow capacity from 'A' to 'Z'. All networks in the test data can be reduced using the rules here.</p>
+<p>한 파이프들의 집합을 읽고. 두개의 끝점을 가진 파이프로 만들어놓은 뒤 A부터 Z까지 흐르는 최대 유량을 계산하라. 모든 파이프들은 위의 규칙을 적용시켜 줄일 수 있다.</p>
 
-<p>Pipe i connects two different nodes a_i and b_i (a_i in range 'A-Za-z'; b_i in range 'A-Za-z') and has flow F_i (1 <= F_i <= 1,000). Note that lower- and upper-case node names are intended to be treated as different.</p>
+<p>i번째 파이프는 두개의 다른 노드 a<sub>i</sub>와 b<sub>i</sub>와 연결돼 있고 F<sub>i</sub> (1 ≤ F<sub>i</sub> ≤ 1,000)만큼의 유량을 갖는다. 알파벳은 같지만, 대소문자가 다르면 다른 문자이다. 파이프는 양방향으로 흐를 수 있다.</p>
 
 ### 입력 
 
- <ul>
-	<li>Line 1: A single integer: N</li>
-	<li>Lines 2..N + 1: Line i+1 describes pipe i with two letters and an integer, all space-separated: a_i, b_i, and F_i</li>
-</ul>
+ <p>첫째 줄에 정수 N (1 ≤ N ≤ 700)이 주어진다. 둘째 줄부터 N+1번째 줄까지 파이프의 정보가 주어진다. 첫 번째, 두 번째 위치에 파이프의 이름(알파벳 대문자 또는 소문자)이 주어지고, 세 번째 위치에 파이프의 용량이 주어진다.</p>
 
 ### 출력 
 
- <ul>
-	<li>Line 1: A single integer that the maximum flow from the well ('A') to the barn ('Z')</li>
-</ul>
+ <p>첫째 줄에 A에서 Z까지의 최대 유량을 출력한다.</p>
 
