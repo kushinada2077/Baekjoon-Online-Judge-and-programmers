@@ -114,10 +114,7 @@ int main() {
           int u = 4 * arounds[dirs[0]] + dirs[0];
           int v = 4 * arounds[dirs[1]] + dirs[1];
 
-          if ((dirs[0] ^ 1) == dirs[1]) {
-            scc.addEdge(u, u ^ 1);
-            scc.addEdge(v, v ^ 1);
-          } else {
+          if ((dirs[0] ^ 1) != dirs[1]) {
             scc.addEdge(u ^ 1, v);
             scc.addEdge(v ^ 1, u);
           }
@@ -188,36 +185,4 @@ int main() {
     }
     std::cout << "\n";
   }
-
-  /*
-  std::cout << "\n\n";
-
-  for (auto [coor, n] : towers) {
-    auto [y, x] = coor;
-    auto [down, right] = towers_dir[n];
-    std::vector<int> dirs;
-
-    if (!down && !right) dirs = {0, 2};
-    if (!down && right) dirs = {0, 3};
-    if (down && right) dirs = {1, 3};
-    if (down && !right) dirs = {1, 2};
-
-    for (auto dir : dirs) {
-      for (int step = 1;; ++step) {
-        int ny = y + step * dy[dir];
-        int nx = x + step * dx[dir];
-        if (ny < 0 || ny >= r || nx < 0 || nx >= s) break;
-        if (board[ny][nx] == '#' || board[ny][nx] == 'T') break;
-        if (board[ny][nx] == 'n') board[ny][nx] = '.';
-      }
-    }
-  }
-
-  for (int i = 0; i < r; ++i) {
-    for (int j = 0; j < s; ++j) {
-      std::cout << board[i][j];
-    }
-    std::cout << "\n";
-  }
-  */
 }
