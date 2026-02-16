@@ -1,101 +1,162 @@
-#include <algorithm>
-#include <cmath>
-#include <iostream>
-#include <queue>
-#include <set>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
-#define L_PATH "input.txt"
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define rep(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-#define INF 0x3f3f3f3f
-using namespace std;
-using ll = long long;
-using T = tuple<int, int, int>;
-using P = pair<int, int>;
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
 
-const int MX = 301;
-int t, n, m, c[MX][MX], f[MX][MX];
-vector<int> adj[MX];
-vector<P> path;
-void init() {
-  path.clear();
-  for (int i = 0; i < MX; ++i) {
-    adj[i].clear();
-    for (int j = 0; j < MX; ++j) c[i][j] = c[j][i] = f[i][j] = f[j][i] = 0;
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
+
+template <class T>
+struct MaxFlow {
+  struct _Edge {
+    int to;
+    T cap;
+    _Edge(int to, T cap) : to(to), cap(cap) {}
+  };
+
+  int n;
+  std::vector<_Edge> e;
+  std::vector<std::vector<int>> g;
+  std::vector<int> cur, h;
+  MaxFlow() {}
+  MaxFlow(int n) { init(n); }
+
+  void init(int n) {
+    this->n = n;
+    e.clear();
+    g.assign(n, {});
+    cur.resize(n);
+    h.resize(n);
   }
-}
+
+  bool bfs(int s, int t) {
+    h.assign(n, -1);
+    std::queue<int> que;
+    h[s] = 0;
+    que.push(s);
+    while (!que.empty()) {
+      const int u = que.front();
+      que.pop();
+      for (int i : g[u]) {
+        auto [v, c] = e[i];
+        if (h[v] == -1 && c > 0) {
+          h[v] = h[u] + 1;
+          if (v == t) {
+            return true;
+          }
+          que.push(v);
+        }
+      }
+    }
+
+    return false;
+  }
+
+  T dfs(int u, int t, T f) {
+    if (u == t) {
+      return f;
+    }
+    auto r = f;
+    for (int& i = cur[u]; i < int(g[u].size()); ++i) {
+      const int j = g[u][i];
+      auto [v, c] = e[j];
+      if (c > 0 && h[v] == h[u] + 1) {
+        auto a = dfs(v, t, std::min(r, c));
+        e[j].cap -= a;
+        e[j ^ 1].cap += a;
+        r -= a;
+        if (r == 0) {
+          return f;
+        }
+      }
+    }
+    return f - r;
+  }
+
+  void addEdge(int u, int v, T c) {
+    g[u].push_back(e.size());
+    e.emplace_back(v, c);
+    g[v].push_back(e.size());
+    e.emplace_back(u, 0);
+  }
+
+  T flow(int s, int t, T f) {
+    T ans = 0;
+    while (bfs(s, t)) {
+      cur.assign(n, 0);
+      ans += dfs(s, t, f);
+    }
+    return ans;
+  }
+
+  std::vector<bool> minCut() {
+    std::vector<bool> c(n);
+    for (int i = 0; i < n; ++i) {
+      c[i] = (h[i] != -1);
+    }
+    return c;
+  }
+
+  struct Edge {
+    int from;
+    int to;
+    T cap;
+    T flow;
+  };
+
+  std::vector<Edge> edges() {
+    std::vector<Edge> a;
+    for (int i = 0; i < int(e.size()); i += 2) {
+      Edge x;
+      x.from = e[i ^ 1].to;
+      x.to = e[i].to;
+      x.cap = e[i].cap + e[i ^ 1].cap;
+      x.flow = e[i ^ 1].cap;
+      a.push_back(x);
+    }
+    return a;
+  }
+};
+
 int main() {
-  fastio;
-  cin >> t;
-  while (t--) {
-    init();
-    cin >> n >> m;
-    int ans = 0;
-    for (int u, v, w, i{}; i < m; ++i) {
-      cin >> u >> v >> w;
-      adj[u].pb(v);
-      adj[v].pb(u);
-      c[u][v] += w;
-      path.pb(P(u, v));
-    }
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  constexpr int INF = 0x3f3f3f3f;
+  int tc;
+  std::cin >> tc;
+  MaxFlow<int> mf;
+  while (tc--) {
+    [&] {
+      int n, m;
+      std::cin >> n >> m;
+      mf.init(n);
+      int S = 0, T = n - 1;
+      for (int i = 0; i < m; ++i) {
+        int u, v, c;
+        std::cin >> u >> v >> c;
+        u--;
+        v--;
+        mf.addEdge(u, v, c);
+      }
 
-    while (1) {
-      queue<int> q;
-      vector<int> prev(MX, -1);
-      q.push(1);
-      prev[1] = 0;
-
-      while (!q.empty() && prev[n] == -1) {
-        int cur = q.front();
-        q.pop();
-        for (auto nxt : adj[cur]) {
-          if (prev[nxt] == -1 && c[cur][nxt] - f[cur][nxt] > 0) {
-            q.push(nxt);
-            prev[nxt] = cur;
-            if (nxt == n) break;
-          }
+      constexpr int INF = 0x3f3f3f3f;
+      auto flow = mf.flow(S, T, INF);
+      auto e = mf.edges();
+      int ans = 0;
+      for (int i = 0; i < int(e.size()); ++i) {
+        if (e[i].cap == e[i].flow) {
+          mf.e[2 * i].cap--;
+          mf.e[2 * i + 1].cap--;
+          bool c = !mf.bfs(e[i].from, e[i].to);
+          if (c) ans++;
+          mf.e[2 * i].cap++;
+          mf.e[2 * i + 1].cap++;
         }
       }
-
-      if (prev[n] == -1) break;
-      int flow = INF;
-      for (int i = n; i != 1; i = prev[i]) flow = min(flow, c[prev[i]][i] - f[prev[i]][i]);
-      for (int i = n; i != 1; i = prev[i]) {
-        f[prev[i]][i] += flow;
-        f[i][prev[i]] -= flow;
-      }
-    }
-
-    for (auto [u, v] : path) {
-      if (c[u][v] == f[u][v]) {
-        queue<int> q;
-        q.push(u);
-        vector<bool> vis(MX, 0);
-        vis[u] = 1;
-
-        while (!q.empty() && vis[v] == 0) {
-          int cur = q.front();
-          q.pop();
-          for (auto nxt : adj[cur]) {
-            if (vis[nxt] == 0 && c[cur][nxt] > f[cur][nxt]) {
-              q.push(nxt);
-              vis[nxt] = 1;
-              if (nxt == v) break;
-            }
-          }
-        }
-
-        if (vis[v] == 0) ans++;
-      }
-    }
-
-    cout << ans << "\n";
+      std::cout << ans << "\n";
+    }();
   }
 }

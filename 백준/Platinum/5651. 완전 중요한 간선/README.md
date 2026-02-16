@@ -4,35 +4,27 @@
 
 ### 성능 요약
 
-메모리: 3028 KB, 시간: 44 ms
+메모리: 2656 KB, 시간: 28 ms
 
 ### 분류
 
-최대 유량
+그래프 이론, 최대 유량
 
 ### 제출 일자
 
-2024년 11월 4일 12:36:14
+2026년 2월 17일 00:42:52
 
 ### 문제 설명
 
-<p>You would like to broadcast the ACM ICPC Regional Contest event in Phuket in real time. To do so, you have to transmit the video data from the recording machine to the broadcasting server in Bangkok. You have the map of the entire network of Thailand. There are N routers and M one-directional links. Each link i, for 1 <= i <= M, can transmit data from Router F<sub>i</sub> to Router T<sub>i</sub>, with bandwidth B<sub>i</sub>. It is possible that there are more than one link that transmits data from a particular router to another particular router.</p>
-
-<p>The recording machine is connected to Router 1 with an unlimited-bandwidth link, and the broadcasting server is connected to Router N also with an unlimited-bandwidth link.</p>
-
-<p>To transmit video data from Router 1 to Router N, you split the video data and transmit them using many transmission paths. A transmission path is a path from Router 1 to Router N. Each path can transmit data with some bandwidth b and utilize bandwidth b from every link used by this path.</p>
-
-<p>It is possible to use many transmission paths with various bandwidths and many paths can share a link. However, the total bandwidth of all paths using any link i must not exceed the bandwidth B<sub>i</sub>. The total video bandwidth is the sum of all transmission bandwidths of all transmission paths.</p>
-
-<p>Given the network map, you can calculate the best possible scheme to maximize the transmission bandwidth from Router 1 to Router N. However, you are afraid that some link might fail to transmit data as fast as the claimed bandwidth. For some link i, it is still possible to obtain the best transmission bandwidths even when the link bandwidth drops from B<sub>i</sub> to B<sub>i</sub>–1. But for some link i, if this occurs, the best video transmission bandwidth also drops; call this link a crucial link. Note that when considering if an edge i is crucial, we only consider only edge i, while assuming that all bandwidths of all other links remain unchanged. i.e., we consider each edge separately. </p>
-
-<p>For each test case, write a program that compute the number of crucial links.</p>
+<p>어떤 플로우 그래프가 주어졌을때, 한 간선의 용량이 1줄면 최대 유량도 1이 줄어드는 경우 그 간선을 완전 중요한 간선이라고 부른다. 그래프가 주어진 경우 완전 중요한 간선의 개수를 세어보자!</p>
 
 ### 입력 
 
- <p>The first line of the input contains an integer K, the number of test cases (1 <= K <= 15). Each test case is in the following format. The first line of each test case contains a pair of integers N and M (2 <= N <= 300; 2 <= M <= 5,000). The next M lines contain link information. For 1 <= i <= M, line 1 + i contains 3 integers F<sub>i</sub>, T<sub>i</sub>, and B<sub>i</sub> (1 <= F<sub>i</sub> <= N; 1 <= T<sub>i</sub> <= N; 1 <= B<sub>i</sub> <= 1,000). The sum of all bandwidths B<sub>i</sub> is at most 20,000.</p>
+ <p>입력은 여러개의 테스트케이스로 이뤄진다. 첫째 줄에는 테스트케이스의 수 K (1<=K<=15)가 주어진다.  각 테스트 케이스에는 N, M (2 <= N <= 300; 2 <= M <= 5,000)가 주어지고 각각 정점의 수와 간선의 수를 뜻한다. 1번 정점은 source를 N번 정점은 sink를 뜻한다. </p>
+
+<p>다음 M줄에 걸쳐서는 세개의 정수 f, t, b가 주어지는데 f에서 t로 가는 간선의 용량이 b(<1000)라는 뜻이다. 모든 유량의 합은 20,000을 넘지 않는다.</p>
 
 ### 출력 
 
- <p>Your program must output K integers, each on a separate line. For each test case, your program must output the number of crucial links.</p>
+ <p>각 테스트케이스마다 한줄씩 완전 중요한 간선의 수를 출력한다.</p>
 
