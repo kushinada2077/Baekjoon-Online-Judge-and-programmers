@@ -9,123 +9,129 @@ using i64 = long long;
 using P = std::pair<int, int>;
 using T = std::tuple<int, int, int>;
 
-struct Edge {
-  int to, c, f;
-  Edge() : Edge(0, -1) {}
-  Edge(int to, int c) : to(to), c(c), f(0) {}
+template <class T>
+struct MaxFlow {
+  struct _Edge {
+    int to;
+    T cap;
+    _Edge(int to, T cap) : to(to), cap(cap) {}
+  };
+
+  int n;
+  std::vector<_Edge> e;
+  std::vector<std::vector<int>> g;
+  std::vector<int> cur, h;
+
+  MaxFlow() {}
+  MaxFlow(int n) { init(n); }
+
+  void init(int n) {
+    this->n = n;
+    e.clear();
+    g.assign(n, {});
+    cur.resize(n);
+    h.resize(n);
+  }
+
+  bool bfs(int s, int t) {
+    h.assign(n, -1);
+    std::queue<int> que;
+    h[s] = 0;
+    que.push(s);
+    while (!que.empty()) {
+      const int u = que.front();
+      que.pop();
+      for (int i : g[u]) {
+        auto [v, c] = e[i];
+        if (c > 0 && h[v] == -1) {
+          h[v] = h[u] + 1;
+          if (v == t) {
+            return true;
+          }
+          que.push(v);
+        }
+      }
+    }
+    return false;
+  }
+
+  T dfs(int u, int t, T f) {
+    if (u == t) {
+      return f;
+    }
+    auto r = f;
+    for (int& i = cur[u]; i < int(g[u].size()); ++i) {
+      const int j = g[u][i];
+      auto [v, c] = e[j];
+      if (c > 0 && h[v] == h[u] + 1) {
+        auto a = dfs(v, t, std::min(r, c));
+        e[j].cap -= a;
+        e[j ^ 1].cap += a;
+        r -= a;
+        if (r == 0) {
+          return f;
+        }
+      }
+    }
+    return f - r;
+  }
+  void addEdge(int u, int v, T c) {
+    g[u].push_back(e.size());
+    e.emplace_back(v, c);
+    g[v].push_back(e.size());
+    e.emplace_back(u, 0);
+  }
+
+  T flow(int s, int t) {
+    T ans = 0;
+    while (bfs(s, t)) {
+      cur.assign(n, 0);
+      ans += dfs(s, t, std::numeric_limits<T>::max());
+    }
+    return ans;
+  }
+
+  std::vector<bool> minCut() {
+    std::vector<bool> c(n);
+    for (int i = 0; i < n; ++i) {
+      c[i] = (h[i] != -1);
+    }
+    return c;
+  }
 };
 
 int main() {
   std::cin.tie(nullptr)->sync_with_stdio(false);
   kushinada;
+  const int INF = 0x3f3f3f3f;
   int n;
   std::cin >> n;
-  const int MAX_V = n + 2;
-  int S = n, T = n + 1;
-  std::vector<int> work(MAX_V), level(MAX_V, -1), team(n);
-  std::vector<Edge> edges;
-  std::vector<std::vector<int>> adj(MAX_V);
-
+  const int S = n, T = n + 1;
+  MaxFlow<int> M(n + 2);
+  std::vector<int> team(n);
   for (int i = 0; i < n; ++i) {
     std::cin >> team[i];
+    if (team[i] == 1) M.addEdge(S, i, INF);
+    else if (team[i] == 2) M.addEdge(i, T, INF);
   }
 
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < n; ++j) {
-      int c;
-      std::cin >> c;
-      if (i >= j) continue;
-      int u = i, v = j;
-      adj[u].push_back((int)edges.size());
-      edges.emplace_back(v, c);
-      adj[v].push_back((int)edges.size());
-      edges.emplace_back(u, c);
+      int x;
+      std::cin >> x;
+      if (x == 0) continue;
+      M.addEdge(i, j, x);
     }
   }
 
-  const int INF = 0x3f3f3f3f;
-
+  std::cout << M.flow(S, T) << "\n";
+  auto c = M.minCut();
   for (int i = 0; i < n; ++i) {
-    int u = i;
-    if (team[i] == 1) {
-      adj[S].push_back((int)edges.size());
-      edges.emplace_back(u, INF);
-      adj[u].push_back((int)edges.size());
-      edges.emplace_back(S, 0);
-    }
-    if (team[i] == 2) {
-      adj[u].push_back((int)edges.size());
-      edges.emplace_back(T, INF);
-      adj[T].push_back((int)edges.size());
-      edges.emplace_back(u, 0);
-    }
+    if (c[i]) std::cout << i + 1 << " ";
   }
-
-  auto bfs = [&]() -> bool {
-    std::fill(level.begin(), level.end(), -1);
-    level[S] = 0;
-
-    std::queue<int> que;
-    que.push(S);
-
-    while (!que.empty()) {
-      int u = que.front();
-      que.pop();
-
-      for (auto e_num : adj[u]) {
-        auto& e = edges[e_num];
-        int v = e.to;
-
-        if (level[v] != -1 || e.c - e.f == 0) continue;
-        que.push(v);
-        level[v] = level[u] + 1;
-      }
-    }
-
-    return level[T] != -1;
-  };
-
-  auto dfs = [&](auto&& dfs, int u, int dest, int flow) -> int {
-    if (u == dest) return flow;
-
-    for (int& i = work[u]; i < (int)adj[u].size(); ++i) {
-      int e_idx = adj[u][i];
-      auto& e = edges[e_idx];
-      int v = e.to;
-
-      if (level[v] != level[u] + 1 || e.c - e.f == 0) continue;
-      int df = dfs(dfs, v, dest, std::min(e.c - e.f, flow));
-      if (df > 0) {
-        auto& rev = edges[e_idx ^ 1];
-        e.f += df;
-        rev.f -= df;
-        return df;
-      }
-    }
-
-    return 0;
-  };
-
-  int ans = 0;
-
-  while (bfs()) {
-    std::fill(work.begin(), work.end(), 0);
-    while (true) {
-      int flow = dfs(dfs, S, T, 0x3f3f3f3f);
-      if (flow == 0) break;
-      ans += flow;
-    }
-  }
-
-  std::vector<int> a, b;
-  for (int i = 0; i < n; ++i) {
-    if (level[i] != -1) a.push_back(i);
-    else b.push_back(i);
-  }
-
-  std::cout << ans << "\n";
-  for (auto x : a) std::cout << x + 1 << " ";
   std::cout << "\n";
-  for (auto x : b) std::cout << x + 1 << " ";
+  for (int i = 0; i < n; ++i) {
+    if (!c[i]) std::cout << i + 1 << " ";
+  }
   std::cout << "\n";
 }
