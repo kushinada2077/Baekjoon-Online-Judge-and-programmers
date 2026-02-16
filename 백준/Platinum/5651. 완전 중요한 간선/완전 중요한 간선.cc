@@ -148,12 +148,8 @@ int main() {
       int ans = 0;
       for (int i = 0; i < int(e.size()); ++i) {
         if (e[i].cap == e[i].flow) {
-          mf.e[2 * i].cap--;
-          mf.e[2 * i + 1].cap--;
           bool c = !mf.bfs(e[i].from, e[i].to);
           if (c) ans++;
-          mf.e[2 * i].cap++;
-          mf.e[2 * i + 1].cap++;
         }
       }
       std::cout << ans << "\n";
