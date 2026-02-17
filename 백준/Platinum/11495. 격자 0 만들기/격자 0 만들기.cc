@@ -131,6 +131,7 @@ int main() {
     [&] {
       int n, m;
       std::cin >> n >> m;
+      int sum = 0;
       const int S = n * m, T = S + 1, MAX_V = T + 1;
       mf.init(MAX_V);
       auto idx = [&](int y, int x) { return y * m + x; };
@@ -138,6 +139,7 @@ int main() {
       for (int i = 0; i < n; ++i) {
         for (int j = 0; j < m; ++j) {
           std::cin >> board[i][j];
+          sum += board[i][j];
         }
       }
 
@@ -160,12 +162,7 @@ int main() {
         }
       }
 
-      int ans = mf.flow(S, T);
-      auto e = mf.edges();
-      for (auto [from, to, cap, flow] : e) {
-        if (cap == INF) continue;
-        if (from == S || to == T) ans += cap - flow;
-      }
+      int ans = sum - mf.flow(S, T);
       std::cout << ans << "\n";
     }();
   }
