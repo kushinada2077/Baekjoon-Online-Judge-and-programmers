@@ -4,40 +4,38 @@
 
 ### 성능 요약
 
-메모리: 9568 KB, 시간: 964 ms
+메모리: 2772 KB, 시간: 32 ms
 
 ### 분류
 
-최대 유량
+그래프 이론, 최대 유량, 격자 그래프
 
 ### 제출 일자
 
-2024년 11월 6일 11:58:09
+2026년 2월 17일 16:24:37
 
 ### 문제 설명
 
-<p>You are given a grid of nonnegative integers. There is an operation that performs the following two steps on the grid:</p>
+<p>음수가 아닌 정수들의 격자가 주어진다. 당신은 이 격자에 다음 연산을 행할 수 있다.</p>
 
 <ul>
-	<li>Step 1. It chooses two numbers adjacent vertically or horizontally in the grid.</li>
-	<li>Step 2. It decreases each number chosen in Step 1 by 1 if it is positive. </li>
+	<li>1. 격자에서 가로 또는 세로로 인접한 정수 2개를 고른다.</li>
+	<li>2. 각 정수가 양수일 때 1 감소시킨다.</li>
 </ul>
 
-<p>For example, Figure 1 shows the result of four successive executions of the operation on a 2-by-2 grid of four numbers.</p>
+<p>다음 그림은 총 4개의 연속한 연산을 2*2 격자에 가해서 모든 정수를 0으로 만든 과정을 보여준다.</p>
 
-<p style="text-align:center"><img alt="" src="https://onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/problem/11495/1.png" style="height:68px; width:412px"></p>
+<p style="text-align: center;"><img alt="" src="https://onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/problem/11495/1.png" style="height:68px; width:412px"></p>
 
-<p style="text-align:center">Figure 1. Four successive executions of the operation on a 2-by-2 grid of four numbers</p>
+<p>위 예제에서는 모든 정수를 0으로 만들기 위해 4번의 연산을 행했다. 이보다 적은 횟수의 연산으로는 모든 정수를 0으로 만들 수 없다는 것을 쉽게 알 수 있다.</p>
 
-<p>In the above example, the operation was executed four times to make all the numbers in the initial grid to 0. You can easily check there is no way to do so using less number of executions of the operation. </p>
-
-<p>You are to write a program that calculates the minimum number of executions of the operation to make all the numbers in the grid to 0.</p>
+<p>격자가 주어졌을 때 모든 정수를 0으로 만들기 위해 필요한 최소 연산의 횟수를 구하는 프로그램을 작성하시오.</p>
 
 ### 입력 
 
- <p>Your program is to read from standard input. The input consists of T test cases. The number of test cases T is given in the first line of the input. Each test case starts with a line containing two integers, n and m (2 ≤ n, m ≤ 50), where n is the row size and m is the column size of a grid. In the following n lines, the elements of the grid are given row by row, that is, the i-th line contains m integers which correspond to the elements of the i-th row of the grid in order, for 1 ≤ i ≤ n. Each integer in the grid is between 0 and 1,000, inclusively.</p>
+ <p>첫째 줄에 테스트 케이스의 개수 T가 주어진다. 각 테스트 케이스의 첫째 줄에는 n과 m (2 ≤ n, m ≤ 50)이 주어지며, n은 격자의 행 개수, m은 격자의 열 개수를 나타낸다. 그 다음 n개의 줄에 각각 격자의 해당 행에 있는 m개의 정수가 열 순서대로 주어진다. 각 정수는 0 이상 1,000 이하이다.</p>
 
 ### 출력 
 
- <p>Your program is to write to standard output. Print exactly one line for each test case. The line should contain an integer representing the minimum number of executions of the operations required in the problem.</p>
+ <p>각 테스트 케이스마다 필요한 연산의 최소 횟수를 한 줄에 출력한다.</p>
 
