@@ -4,35 +4,33 @@
 
 ### 성능 요약
 
-메모리: 36760 KB, 시간: 288 ms
+메모리: 4544 KB, 시간: 20 ms
 
 ### 분류
 
-최대 유량
+그래프 이론, 최대 유량
 
 ### 제출 일자
 
-2024년 11월 5일 15:01:02
+2026년 2월 17일 18:49:28
 
 ### 문제 설명
 
-<p>One of your classes has K students in it who really don’t like each other. In fact, they dislike each other that they want to ﬁnd routes to class that don’t intersect to that they won’t ever see each other outside of class. Can you ﬁnd such routes?</p>
+<p>상근이네 반에는 총 K명의 학생이 있다. 그 중 일부는 서로를 엄청나게 싫어한다. 서로 싫어하는 친구는 교실 밖에서 절대 마주치지 않는 경로를 이용해 교실로 이동하려고 한다. 이런 경로를 찾아보자.</p>
 
 ### 입력 
 
- <p>The input ﬁle will contain multiple cases. The ﬁrst line of each case is K N, where K is the number of routes you need to ﬁnd and N is the number of intersections in MIT’s ﬂoor plan. The intersections are numbered 1, ..., N. This is followed by N lines, one for each intersection, containing the indices of the adjacent intersections, separated by spaces. (This means that if the line for intersection 2 contains a 3, then the line for intersection 3 will contain a 2.) Every intersection is adjacent to at least one other intersection.</p>
+ <p>입력은 여러 개의 테스트 케이스로 이루어져 있다.</p>
 
-<p>Each case is followed immediately by the next case. The end of the input is indicated by a line containing only “0 0”.</p>
+<p>각 테스트 케이스의 첫째 줄에는 찾아야하는 경로의 수 K와 교차로의 수 N이 주어진다. 교차로는 1번부터 N번까지 번호가 매겨져 있다. 다음 N개 줄에는 각 교차로가 어떤 교차로와 연결되어 있는지 주어지며, 교차로 번호가 증가하는 순서로 주어진다. 모든 교차로는 적어도 한 교차로와 연결되어 있다.</p>
 
-<p>You may assume that 1 ≤ K ≤ 100 and 2 ≤ N ≤ 5000.</p>
+<p>입력의 마지막 줄에는 0 0이 주어진다.</p>
 
-<p>The students all start at intersection 1 and their class is at intersection 2.</p>
+<p>1 ≤ K ≤ 100, 2 ≤ N ≤ 5000이며 모든 학생은 1번 교차로에서 시작하고, 교실은 2번 교차로에 있다.</p>
 
 ### 출력 
 
- <p>For each case, output the case number, in the format “Case #:”, followed by a newline.</p>
+ <p>각 테스트 케이스마다 "Case #:" 형식으로 케이스 번호를 출력한다. 그 다음, K개의 겹치지 않는 경로 (1번에서 출발해 2번으로 도착하는 경로)가 존재하면 K개 줄에 각 경로를 출력한다. 없는 경우에는 "Impossible"을 출력한다.</p>
 
-<p>If there are K non-intersecting routes from the start (1) to the end (2), then this must be followed K lines, each one giving a list of corners, in order, on one such route from 1 to 2. If not, then output one line with the word “Impossible”.</p>
-
-<p>Output a blank line after each test case.</p>
+<p>각 테스트 케이스의 정답을 출력한 다음에는 빈 줄을 하나 출력한다.</p>
 
