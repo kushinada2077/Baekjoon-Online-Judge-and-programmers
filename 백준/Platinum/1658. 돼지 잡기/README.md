@@ -4,43 +4,41 @@
 
 ### 성능 요약
 
-메모리: 12660 KB, 시간: 68 ms
+메모리: 5752 KB, 시간: 52 ms
 
 ### 분류
 
-최대 유량
+그래프 이론, 최대 유량
 
 ### 제출 일자
 
-2024년 11월 6일 18:33:18
+2026년 2월 18일 03:29:25
 
 ### 문제 설명
 
-<p>Mirko works on a pig farm that consists of M locked pig-houses and Mirko can't unlock any pighouse because he doesn't have the keys. Customers come to the farm one after another. Each of them has keys to some pig-houses and wants to buy a certain number of pigs. </p>
+<p>종혁이는 자물쇠로 잠긴 M개의 돼지우리가 있는 농장에서 일하고 있다. 종혁이는 열쇠가 없기 때문에 우리들을 열지 못한다.</p>
 
-<p>All data concerning customers planning to visit the farm on that particular day are available to Mirko early in the morning so that he can make a sales-plan in order to maximize the number of pigs sold. </p>
+<p>이 농장에 손님들은 하루에 한 명씩 방문한다. 이들은 몇몇 우리 열쇠를 가지고 있고, 이 우리들을 연 다음 자신이 원하는 만큼의 돼지를 사간다.</p>
 
-<p>More precisely, the procedure is as following: the customer arrives, opens all pig-houses to which he has the key, Mirko sells a certain number of pigs from all the unlocked pig-houses to him, and, if Mirko wants, he can redistribute the remaining pigs across the unlocked pig-houses. </p>
+<p>농장 운영 방식은 아래와 같다.</p>
 
-<p>An unlimited number of pigs can be placed in every pig-house. </p>
+<ol>
+	<li>손님이 도착해서 가지고 있는 열쇠로 열 수 있는 모든 우리들을 연다.</li>
+	<li>손님에게 몇몇 돼지들을 판다. (손님이 원하는 만큼을 <strong>초과</strong>하여 돼지를 팔 순 없지만 그 이하로는 팔 수 있다.)</li>
+	<li>종혁이는 팔고 남은 돼지들을 현재 열려져 있는 우리들을 상대로 재분배 할 수 있다.</li>
+</ol>
 
-<p>Write a program that will find the maximum number of pigs that he can sell on that day.</p>
+<p>문제는 우리에 들어갈 수 있는 돼지 숫자의 제한이 없다고 할 때 손님들이 방문한 동안 종혁이가 최대로 팔 수 있는 총 돼지의 숫자를 구하는 것이다.</p>
 
 ### 입력 
 
- <p>The first line of input file contains two integers M and N, 1 ≤ M ≤ 1000, 1 ≤ N ≤ 100, number of pighouses and number of customers. Pig houses are numbered from 1 to M and customers are numbered from 1 to N. </p>
+ <p>첫째 줄에 돼지 우리 숫자를 나타내는 M(1≤M≤1,000)과 손님들의 숫자를 나타내는 N(1≤N≤100)이 공백으로 구분되어 주어진다. 돼지우리는 1번부터 M번까지의 숫자로 매겨져 있고 손님 역시 1번부터 N번의 숫자로 매겨져 있다.</p>
 
-<p>The next line contains M integeres, for each pig-house initial number of pigs. The number of pigs in each pig-house is greater or equal to 0 and less or equal to 1000. </p>
+<p>두 번째 줄에는 각각의 돼지우리에 있는 초기 돼지 숫자를 나타내는 M개의 수가 공백으로 구분되어 주어진다. 이 수는 0 이상 1,000 이하의 수이다.</p>
 
-<p>The next N lines contains records about the customers in the following form ( record about the i-th customer is written in the (i+2)-th line): </p>
-
-<p>A K<sub>1</sub> K<sub>2</sub> ... K<sub>A</sub> B </p>
-
-<p>It means that this customer has key to the pig-houses marked with the numbers K<sub>1</sub>, K<sub>2</sub>, ..., K<sub>A</sub> (sorted nondecreasingly ) and that he wants to buy B pigs. Numbers A and B can be equal to 0.</p>
+<p>그 다음 N개의 줄에는 N명의 손님들에 대한 정보가 주어진다. i+2번째 줄에는 i번째 손님에 대한 정보 A, K1, K2, …, KA, B가 주어지는데 이는 i번째 손님이 K1, K2, …, KA번째 우리 열쇠를 가지고 있고 B마리의 돼지를 사길 원한다는 의미이다. A와 B는 0 이상의 정수이다.</p>
 
 ### 출력 
 
- <p>The first and only line of the output file should contain the number of sold pigs. </p>
-
-<p> </p>
+ <p>첫째 줄에 최대 팔 수 있는 돼지 숫자를 출력한다.</p>
 
