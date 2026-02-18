@@ -1,0 +1,48 @@
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
+
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
+
+int main() {
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  const int MOD = 1e6;
+  i64 n;
+  std::cin >> n;
+  std::vector<std::vector<i64>> M = {{1, 1}, {1, 0}};
+
+  auto mul = [&](std::vector<std::vector<i64>> a, std::vector<std::vector<i64>> b) {
+    int n = a.size(), m = a.front().size(), o = b.front().size();
+    std::vector r(n, std::vector<i64>(o));
+    for (int i = 0; i < n; ++i) {
+      for (int k = 0; k < o; ++k) {
+        for (int j = 0; j < m; ++j) {
+          r[i][k] += a[i][j] * b[j][k];
+          r[i][k] %= MOD;
+        }
+      }
+    }
+    return r;
+  };
+
+  auto pow = [&](auto&& pow, i64 x) -> std::vector<std::vector<i64>> {
+    if (x == 0) {
+      return std::vector<std::vector<i64>>{{1, 0}, {0, 1}};
+    }
+    auto r = pow(pow, x / 2);
+    if (x % 2) {
+      return mul(mul(r, r), M);
+    }
+    return mul(r, r);
+  };
+
+  auto mPow = pow(pow, n - 1);
+  auto res = mul(mPow, {{1}, {0}});
+  std::println("{}", res[0][0]);
+}
