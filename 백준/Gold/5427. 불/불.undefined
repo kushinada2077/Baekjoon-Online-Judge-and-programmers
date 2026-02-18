@@ -1,0 +1,74 @@
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
+
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
+
+int main() {
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  int tc;
+  std::cin >> tc;
+  while (tc--) {
+    int d = [&] -> int {
+      int n, m;
+      std::cin >> m >> n;
+      std::queue<T> que;
+      std::vector d_f(n, std::vector<int>(m, -1)), d_p(n, std::vector<int>(m, -1));
+      std::vector<std::string> b(n);
+      int sy = 0, sx = 0;
+      for (int i = 0; i < n; ++i) {
+        std::cin >> b[i];
+        for (int j = 0; j < m; ++j) {
+          if (b[i][j] == '@') {
+            sy = i;
+            sx = j;
+            d_p[i][j] = 0;
+          }
+          if (b[i][j] == '*') {
+            que.push({i, j, 0});
+            d_f[i][j] = 0;
+          }
+        }
+      }
+      que.push({sy, sx, 1});
+
+      std::vector dy = {1, 0, -1, 0}, dx = {0, 1, 0, -1};
+      while (!que.empty()) {
+        auto [y, x, s] = que.front();
+        que.pop();
+        for (int dir = 0; dir < 4; ++dir) {
+          int ny = y + dy[dir];
+          int nx = x + dx[dir];
+          if (ny < 0 || ny >= n || nx < 0 || nx >= m) {
+            if (s == 1) {
+              return d_p[y][x] + 1;
+            }
+            continue;
+          }
+          if (s == 0) {
+            if (d_f[ny][nx] != -1 || b[ny][nx] == '#') continue;
+            que.push({ny, nx, 0});
+            d_f[ny][nx] = d_f[y][x] + 1;
+          } else if (s == 1) {
+            if (d_p[ny][nx] != -1 || d_f[ny][nx] != -1 || b[ny][nx] == '#') continue;
+            que.push({ny, nx, 1});
+            d_p[ny][nx] = d_p[y][x] + 1;
+          }
+        }
+      }
+      return -1;
+    }();
+
+    if (d == -1) {
+      std::println("IMPOSSIBLE");
+    } else {
+      std::println("{}", d);
+    }
+  }
+}
