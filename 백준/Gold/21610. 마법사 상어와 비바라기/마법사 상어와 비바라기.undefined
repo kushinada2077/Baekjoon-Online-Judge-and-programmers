@@ -22,10 +22,10 @@ int main() {
   }
 
   std::vector dy = {0, -1, -1, -1, 0, 1, 1, 1}, dx = {-1, -1, 0, 1, 1, 1, 0, -1};
-  std::set<P> c;
+  std::vector<P> c;
   for (int i = n - 2; i < n; ++i) {
     for (int j = 0; j < 2; ++j) {
-      c.insert({i, j});
+      c.push_back({i, j});
     }
   }
 
@@ -37,13 +37,15 @@ int main() {
   };
 
   auto action = [&](int d, int s) {
-    std::set<P> moved;
-    for (auto [y, x] : c) {
+    std::vector chk(n, std::vector<bool>(n));
+    for (auto& [y, x] : c) {
       auto [ny, nx] = move(y, x, d, s);
       a[ny][nx]++;
-      moved.insert({ny, nx});
+      chk[ny][nx] = true;
+      y = ny;
+      x = nx;
     }
-    for (auto [y, x] : moved) {
+    for (auto [y, x] : c) {
       for (int dir = 1; dir < 8; dir += 2) {
         int ny = y + dy[dir];
         int nx = x + dx[dir];
@@ -52,16 +54,15 @@ int main() {
       }
     }
 
-    std::set<P> nc;
+    c.assign(0, {});
     for (int i = 0; i < n; ++i) {
       for (int j = 0; j < n; ++j) {
-        if (a[i][j] >= 2 && !moved.contains({i, j})) {
-          nc.insert({i, j});
+        if (a[i][j] >= 2 && !chk[i][j]) {
           a[i][j] -= 2;
+          c.push_back({i, j});
         }
       }
     }
-    c = nc;
   };
 
   for (int i = 0; i < m; ++i) {
