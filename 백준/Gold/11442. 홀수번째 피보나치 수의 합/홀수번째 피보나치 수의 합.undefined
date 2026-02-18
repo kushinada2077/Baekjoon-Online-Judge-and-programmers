@@ -1,0 +1,98 @@
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
+
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
+
+template <class T, int N>
+struct Matrix {
+  std::array<std::array<T, N>, N> dat;
+
+  Matrix(T v = 0) {
+    for (int i = 0; i < N; ++i) {
+      for (int j = 0; j < N; ++j) {
+        dat[i][j] = 0;
+      }
+      dat[i][i] = v;
+    }
+  }
+
+  std::array<T, N>& operator[](int i) { return dat[i]; }
+
+  Matrix& operator*=(const Matrix& a) {
+    Matrix r;
+    for (int i = 0; i < N; ++i) {
+      for (int j = 0; j < N; ++j) {
+        for (int k = 0; k < N; ++k) {
+          r[i][j] += dat[i][k] * a.dat[k][j];
+        }
+      }
+    }
+    this->dat = r.dat;
+    return *this;
+  }
+
+  friend Matrix operator*(Matrix a, const Matrix& b) { return a *= b; }
+};
+
+template <class T>
+T power(T b, long long e) {
+  T r(1);
+  while (e) {
+    if (e & 1) r *= b;
+    b *= b;
+    e /= 2;
+  }
+  return r;
+};
+
+template <int MOD>
+struct Mint {
+  int x;
+  Mint(long long v = 0) {
+    v %= MOD;
+    if (v < 0) v += MOD;
+    x = int(v);
+  }
+
+  Mint& operator+=(const Mint& o) {
+    x += o.x;
+    if (x >= MOD) x -= MOD;
+    return *this;
+  }
+
+  Mint& operator-=(const Mint& o) {
+    x -= o.x;
+    if (x < 0) x += MOD;
+    return *this;
+  }
+
+  Mint& operator*=(const Mint& o) {
+    x = 1LL * x * o.x % MOD;
+    return *this;
+  }
+
+  int val() const { return x; }
+
+  friend Mint operator+(Mint a, const Mint& b) { return a += b; }
+  friend Mint operator-(Mint a, const Mint& b) { return a -= b; }
+  friend Mint operator*(Mint a, const Mint& b) { return a *= b; }
+};
+
+int main() {
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  const int MOD = 1e9 + 7;
+  i64 n;
+  std::cin >> n;
+  Matrix<Mint<MOD>, 2> M;
+  M[0][0] = M[0][1] = M[1][0] = 1;
+  if (n & 1) n++;
+  M = power(M, n - 1);
+  std::println("{}", M[0][0].val());
+}
