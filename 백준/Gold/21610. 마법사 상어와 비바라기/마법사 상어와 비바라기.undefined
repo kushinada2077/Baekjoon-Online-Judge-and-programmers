@@ -29,17 +29,15 @@ int main() {
     }
   }
 
-  auto move = [&](int y, int x, int d, int s) -> P {
-    int a = dy[d] * s, b = dx[d] * s;
-    if (dy[d] < 0) a = -dy[d] * (n - s);
-    if (dx[d] < 0) b = -dx[d] * (n - s);
-    return {(y + a) % n, (x + b) % n};
-  };
-
+  std::vector chk(n, std::vector<bool>(n));
   auto action = [&](int d, int s) {
-    std::vector chk(n, std::vector<bool>(n));
-    for (auto& [y, x] : c) {
-      auto [ny, nx] = move(y, x, d, s);
+    int p = dy[d] * s, q = dx[d] * s;
+    if (dy[d] < 0) p = -dy[d] * (n - s);
+    if (dx[d] < 0) q = -dx[d] * (n - s);
+
+    for (auto &[y, x] : c) {
+      int ny = (y + p) % n;
+      int nx = (x + q) % n;
       a[ny][nx]++;
       chk[ny][nx] = true;
       y = ny;
@@ -54,12 +52,14 @@ int main() {
       }
     }
 
-    c.assign(0, {});
+    c.clear();
     for (int i = 0; i < n; ++i) {
       for (int j = 0; j < n; ++j) {
         if (a[i][j] >= 2 && !chk[i][j]) {
           a[i][j] -= 2;
           c.push_back({i, j});
+        } else if (chk[i][j]) {
+          chk[i][j] = false;
         }
       }
     }
