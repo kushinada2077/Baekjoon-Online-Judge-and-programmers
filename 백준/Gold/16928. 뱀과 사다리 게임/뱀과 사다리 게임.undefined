@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
+
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
+
+int main() {
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  const int MAX_V = 100, S = 0, T = 99;
+  int n, m;
+  std::cin >> n >> m;
+  std::vector<int> d(MAX_V, -1), c(MAX_V);
+  std::vector adj(MAX_V, std::vector<int>());
+  for (int i = 0; i < n + m; ++i) {
+    int u, v;
+    std::cin >> u >> v;
+    u--;
+    v--;
+    adj[u].push_back(v);
+    c[u] = 1;
+  }
+
+  for (int u = 0; u < MAX_V - 1; ++u) {
+    if (int(adj[u].size()) > 0) continue;
+    for (int v = u + 1; v < std::min(100, u + 7); ++v) {
+      adj[u].push_back(v);
+    }
+  }
+  std::deque<int> dq;
+  d[S] = 0;
+  dq.push_back(S);
+  while (!dq.empty()) {
+    int u = dq.front();
+    dq.pop_front();
+    for (auto v : adj[u]) {
+      if (d[v] == -1) {
+        d[v] = d[u] + (c[u] != 1);
+        if (c[v] == 1) dq.push_front(v);
+        else dq.push_back(v);
+      }
+    }
+  }
+
+  std::println("{}", d[T]);
+}
