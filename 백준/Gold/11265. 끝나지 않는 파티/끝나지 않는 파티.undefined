@@ -1,0 +1,43 @@
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
+
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
+
+int main() {
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  int n, m;
+  std::cin >> n >> m;
+  std::vector dist(n, std::vector<int>(n));
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) {
+      std::cin >> dist[i][j];
+    }
+  }
+  for (int k = 0; k < n; ++k) {
+    for (int i = 0; i < n; ++i) {
+      for (int j = 0; j < n; ++j) {
+        if (dist[i][j] > dist[i][k] + dist[k][j]) {
+          dist[i][j] = dist[i][k] + dist[k][j];
+        }
+      }
+    }
+  }
+  for (int i = 0; i < m; ++i) {
+    int u, v, t;
+    std::cin >> u >> v >> t;
+    u--;
+    v--;
+    if (dist[u][v] <= t) {
+      std::println("Enjoy other party");
+    } else {
+      std::println("Stay here");
+    }
+  }
+}
