@@ -1,0 +1,98 @@
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
+
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
+
+int main() {
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  int n;
+  std::cin >> n;
+  std::vector<std::string> b(n);
+  for (int i = 0; i < n; ++i) {
+    std::cin >> b[i];
+  }
+
+  int b_c = 0, t_c = 0;
+  int sy = -1, sx = -1, s_dir = -1;
+  int ty = -1, tx = -1, t_dir = -1;
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) {
+      if (b[i][j] == 'B' && b_c < 2) {
+        b_c++;
+        if (b_c == 2) {
+          if (sy == i) s_dir = 1;
+          if (sx == j) s_dir = 0;
+        }
+        sy = i;
+        sx = j;
+      }
+      if (b[i][j] == 'E' && t_c < 2) {
+        t_c++;
+        if (t_c == 2) {
+          if (ty == i) t_dir = 1;
+          if (tx == j) t_dir = 0;
+        }
+        ty = i;
+        tx = j;
+      }
+    }
+  }
+
+  auto can_rotate = [&](int y, int x) -> bool {
+    for (int i = y - 1; i < y + 2; ++i) {
+      for (int j = x - 1; j < x + 2; ++j) {
+        if (i < 0 || i >= n || j < 0 || j >= n) return false;
+        if (b[i][j] == '1') return false;
+      }
+    }
+    return true;
+  };
+
+  auto chk = [&](int y, int x, int dir) {
+    std::vector<std::vector<int>> dy = {{0, 1, -1}, {0, 0, 0}}, dx = {{0, 0, 0}, {0, 1, -1}};
+    for (int i = 0; i < 3; ++i) {
+      int ny = y + dy[dir][i];
+      int nx = x + dx[dir][i];
+      if (ny < 0 || ny >= n || nx < 0 || nx >= n) return false;
+      if (b[ny][nx] == '1') return false;
+    }
+    return true;
+  };
+
+  std::vector oy = {-1, 1, 0, 0}, ox = {0, 0, -1, 1};
+  std::vector dist(n, std::vector(n, std::vector<int>(2, -1)));
+  std::queue<T> que;
+  dist[sy][sx][s_dir] = 0;
+  que.push({sy, sx, s_dir});
+  while (!que.empty()) {
+    auto [y, x, dir] = que.front();
+    que.pop();
+
+    for (int ddir = 0; ddir < 4; ++ddir) {
+      int ny = y + oy[ddir];
+      int nx = x + ox[ddir];
+      if (chk(ny, nx, dir) && dist[ny][nx][dir] == -1) {
+        que.push({ny, nx, dir});
+        dist[ny][nx][dir] = dist[y][x][dir] + 1;
+      }
+    }
+
+    if (can_rotate(y, x) && dist[y][x][dir ^ 1] == -1) {
+      que.push({y, x, dir ^ 1});
+      dist[y][x][dir ^ 1] = dist[y][x][dir] + 1;
+    }
+  }
+
+  if (dist[ty][tx][t_dir] == -1) {
+    std::println("0");
+  } else {
+    std::println("{}", dist[ty][tx][t_dir]);
+  }
+}
