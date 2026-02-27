@@ -21,14 +21,16 @@ int main() {
   }
   int x;
   std::cin >> x;
-  std::vector dp(n, std::vector<i64>(21, 0));
-  dp[0][a[0]] = 1;
+  std::vector<i64> dp(21, 0);
+  dp[a[0]] = 1;
   for (int i = 1; i < n; ++i) {
+    std::vector<i64> n_dp(21, 0);
     for (int j = 0; j < 21; ++j) {
-      if (0 <= j - a[i] && j - a[i] <= 20) dp[i][j] += dp[i - 1][j - a[i]];
-      if (0 <= j + a[i] && j + a[i] <= 20) dp[i][j] += dp[i - 1][j + a[i]];
+      if (0 <= j - a[i] && j - a[i] <= 20) n_dp[j] += dp[j - a[i]];
+      if (0 <= j + a[i] && j + a[i] <= 20) n_dp[j] += dp[j + a[i]];
     }
+    dp = std::move(n_dp);
   }
 
-  std::println("{}", dp[n - 1][x]);
+  std::println("{}", dp[x]);
 }
