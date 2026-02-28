@@ -21,9 +21,6 @@ int main() {
   }
 
   auto dfs = [&](auto&& dfs, int k, int s, i64 c) {
-    if (int(dp.size()) >= 500000) {
-      return;
-    }
     if (k == 11) {
       return;
     }
