@@ -14,28 +14,22 @@ int main() {
   kushinada;
   int n;
   std::cin >> n;
-  std::vector<i64> dp, tp(11);
-  tp[0] = 1;
-  for (int i = 1; i < 11; ++i) {
-    tp[i] = tp[i - 1] * 10;
+  std::vector<int> d(10);
+  std::vector<i64> dp;
+  std::iota(d.rbegin(), d.rend(), 0);
+  for (int br = 1; br < (1 << 10); ++br) {
+    i64 a = 0;
+    for (int j = 0; j < 10; ++j) {
+      if ((1 << j) & br) {
+        a *= 10;
+        a += d[j];
+      }
+    }
+    dp.push_back(a);
   }
-
-  auto dfs = [&](auto&& dfs, int k, int s, i64 c) {
-    if (k == 11) {
-      return;
-    }
-
-    for (int i = s; i < 10; ++i) {
-      i64 nxt = c + tp[k] * i;
-      dp.push_back(nxt);
-      dfs(dfs, k + 1, i + 1, nxt);
-    }
-  };
-
-  dfs(dfs, 0, 0, 0);
   n--;
-  std::sort(dp.begin(), dp.end());
-  if (n >= int(dp.size())) {
+  std::ranges::sort(dp);
+  if (int(dp.size()) <= n) {
     std::println("-1");
   } else {
     std::println("{}", dp[n]);
