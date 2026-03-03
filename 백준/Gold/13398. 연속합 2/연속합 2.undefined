@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
+
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
+
+const int INF = 0x3f3f3f3f;
+int main() {
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  int n;
+  std::cin >> n;
+  std::vector<int> a(n), pref(n + 1), pref_rev(n + 1);
+  for (int i = 0; i < n; ++i) {
+    std::cin >> a[i];
+    pref[i + 1] = pref[i] + a[i];
+  }
+
+  for (int i = 0; i < n; ++i) {
+    pref_rev[n - i - 1] = pref_rev[n - i] + a[n - i - 1];
+  }
+
+  int ans = -INF;
+  std::vector<int> max = {}, max_rev(n);
+  int min = 0;
+  for (int i = 0; i < n; ++i) {
+    max.push_back(pref[i + 1] - min);
+    ans = std::max(ans, pref[i + 1] - min);
+    min = std::min(min, pref[i + 1]);
+  }
+
+  min = 0;
+  for (int i = n - 1; i >= 0; --i) {
+    max_rev[i] = pref_rev[i] - min;
+    min = std::min(min, pref_rev[i]);
+  }
+
+  for (int p = 1; p < n - 1; ++p) {
+    int l = max[p - 1];
+    int r = max_rev[p + 1];
+    ans = std::max(ans, l + r);
+  }
+  std::println("{}", ans);
+}
