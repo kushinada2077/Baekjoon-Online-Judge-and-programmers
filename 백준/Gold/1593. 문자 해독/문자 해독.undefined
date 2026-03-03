@@ -1,0 +1,56 @@
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
+
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
+
+int main() {
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  const int MAX = 52;
+  int n, m;
+  std::cin >> n >> m;
+  std::string a, b;
+  std::cin >> a >> b;
+  std::vector<char> alphs;
+  for (char a = 'A'; a <= 'Z'; ++a) alphs.push_back(a);
+  for (char a = 'a'; a <= 'z'; ++a) alphs.push_back(a);
+  std::vector<int> c1(MAX), c2(MAX);
+
+  auto CtoI = [&](char a) {
+    if ('A' <= a && a <= 'Z') return a - 'A';
+    return a - 'a' + 26;
+  };
+
+  for (int i = 0; i < n; ++i) {
+    c1[CtoI(a[i])]++;
+  }
+
+  auto chk = [&] -> bool {
+    for (int i = 0; i < MAX; ++i) {
+      if (c1[i] != c2[i]) return false;
+    }
+    return true;
+  };
+
+  int ans = 0;
+  int l = 0, r = 0;
+  for (; r < int(a.size()) - 1; ++r) {
+    c2[CtoI(b[r])]++;
+  }
+
+  while (r < m) {
+    c2[CtoI(b[r++])]++;
+    if (chk()) {
+      ans++;
+    }
+    c2[CtoI(b[l++])]--;
+  }
+
+  std::println("{}", ans);
+}
