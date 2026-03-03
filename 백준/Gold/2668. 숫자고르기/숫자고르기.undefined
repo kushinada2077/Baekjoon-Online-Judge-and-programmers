@@ -9,79 +9,51 @@ using i64 = long long;
 using P = std::pair<int, int>;
 using T = std::tuple<int, int, int>;
 
-struct SCC {
-  int n;
-  int cur, cnt;
-  std::vector<std::vector<int>> adj;
-  std::vector<int> dfn, low, bel;
-  std::vector<int> stk;
-
-  SCC(int n) : n(n), cur(0), cnt(0), adj(n), dfn(n, -1), low(n), bel(n, -1) {}
-
-  void addEdge(int u, int v) { adj[u].push_back(v); }
-
-  void dfs(int u) {
-    dfn[u] = low[u] = cur++;
-    stk.push_back(u);
-
-    for (auto v : adj[u]) {
-      if (dfn[v] == -1) {
-        dfs(v);
-        low[u] = std::min(low[u], low[v]);
-      } else if (bel[v] == -1) {
-        low[u] = std::min(low[u], dfn[v]);
-      }
-    }
-
-    if (dfn[u] == low[u]) {
-      int v;
-      do {
-        v = stk.back();
-        stk.pop_back();
-        bel[v] = cnt;
-      } while (v != u);
-      cnt++;
-    }
-  }
-
-  std::vector<int> work() {
-    for (int i = 0; i < n; ++i) {
-      if (dfn[i] == -1) dfs(i);
-    }
-    return bel;
-  }
-};
-
 int main() {
   std::cin.tie(nullptr)->sync_with_stdio(false);
   kushinada;
   int n;
   std::cin >> n;
-  SCC scc(n);
+  std::vector<std::vector<int>> adj(n);
   for (int i = 0; i < n; ++i) {
     int x;
     std::cin >> x;
     x--;
-    scc.addEdge(i, x);
+    adj[i].push_back(x);
   }
 
-  auto bel = scc.work();
-  std::vector<std::vector<int>> s(scc.cnt);
-  std::vector<int> ans;
-  for (int i = 0; i < n; ++i) {
-    s[bel[i]].push_back(i);
-  }
-
-  for (auto& a : s) {
-    if (int(a.size()) > 1 || (int(a.size()) == 1 && scc.adj[a.front()].front() == a.front())) {
-      for (auto x : a) {
-        ans.push_back(x);
+  std::vector<int> vis(n), fin(n), ans;
+  auto dfs = [&](auto&& dfs, int u, std::stack<int>& stk) -> void {
+    for (auto v : adj[u]) {
+      if (vis[v] && !fin[v]) {
+        while (true) {
+          int x = stk.top();
+          stk.pop();
+          ans.push_back(x);
+          if (x == v) {
+            break;
+          }
+        }
+      } else if (!vis[v]) {
+        vis[v] = 1;
+        stk.push(v);
+        dfs(dfs, v, stk);
       }
+    }
+    fin[u] = 1;
+  };
+
+  for (int i = 0; i < n; ++i) {
+    if (!vis[i]) {
+      std::stack<int> stk;
+      vis[i] = 1;
+      stk.push(i);
+      dfs(dfs, i, stk);
     }
   }
 
-  std::ranges::sort(ans);
   std::println("{}", ans.size());
+  std::ranges::sort(ans);
   for (auto x : ans) {
     std::println("{}", x + 1);
   }
