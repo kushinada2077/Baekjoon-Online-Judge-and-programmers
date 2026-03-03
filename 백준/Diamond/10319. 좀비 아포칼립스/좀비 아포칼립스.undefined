@@ -27,8 +27,7 @@ struct MaxFlow {
   void init(int n) {
     this->n = n;
     e.clear();
-    g.resize(n);
-    for (int i = 0; i < n; ++i) g[i].clear();
+    g.assign(n, {});
     cur.resize(n);
     h.resize(n);
   }
@@ -73,7 +72,6 @@ struct MaxFlow {
         }
       }
     }
-    if (r == f) h[u] = -1;
     return f - r;
   }
 
@@ -88,7 +86,7 @@ struct MaxFlow {
     T ans = 0;
     while (bfs(s, t)) {
       cur.assign(n, 0);
-      ans += dfs(s, t, 500);
+      ans += dfs(s, t, std::numeric_limits<T>::max());
     }
     return ans;
   }
