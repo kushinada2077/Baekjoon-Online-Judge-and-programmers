@@ -4,46 +4,46 @@
 
 ### 성능 요약
 
-메모리: 336364 KB, 시간: 556 ms
+메모리: 14760 KB, 시간: 104 ms
 
 ### 분류
 
-최대 유량
+그래프 이론, 최대 유량
 
 ### 제출 일자
 
-2024년 11월 7일 13:08:50
+2026년 3월 3일 18:16:22
 
 ### 문제 설명
 
-<p>You and the rest of your team are stuck in a town during the zombie apocalypse of 2020. You all might be infected with the virus and hence you will have to find your way to one of the medical facilities to get a cure before you also become zombies. Because you are scientists you quickly realize that it is safer to try and sneak your way past the zombies than to recklessly start fighting them. Obviously the zombies are everywhere so some streets might take more time to sneak through than others. It is also obvious that by splitting up into smaller groups it is easier to move around undetected.</p>
+<p>때는 2020년, 당신과 그 일행은 좀비로 황폐화된 대도시의 어느 마을 안에 갇혔다. 당신들 또한 바이러스에 감염되었기 때문에 좀비가 되기 전에 빨리 병원을 찾아 치료해야 한다. 당신들은 과학자이기에 멍청하게 좀비들에게 돌격해 길을 뚫기보다는 좀비들 몰래 슬금슬금 이동하는 게 안전하다. 하지만 도처에 널린 것이 좀비라 몇몇 도로는 다른 곳보다 슬금슬금 지나가는 데 시간이 많이 걸린다. 때로는 다같이 다니는 것보다 여러 무리로 떨어져서 각자 나아가는 게 훨씬 안전할 것이다.</p>
 
-<p>Furthermore, since these zombies have not mutated to the extent that they actually have eyes in the back of their heads, it might be easy to cross some streets in one direction while hard or impossible to cross them in the other direction.</p>
+<p>게다가, 이 좀비들은 크게 감염되지는 않아서 머리 뒤편에 눈이 달려있거나 하지는 않다. 따라서 몇몇 도로는 한쪽 방향으로 이동하는 건 쉽지만, 역행하는 것은 어렵거나 불가능할지도 모른다.</p>
 
-<p>How many of you can sneak past all the zombies and get to a medical facility in time?</p>
+<p>당신들 일행 중 최대 몇 명이 좀비가 되기 전에 좀비들을 피해서 병원에 도달할 수 있을까?</p>
 
-<p style="text-align:center"><a href="https://xkcd.com/734"><img alt="" src="https://onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/upload/images2/outbreak.png" style="height:252px; width:740px"></a></p>
-
-<p style="text-align:center"> </p>
+<p style="text-align: center;"><img src="https://onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/userupload/kks227/20160806/af5cb80b7cf3f9812f658fd5cec49c55.png"></p>
 
 ### 입력 
 
- <p>On the first line one positive number: the number of test cases, at most 100. After that per test case:</p>
+ <p>첫째 줄에 테스트 케이스의 개수가 주어지며, 각 테스트 케이스는 다음과 같이 이루어져 있다. 주어지는 모든 값은 정수이다.</p>
 
 <ul>
-	<li>one line with a single integer n (1 ≤ n ≤ 1 000): the number of locations in the town.</li>
-	<li>one line with three space-separated integers i, g and s (1 ≤ i ≤ n and 1 ≤ g ≤ 100 and 1 ≤ s ≤ 100): the starting location of your group, the number of people in it, and the number of time steps you have to get to the safety of a medical facility, respectively.</li>
-	<li>one line with a single integer m (1 ≤ m ≤ n): the number of medical facilities in the town.</li>
-	<li>m lines, each with a single integer x (1 ≤ x ≤ n): the location of each of the medical facilities.</li>
-	<li>one line with a single integer r (0 ≤ r ≤ 1 000): the number of roads in the town.</li>
-	<li>r lines, each with four space-separated integers a, b, p and t (1 ≤ a, b ≤ n and a ≠ b and 1 ≤ p ≤ 100 and 1 ≤ t ≤ 100), indicating that there is a road from a to b, which p people can enter at every time step and takes t timesteps to traverse.</li>
+	<li>첫째 줄에 장소의 개수 n이 주어진다. (1 ≤ n ≤ 1 000)</li>
+	<li>다음 줄에 일행이 처음에 있던 장소 i, 일행의 사람 수 g, 좀비에 감염되기까지 걸리는 시간 s가 주어진다. (1 ≤ i ≤ n, 1 ≤ g ≤ 100, 1 ≤ s ≤ 100)
+	<ul>
+		<li>s초에 병원에 도착한 경우 좀비가 되기 전에 병원을 찾은 것이다.</li>
+	</ul>
+	</li>
+	<li>다음 줄에 병원의 수 m이 주어진다. (1 ≤ m ≤ n)</li>
+	<li>이어서 m개의 줄에 각 병원이 위치한 장소 번호가 주어진다. (1 ≤ x ≤ n)</li>
+	<li>다음 줄에 도로의 개수 r이 주어진다. (0 ≤ r ≤ 1 000)</li>
+	<li>이어서 r개의 줄에 각 도로의 정보를 나타내는 값 a, b, p, t가 주어진다. (1 ≤ a, b ≤ n, a ≠ b, 1 ≤ p ≤ 100, 1 ≤ t ≤ 100) 이 도로는 a에서 b로 가는 도로이며, 매 단위시간마다 p명이 도로에 들어설 수 있으며 지나가려면 단위시간 t가 소요된다는 뜻이다.</li>
 </ul>
 
-<p>There are at most two roads – one in each direction – between any pair of locations. The locations are safe enough to wait at for any amount of time and do not have a limit on the number of people that can be there.</p>
+<p>어떤 장소 쌍에 대해 도로는 최대 2개(한 방향당 1개)까지 존재한다. 각 장소는 충분히 안전하여 얼마든지 가만히 서서 기다려도 안전하다. 또한 한 장소에 있을 수 있는 사람 수에도 제한이 없다.</p>
 
 ### 출력 
 
- <p>Per test case:</p>
-
-<p>one line with a single integer: the largest number of people that can get to a medical facility in time.</p>
+ <p>각 테스트 케이스마다 한 줄에 걸쳐 감염되지 않고 병원에 도달하는 최대 사람 수를 출력한다.</p>
 
