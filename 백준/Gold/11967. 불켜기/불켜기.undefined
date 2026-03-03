@@ -14,69 +14,64 @@ int main() {
   kushinada;
   int n, m;
   std::cin >> n >> m;
-
-  std::vector adj(n, std::vector(n, std::vector<P>())), ls(n, std::vector(n, std::vector<P>()));
-  std::vector lgt(n, std::vector<int>(n)), used(n, std::vector<int>(n, -1));
-  lgt[0][0] = 1;
-
+  std::vector adj(n, std::vector(n, std::vector<P>()));
+  std::vector lgt(n, std::vector<int>(n));
   for (int i = 0; i < m; ++i) {
-    int ux, uy, vx, vy;
-    std::cin >> ux >> uy >> vx >> vy;
-    ux--;
-    uy--;
-    vx--;
-    vy--;
-    ls[ux][uy].push_back({vx, vy});
-    used[ux][uy] = 0;
+    int x, y, a, b;
+    std::cin >> x >> y >> a >> b;
+    x--;
+    y--;
+    a--;
+    b--;
+    adj[x][y].push_back({a, b});
   }
 
   std::vector dy = {1, 0, -1, 0}, dx = {0, 1, 0, -1};
+  std::queue<P> que;
+  lgt[0][0] = 2;
+  que.push({0, 0});
 
-  while (true) {
-    std::queue<P> que;
-    std::vector vis(n, std::vector<int>(n));
-    vis[0][0] = 1;
-    que.push({0, 0});
+  while (!que.empty()) {
+    auto [x, y] = que.front();
+    que.pop();
 
-    auto stop = [&] -> bool {
-      bool ret = true;
-      while (!que.empty()) {
-        auto [x, y] = que.front();
-        que.pop();
-        if (!used[x][y]) {
-          ret = false;
-          used[x][y] = 1;
-          for (auto [cx, cy] : ls[x][y]) {
-            lgt[cx][cy] = 1;
-            for (int dir = 0; dir < 4; ++dir) {
-              int nx = cx + dx[dir];
-              int ny = cy + dy[dir];
-              if (nx < 0 || nx >= n || ny < 0 || ny >= n) continue;
-              adj[nx][ny].push_back({cx, cy});
-            }
-          }
+    for (auto [lx, ly] : adj[x][y]) {
+      if (lgt[lx][ly] == 2) continue;
+      lgt[lx][ly] = 1;
+
+      bool ok = [&] -> bool {
+        for (int dir = 0; dir < 4; ++dir) {
+          int nlx = lx + dx[dir];
+          int nly = ly + dy[dir];
+          if (nlx < 0 || nlx >= n || nly < 0 || nly >= n) continue;
+          if (lgt[nlx][nly] == 2) return true;
         }
+        return false;
+      }();
 
-        for (auto [nx, ny] : adj[x][y]) {
-          if (!vis[nx][ny] && lgt[nx][ny]) {
-            vis[nx][ny] = 1;
-            que.push({nx, ny});
-          }
-        }
+      if (ok) {
+        lgt[lx][ly] = 2;
+        que.push({lx, ly});
       }
+    }
 
-      return ret;
-    }();
-
-    if (stop) {
-      break;
+    for (int dir = 0; dir < 4; ++dir) {
+      int nx = x + dx[dir];
+      int ny = y + dy[dir];
+      if (nx < 0 || nx >= n || ny < 0 || ny >= n) continue;
+      if (lgt[nx][ny] == 1) {
+        lgt[nx][ny] = 2;
+        que.push({nx, ny});
+      }
     }
   }
 
   int ans = 0;
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < n; ++j) {
-      if (lgt[i][j]) ans++;
+      if (lgt[i][j] != 0) {
+        ans++;
+      }
     }
   }
 
