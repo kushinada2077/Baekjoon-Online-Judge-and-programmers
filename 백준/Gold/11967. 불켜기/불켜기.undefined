@@ -1,0 +1,84 @@
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
+
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
+
+int main() {
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  int n, m;
+  std::cin >> n >> m;
+
+  std::vector adj(n, std::vector(n, std::vector<P>())), ls(n, std::vector(n, std::vector<P>()));
+  std::vector lgt(n, std::vector<int>(n)), used(n, std::vector<int>(n, -1));
+  lgt[0][0] = 1;
+
+  for (int i = 0; i < m; ++i) {
+    int ux, uy, vx, vy;
+    std::cin >> ux >> uy >> vx >> vy;
+    ux--;
+    uy--;
+    vx--;
+    vy--;
+    ls[ux][uy].push_back({vx, vy});
+    used[ux][uy] = 0;
+  }
+
+  std::vector dy = {1, 0, -1, 0}, dx = {0, 1, 0, -1};
+
+  while (true) {
+    std::queue<P> que;
+    std::vector vis(n, std::vector<int>(n));
+    vis[0][0] = 1;
+    que.push({0, 0});
+
+    auto stop = [&] -> bool {
+      bool ret = true;
+      while (!que.empty()) {
+        auto [x, y] = que.front();
+        que.pop();
+        if (!used[x][y]) {
+          ret = false;
+          used[x][y] = 1;
+          for (auto [cx, cy] : ls[x][y]) {
+            lgt[cx][cy] = 1;
+            for (int dir = 0; dir < 4; ++dir) {
+              int nx = cx + dx[dir];
+              int ny = cy + dy[dir];
+              if (nx < 0 || nx >= n || ny < 0 || ny >= n) continue;
+              adj[nx][ny].push_back({cx, cy});
+            }
+          }
+        }
+
+        for (auto [nx, ny] : adj[x][y]) {
+          if (!vis[nx][ny] && lgt[nx][ny]) {
+            vis[nx][ny] = 1;
+            que.push({nx, ny});
+          }
+        }
+      }
+
+      return ret;
+    }();
+
+    if (stop) {
+      break;
+    }
+  }
+
+  int ans = 0;
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) {
+      if (lgt[i][j]) ans++;
+    }
+  }
+
+  std::println("{}", ans);
+}
