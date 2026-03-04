@@ -1,0 +1,42 @@
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_LPATH"), "r", stdin);
+#else
+#define kushinada
+#endif
+
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
+
+int main() {
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  int n, k;
+  std::cin >> n >> k;
+  int l = n - k;
+  std::string s;
+  std::cin >> s;
+  std::stack<int> S;
+
+  for (int i = 0; i < n; ++i) {
+    while (k > 0 && !S.empty() && S.top() < s[i]) {
+      k--;
+      S.pop();
+    }
+    S.push(s[i]);
+  }
+
+  int m = S.size();
+  std::vector<char> ans(m);
+  int i = m - 1;
+  while (!S.empty()) {
+    ans[i--] = S.top();
+    S.pop();
+  }
+
+  for (int i = 0; i < std::min(m, l); ++i) {
+    std::print("{}", ans[i]);
+  }
+  std::println();
+}
