@@ -8,7 +8,7 @@
 
 ### 분류
 
-이분 탐색, 최대 유량, 매개 변수 탐색
+그래프 이론, 이분 탐색, 매개 변수 탐색, 최대 유량
 
 ### 제출 일자
 
@@ -16,29 +16,27 @@
 
 ### 문제 설명
 
-<p>Risk is a board game played on a world map. This world is divided into regions by borders. Each region is controlled by a player (either you or one of your opponents). Any region that you control contains a positive number of your armies.</p>
+<p>리스크는 세계를 무대로 한 보드 위에서 진행되는 유명한 보드 게임이다. 이 세계는 국경선으로 나뉘어진 여러 지역으로 이루어져 있고, 각각의 지역은 하나의 플레이어에게 배정된다. 모든 지역엔 각 지역을 가진 플레이어의 군대가 하나 이상 주둔해야 한다.</p>
 
-<p>In each turn, you are allowed to move your armies. Each of your armies may either stay where it is, or move from a region to a bordering region under your control. The movements are performed one by one, in an order of your choice. At all times, each region must contain at least one army.</p>
+<p>각 턴마다, 당신은 당신의 군대를 제자리에 두거나 인접한 자신의 영토로 보낼 수 있다. 딱히 이동할 군대가 없다면 턴을 패스하는 것도 가능하다. 각 군대는 현재 턴에 주둔한 영역에서 인접한 영역으로의 이동만이 가능하며, 이와 같은 조건 하에서라면 여러 번 군대를 이동시켜도 상관없다. 필요하다면 나누어 보낼 수도 있지만, 모든 군대를 이동시켜 영토에 주둔하는 군대가 0이 되게 할 수는 없다.</p>
 
-<p>For strategic purposes, it is important to move your armies to regions that border your opponents’ regions and minimize the number of armies on your regions that are totally surrounded by other regions under your control. You want your weakest link, i.e., the border region with the minimum number of armies, to be as strong as possible. What is the maximum number of armies that can be placed on it after one turn?</p>
+<p>일반적으로는 적의 영토와 인접한 영역에 최대한의 군대를 보내는 전략을 사용한다. 이번 턴에 당신은 당신이 가진 영역 중 가장 취약한 영역(즉, 적국과 인접해 있으며 아군의 수가 가장 적은 영역)을 최대한 강하게 만드려고 한다. 이때, 이번 턴이 끝나면 당신의 가장 취약한 영역에 최대 몇 명의 군대가 주둔할 수 있을까?</p>
 
 ### 입력 
 
- <p>On the ﬁrst line a positive integer: the number of test cases, at most 100. After that per test case:</p>
+ <p>첫 줄에 테스트 케이스의 수가 주어진다. 이 수는 100을 넘지 않는다.</p>
+
+<p>각 테스트 케이스는 다음과 같이 구성되어 있다.</p>
 
 <ul>
-	<li>One line with an integer n (1 ≤ n ≤ 100): the number of regions.</li>
-	<li>One line with n integers a<sub>i</sub> (0 ≤ a<sub>i</sub> ≤ 100): the number of your armies on each region. A number 0 indicates that a region is controlled by your opponents, while a positive number indicates that it is under your control.</li>
-	<li>n lines with n characters, where each character is either ‘Y’ or ‘N’. The i-th character of the j-th line is ‘Y’ if regions i and j border, and ‘N’ otherwise. This relationship is symmetric and the i-th character of the i-th line will always be ‘N’.</li>
+	<li>정수 n ( 1 ≤ n ≤ 100 ) : 영토의 총 수</li>
+	<li>n개의 정수 ai ( 0 ≤ ai ≤ 100 ) : 각 지역에 주둔하고 있는 당신의 군대 수. 만일 이 값이 0이라면 적군에 의해 점령된 지역임을 의미한다.</li>
+	<li>n개의 줄에 걸쳐 n개의 문자 'Y' 또는 'N' : i행 j열의 문자는 i번째 영토와 j번째 영토의 인접 여부를 나타낸다. 'Y' 일 경우 인접하며, 'N' 일 경우 인접하지 않는다. 항상 대칭으로 주어지며, i번째 행의 i번째 열은 항상 'N' 이다.</li>
 </ul>
 
-<p>In every test case, you control at least one region, and your opponents control at least one region. Furthermore, at least one of your regions borders at least one of your opponents’ regions.</p>
+<p>모든 테스트 케이스에서 당신은 적어도 하나의 영토를 갖고 있으며, 당신의 적 또한 최소한 하나의 영토를 갖고 있다. 또한, 최소한 적국과 하나의 영토는 서로 인접해 있다.</p>
 
 ### 출력 
 
- <p>Per test case:</p>
-
-<ul>
-	<li>One line with an integer: the maximum number of armies on your weakest border region after one turn of moving.</li>
-</ul>
+ <p>각 테스트 케이스마다 첫 줄에 가장 취약한 영역에 배치될 수 있는 최대의 군대 수를 출력한다.</p>
 
