@@ -1,148 +1,200 @@
-#include <algorithm>
-#include <cmath>
-#include <iostream>
-#include <queue>
-#include <set>
-#include <sstream>
-#include <vector>
-#define PATH "/Users/leedongha/Downloads/PS/input.txt"
-#define L_PATH "input.txt"
-#define fastio cin.tie(0)->sync_with_stdio(0);
-#define rep(n) for (int i = 0; i < n; ++i)
-#define si(x) int(x.size())
-#define all(x) (x).begin(), (x).end()
-#define pb(...) push_back(__VA_ARGS__)
-#define X first
-#define Y second
-#define ROOT 1
-#define INF 0x3f3f3f3f
-using namespace std;
-using ll = long long;
-using TP = tuple<int, int, int>;
-using P = pair<int, int>;
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
 
-const int MX = 301, S = 299, T = 300;
+using i64 = long long;
+using P = std::pair<int, int>;
+using T = std::tuple<int, int, int>;
 
-struct Edge {
-  int to, c, f;
-  Edge *dual;
-  Edge(int to, int c) : to(to), c(c), f(0), dual(nullptr) {}
-  int spare() { return c - f; }
-  void addFlow(int flow) {
-    f += flow;
-    dual->f -= flow;
+template <class T>
+struct MaxFlow {
+  struct _Edge {
+    int to;
+    T cap;
+    _Edge(int to, T cap) : to(to), cap(cap) {}
+  };
+
+  int n;
+  std::vector<_Edge> e;
+  std::vector<std::vector<int>> g;
+  std::vector<int> cur, h;
+  MaxFlow() {}
+  MaxFlow(int n) { init(n); }
+
+  void init(int n) {
+    this->n = n;
+    e.clear();
+    g.assign(n, {});
+    cur.resize(n);
+    h.resize(n);
+  }
+
+  bool bfs(int s, int t) {
+    h.assign(n, -1);
+    std::queue<int> que;
+    h[s] = 0;
+    que.push(s);
+    while (!que.empty()) {
+      const int u = que.front();
+      que.pop();
+      for (int i : g[u]) {
+        auto [v, c] = e[i];
+        if (c > 0 && h[v] == -1) {
+          h[v] = h[u] + 1;
+          if (v == t) {
+            return true;
+          }
+          que.push(v);
+        }
+      }
+    }
+    return false;
+  }
+
+  T dfs(int u, int t, T f) {
+    if (u == t) {
+      return f;
+    }
+    auto r = f;
+    for (int& i = cur[u]; i < int(g[u].size()); ++i) {
+      const int j = g[u][i];
+      auto [v, c] = e[j];
+      if (c > 0 && h[v] == h[u] + 1) {
+        auto a = dfs(v, t, std::min(r, c));
+        e[j].cap -= a;
+        e[j ^ 1].cap += a;
+        r -= a;
+        if (r == 0) {
+          return f;
+        }
+      }
+    }
+    return f - r;
+  }
+
+  void addEdge(int u, int v, T c) {
+    g[u].push_back(e.size());
+    e.emplace_back(v, c);
+    g[v].push_back(e.size());
+    e.emplace_back(u, 0);
+  }
+
+  T flow(int s, int t) {
+    T ans = 0;
+    while (bfs(s, t)) {
+      cur.assign(n, 0);
+      ans += dfs(s, t, std::numeric_limits<T>::max());
+    }
+    return ans;
+  }
+
+  std::vector<bool> minCut() {
+    std::vector<bool> c(n);
+    for (int i = 0; i < n; ++i) {
+      c[i] = (h[i] != -1);
+    }
+    return c;
+  }
+
+  struct Edge {
+    int from;
+    int to;
+    T cap;
+    T flow;
+  };
+
+  std::vector<Edge> edges() {
+    std::vector<Edge> a;
+    for (int i = 0; i < int(e.size()); i += 2) {
+      Edge x;
+      x.from = e[i ^ 1].to;
+      x.to = e[i].to;
+      x.cap = e[i].cap + e[i ^ 1].cap;
+      x.flow = e[i ^ 1].cap;
+      a.push_back(x);
+    }
+    return a;
   }
 };
 
-int TC, n, needed, army[MX];
-vector<Edge *> adj[MX];
-void init() {
-  for (int i = 0; i < MX; ++i) adj[i].clear();
-  needed = 0;
-}
-
 int main() {
-  fastio;
-  cin >> TC;
-
-  while (TC--) {
-    init();
-    cin >> n;
-    for (int i = 0; i < n; ++i) cin >> army[i];
-    string s;
-    set<int> adjLand;
-    for (int i = 0; i < n; ++i) {
-      cin >> s;
-      if (army[i] == 0) continue;
-      for (int j = 0; j < n; ++j) {
-        if (s[j] == 'Y' && army[j] == 0) adjLand.insert(i);
-        if ((i == j || s[j] == 'Y') && army[j]) {
-          Edge *e1 = new Edge(2 * j + 1, INF), *e2 = new Edge(2 * i, 0);
-          e1->dual = e2;
-          e2->dual = e1;
-          adj[2 * i].pb(e1);
-          adj[2 * j + 1].pb(e2);
-        }
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  const int INF = 0x3f3f3f3f;
+  int tc;
+  std::cin >> tc;
+  MaxFlow<int> mf;
+  while (tc--) {
+    [&] {
+      int n;
+      std::cin >> n;
+      const int MAX = 2 * n + 2, S = MAX - 2, T = MAX - 1;
+      int n_safe = 0, n_dangerous = 0;
+      std::vector<int> a(n);
+      std::vector<std::string> adj(n);
+      for (int i = 0; i < n; ++i) {
+        std::cin >> a[i];
       }
-    }
-
-    for (int i = 0; i < n; ++i) {
-      if (army[i] == 0) continue;
-      Edge *e1 = new Edge(2 * i, army[i]), *e2 = new Edge(S, 0);
-      e1->dual = e2;
-      e2->dual = e1;
-      adj[S].pb(e1);
-      adj[2 * i].pb(e2);
-    }
-
-    for (int i = 0; i < n; ++i) {
-      if (army[i] == 0 || adjLand.contains(i)) continue;
-      Edge *e1 = new Edge(T, 1), *e2 = new Edge(2 * i + 1, 0);
-      e1->dual = e2;
-      e2->dual = e1;
-      adj[2 * i + 1].pb(e1);
-      adj[T].pb(e2);
-      needed++;
-    }
-
-    int lo = 0, hi = 50000;
-
-    while (lo + 1 < hi) {
-      for (int i = 0; i < MX; ++i) {
-        for (auto &e : adj[i]) e->f = 0;
-      }
-      int mid = (lo + hi) / 2, tot = 0;
-      needed += mid * si(adjLand);
-
-      for (auto i : adjLand) {
-        int v = 2 * i + 1;
-        Edge *e1 = new Edge(T, mid), *e2 = new Edge(v, 0);
-        e1->dual = e2;
-        e2->dual = e1;
-        adj[v].pb(e1);
-        adj[T].pb(e2);
+      for (int i = 0; i < n; ++i) {
+        std::cin >> adj[i];
       }
 
-      while (1) {
-        queue<int> q;
-        q.push(S);
-        vector<int> prev(MX, -1);
-        vector<Edge *> path(MX);
-
-        while (!q.empty() && prev[T] == -1) {
-          int cur = q.front();
-          q.pop();
-          for (auto &e : adj[cur]) {
-            int nxt = e->to;
-            if (e->spare() && prev[nxt] == -1) {
-              q.push(nxt);
-              prev[nxt] = cur;
-              path[nxt] = e;
-              if (nxt == T) break;
-            }
+      auto init_mf = [&](int mid) {
+        mf.init(MAX);
+        n_safe = n_dangerous = 0;
+        for (int i = 0; i < n; ++i) {
+          if (a[i] > 0) {
+            mf.addEdge(S, 2 * i, a[i]);
           }
         }
 
-        if (prev[T] == -1) break;
+        for (int i = 0; i < n; ++i) {
+          bool safe = true;
+          for (int j = 0; j < n; ++j) {
+            char c = adj[i][j];
+            if (a[i] == 0) continue;
+            if (c == 'Y') {
+              if (a[j] == 0) {
+                safe = false;
+              } else {
+                mf.addEdge(2 * i, 2 * j + 1, INF);
+              }
+            }
+          }
 
-        int flow = INF;
+          if (a[i] != 0) {
+            mf.addEdge(2 * i, 2 * i + 1, INF);
+            if (safe) {
+              mf.addEdge(2 * i + 1, T, 1);
+              n_safe++;
+            } else {
+              mf.addEdge(2 * i + 1, T, mid);
+              n_dangerous++;
+            }
+          }
+        }
+      };
 
-        for (int i = T; i != S; i = prev[i]) flow = min(flow, path[i]->spare());
-        for (int i = T; i != S; i = prev[i]) path[i]->addFlow(flow);
-        tot += flow;
+      auto ok = [&](int mid) -> bool {
+        init_mf(mid);
+        bool ret = false;
+        auto f = mf.flow(S, T);
+        if (1LL * f >= 1LL * mid * n_dangerous + n_safe) {
+          ret = true;
+        }
+        return ret;
+      };
+
+      int lo = 0, hi = INF;
+      while (lo + 1 < hi) {
+        int mid = (lo + hi) / 2;
+        if (ok(mid)) lo = mid;
+        else hi = mid;
       }
-
-      for (auto i : adjLand) {
-        int v = 2 * i + 1;
-        adj[v].pop_back();
-        adj[T].pop_back();
-      }
-
-      if (needed > tot) hi = mid;
-      else lo = mid;
-      needed -= mid * si(adjLand);
-    }
-
-    cout << lo << "\n";
+      std::println("{}", lo);
+    }();
   }
 }
