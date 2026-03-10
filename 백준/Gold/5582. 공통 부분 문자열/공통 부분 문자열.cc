@@ -15,15 +15,19 @@ int main() {
   std::string s1, s2;
   std::cin >> s1 >> s2;
   int n = s1.size(), m = s2.size();
-  std::vector dp(n + 1, std::vector<int>(m + 1));
+  std::vector<int> dp(m + 1);
   int ans = 0;
   for (int i = 1; i <= n; ++i) {
+    std::vector<int> next(m + 1);
     for (int j = 1; j <= m; ++j) {
       if (s1[i - 1] == s2[j - 1]) {
-        dp[i][j] = dp[i - 1][j - 1] + 1;
-        ans = std::max(ans, dp[i][j]);
+        next[j] = dp[j - 1] + 1;
+        if (next[j] > ans) {
+          ans = next[j];
+        }
       }
     }
+    dp = std::move(next);
   }
   std::println("{}", ans);
 }
