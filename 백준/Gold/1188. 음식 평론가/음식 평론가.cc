@@ -14,11 +14,7 @@ int main() {
   kushinada;
   int n, m;
   std::cin >> n >> m;
-  int ans = m - 1;
-  int lcm = std::lcm(n, m);
-  int a = lcm / n;
-  int b = lcm / m;
-  int n_lcm = std::lcm(a, b);
-  ans -= (lcm / n_lcm - 1);
+  int gcd = std::gcd(n, m);
+  int ans = m - gcd;
   std::println("{}", ans);
 }
