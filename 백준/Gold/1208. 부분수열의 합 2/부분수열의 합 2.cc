@@ -12,6 +12,8 @@ using TP = std::tuple<int, int, int>;
 int main() {
   std::cin.tie(nullptr)->sync_with_stdio(false);
   kushinada;
+  const int MAX = 8000001;
+  const int offset = 4000000;
   int n, s;
   std::cin >> n >> s;
   std::vector<int> a, b;
@@ -25,29 +27,28 @@ int main() {
     b.push_back(x);
   }
 
-  std::vector<i64> bb;
+  std::vector<int> bb(MAX);
   int p = a.size(), q = b.size();
   for (int br = 0; br < (1 << q); ++br) {
-    i64 sum = 0;
+    int sum = 0;
     for (int i = 0; i < q; ++i) {
       if (br & (1 << i)) {
         sum += b[i];
       }
     }
-    bb.push_back(sum);
+    bb[sum + offset]++;
   }
-  std::ranges::sort(bb);
 
   i64 ans = 0;
   for (int br = 0; br < (1 << p); ++br) {
-    i64 sum = 0;
+    int sum = 0;
     for (int i = 0; i < p; ++i) {
       if (br & (1 << i)) {
         sum += a[i];
       }
     }
 
-    ans += std::upper_bound(bb.begin(), bb.end(), s - sum) - std::lower_bound(bb.begin(), bb.end(), s - sum);
+    ans += bb[s - sum + offset];
   }
 
   if (s == 0) {
