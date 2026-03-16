@@ -48,11 +48,13 @@ int main() {
     bb.push_back(sum);
   }
 
-  std::ranges::sort(bb);
   i64 ans = 0;
   for (auto xa : aa) {
-    auto i = std::upper_bound(bb.begin(), bb.end(), c - xa) - bb.begin();
-    ans += i;
+    for (auto xb : bb) {
+      if (xa + xb <= c) {
+        ans++;
+      }
+    }
   }
   std::println("{}", ans);
 }
