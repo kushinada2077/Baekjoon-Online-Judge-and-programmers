@@ -14,59 +14,33 @@ int main() {
   kushinada;
   int n, k, m;
   std::cin >> n >> k >> m;
-  std::vector<int> S, T;
-  std::vector bel(n, std::vector<int>());
-  std::vector com(m, std::vector<int>(k));
+  const int N = n + m;
+  std::vector adj(N, std::vector<int>());
   for (int i = 0; i < m; ++i) {
+    int v = i + n;
     for (int j = 0; j < k; ++j) {
-      std::cin >> com[i][j];
-      com[i][j]--;
-      bel[com[i][j]].push_back(i);
-      if (com[i][j] == 0) {
-        S.push_back(i);
-      }
-      if (com[i][j] == n - 1) {
-        T.push_back(i);
-      }
+      int u;
+      std::cin >> u;
+      u--;
+      adj[u].push_back(v);
+      adj[v].push_back(u);
     }
   }
 
   std::queue<int> que;
-  std::vector<int> d(m, -1), vis(n);
-  for (auto u : S) {
-    d[u] = 1;
-    que.push(u);
-  }
-
+  std::vector<int> d(N, -1);
+  d[0] = 1;
+  que.push(0);
   while (!que.empty()) {
     auto u = que.front();
     que.pop();
-    for (auto x : com[u]) {
-      if (vis[x]) {
-        continue;
-      }
-      vis[x] = 1;
-      for (auto v : bel[x]) {
-        if (d[v] == -1) {
-          d[v] = d[u] + 1;
-          que.push(v);
-        }
+    for (auto v : adj[u]) {
+      if (d[v] == -1) {
+        d[v] = d[u] + (u < n ? 0 : 1);
+        que.push(v);
       }
     }
   }
 
-  int ans = 0x3f3f3f3f;
-  for (auto x : T) {
-    if (d[x] != -1) {
-      ans = std::min(ans, d[x]);
-    }
-  }
-
-  if (ans == 0x3f3f3f3f) {
-    ans = -2;
-  }
-  if (n == 1) {
-    ans = 0;
-  }
-  std::println("{}", ans + 1);
+  std::println("{}", d[n - 1]);
 }
