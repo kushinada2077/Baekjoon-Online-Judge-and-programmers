@@ -14,7 +14,6 @@ int main() {
   kushinada;
   int n, m;
   std::cin >> n >> m;
-  std::vector a(n, std::vector<int>(m));
   std::vector<int> z(n);
   std::vector<i64> bit(n);
   std::map<i64, int> cnt;
@@ -23,9 +22,9 @@ int main() {
     for (int j = 0; j < m; ++j) {
       char c;
       std::cin >> c;
-      a[i][j] = c - '0';
-      x = x * 2 + a[i][j];
-      if (a[i][j] == 0) {
+      c -= '0';
+      x = x * 2 + c;
+      if (c == 0) {
         z[i]++;
       }
     }
