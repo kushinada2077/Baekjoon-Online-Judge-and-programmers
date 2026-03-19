@@ -32,7 +32,7 @@ int main() {
   }
 
   std::queue<int> que;
-  std::vector<int> d(m, -1);
+  std::vector<int> d(m, -1), vis(n);
   for (auto u : S) {
     d[u] = 1;
     que.push(u);
@@ -42,6 +42,10 @@ int main() {
     auto u = que.front();
     que.pop();
     for (auto x : com[u]) {
+      if (vis[x]) {
+        continue;
+      }
+      vis[x] = 1;
       for (auto v : bel[x]) {
         if (d[v] == -1) {
           d[v] = d[u] + 1;
