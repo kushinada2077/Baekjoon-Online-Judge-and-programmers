@@ -24,8 +24,7 @@ int main() {
       char c;
       std::cin >> c;
       a[i][j] = c - '0';
-      x *= 10;
-      x += a[i][j];
+      x = x * 2 + a[i][j];
       if (a[i][j] == 0) {
         z[i]++;
       }
