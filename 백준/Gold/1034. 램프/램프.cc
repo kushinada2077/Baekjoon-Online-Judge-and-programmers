@@ -15,48 +15,31 @@ int main() {
   int n, m;
   std::cin >> n >> m;
   std::vector a(n, std::vector<int>(m));
+  std::vector<int> z(n);
+  std::vector<i64> bit(n);
+  std::map<i64, int> cnt;
   for (int i = 0; i < n; ++i) {
+    i64 x = 0;
     for (int j = 0; j < m; ++j) {
       char c;
       std::cin >> c;
       a[i][j] = c - '0';
+      x *= 10;
+      x += a[i][j];
+      if (a[i][j] == 0) {
+        z[i]++;
+      }
     }
+    cnt[x]++;
+    bit[i] = x;
   }
   int k;
   std::cin >> k;
-
   int ans = 0;
-  for (int l = 0; l < n; ++l) {
-    auto b = a;
-    int kk = k;
-    for (int i = 0; i < m && kk > 0; ++i) {
-      if (b[l][i] == 0) {
-        kk--;
-        [&]() {
-          for (int j = 0; j < n; ++j) {
-            b[j][i] ^= 1;
-          }
-        }();
-      }
+  for (int i = 0; i < n; ++i) {
+    if (k >= z[i] && (k - z[i]) % 2 == 0) {
+      ans = std::max(ans, cnt[bit[i]]);
     }
-
-    if (kk % 2) {
-      continue;
-    }
-
-    int cnt = 0;
-    for (int i = 0; i < n; ++i) {
-      cnt += [&]() -> int {
-        for (int j = 0; j < m; ++j) {
-          if (b[i][j] == 0) {
-            return 0;
-          }
-        }
-
-        return 1;
-      }();
-    }
-    ans = std::max(ans, cnt);
   }
   std::println("{}", ans);
 }
