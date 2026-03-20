@@ -1,43 +1,64 @@
-#define ll long long
-#include <algorithm>
-#include <iostream>
-#include <unordered_set>
-#include <vector>
-using namespace std;
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#define kushinada freopen(getenv("MY_PATH"), "r", stdin);
+#else
+#define kushinada
+#endif
 
-int N, a, b;
-int d[1000005][2];
-bool vis[1000005];
-vector<int> adj[1000005];
-
-// f(n, k) = 부모의 상태가 k(1이면 얼리어답터, 0이면 아님)인 n번 노드를 루트로
-// 하는 서브트리에서 최소 얼리어답터 수
-int f(int n, bool k) {
-  if (vis[n]) return 0;
-  if (d[n][k] != -1) return d[n][k];
-
-  vis[n] = true;
-  int result = 1, result2 = 0x3f3f3f3f;
-  for (auto v : adj[n]) result += f(v, 1);
-  if (k) {
-    result2 = 0;
-    for (auto v : adj[n]) result2 += f(v, 0);
-  }
-  result = min(result, result2);
-  vis[n] = false;
-  d[n][k] = result;
-  return result;
-}
+using i64 = long long;
+using P = std::pair<int, int>;
+using TP = std::tuple<int, int, int>;
 
 int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
-  cin >> N;
-  for (int i = 0; i < N - 1; ++i) {
-    cin >> a >> b;
-    adj[a].push_back(b);
-    adj[b].push_back(a);
+  std::cin.tie(nullptr)->sync_with_stdio(false);
+  kushinada;
+  int n;
+  std::cin >> n;
+  std::vector adj(n, std::vector<int>());
+  for (int i = 0; i < n - 1; ++i) {
+    int u, v;
+    std::cin >> u >> v;
+    u--;
+    v--;
+    adj[u].push_back(v);
+    adj[v].push_back(u);
   }
-  for (int i = 0; i < N + 1; ++i) fill(d[i], d[i] + 2, -1);
-  cout << f(1, 1);
+  const int N = n + 1, IMP = 0x3f3f3f3f;
+  std::vector dp(N, std::vector<int>(2, IMP));
+  std::vector<int> p(N, -1);
+  std::queue<int> que;
+  que.push(n);
+  adj.push_back({0});
+  while (!que.empty()) {
+    int u = que.front();
+    que.pop();
+    for (auto v : adj[u]) {
+      if (p[v] == -1) {
+        p[v] = u;
+        que.push(v);
+      }
+    }
+  }
+
+  auto dfs = [&](auto&& dfs, int u, int opt) {
+    int& ret = dp[u][opt];
+    if (ret != IMP) {
+      return ret;
+    }
+
+    ret = opt ? 1 : 0;
+
+    for (auto v : adj[u]) {
+      if (p[u] != v) {
+        if (!opt) {
+          ret += dfs(dfs, v, 1);
+        } else {
+          ret += std::min(dfs(dfs, v, 0), dfs(dfs, v, 1));
+        }
+      }
+    }
+    return ret;
+  };
+
+  std::println("{}", dfs(dfs, n, 1) - 1);
 }
